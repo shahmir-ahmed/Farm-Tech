@@ -27,15 +27,16 @@ class Utils {
       GoogleFonts.raleway(fontSize: 23, fontWeight: FontWeight.bold);
 
   // text form field decoration
-  static const inputFieldDecoration = InputDecoration(
-      focusedBorder: OutlineInputBorder(
+  static final inputFieldDecoration = InputDecoration(
+      focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(
             color: Utils.greenColor,
           ),
           borderRadius: BorderRadius.all(Radius.circular(20))),
       hintText: '',
+      hintStyle: Utils.kAppBody3RegularStyle,
       contentPadding: const EdgeInsets.all(26),
-      border: OutlineInputBorder(
+      border: const OutlineInputBorder(
           borderSide: BorderSide(
             color: Utils.lightGreyColor1,
           ),

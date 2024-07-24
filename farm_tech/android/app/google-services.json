@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "408521327876",
+    "project_id": "farm-tech-1a96c",
+    "storage_bucket": "farm-tech-1a96c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:408521327876:android:d666da1f880c647cd9bc51",
+        "android_client_info": {
+          "package_name": "com.example.farm_tech"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJYXc_E58NvFosRSAUeJOpdB47ATRFGBs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

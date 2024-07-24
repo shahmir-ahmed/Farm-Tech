@@ -17,6 +17,10 @@ class _LoginViewState extends State<LoginView> {
 
   final _formKey = GlobalKey<FormState>();
 
+  // form field values
+  String email = '';
+  String password = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,8 +36,7 @@ class _LoginViewState extends State<LoginView> {
             image: DecorationImage(
                 fit: BoxFit.contain,
                 alignment: AlignmentDirectional.topCenter,
-                image:
-                    const AssetImage('assets/images/login-signup-banner.png'))),
+                image: const AssetImage('assets/images/login-banner.png'))),
         child: Container(
           margin: const EdgeInsets.only(top: 280),
           decoration: const BoxDecoration(
@@ -42,7 +45,7 @@ class _LoginViewState extends State<LoginView> {
                 topLeft: Radius.circular(40), topRight: Radius.circular(40)),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 30),
+            padding: const EdgeInsets.fromLTRB(30, 50.0, 30, 25),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -76,7 +79,11 @@ class _LoginViewState extends State<LoginView> {
                       children: [
                         // email form field
                         TextFormField(
-                          onTap: () {},
+                          onChanged: (value) {
+                            setState(() {
+                              email = value.trim();
+                            });
+                          },
                           decoration: Utils.inputFieldDecoration
                               .copyWith(hintText: 'Email'),
                           validator: (value) {
@@ -95,6 +102,11 @@ class _LoginViewState extends State<LoginView> {
 
                         // password form field
                         TextFormField(
+                          onChanged: (value) {
+                            setState(() {
+                              password = value.trim();
+                            });
+                          },
                           keyboardType: TextInputType.text,
                           obscureText:
                               !_passwordVisible, //This will obscure text dynamically
@@ -170,7 +182,11 @@ class _LoginViewState extends State<LoginView> {
 
                 // login button
                 PrimaryButton(
-                  onButtonPressed: () {},
+                  onButtonPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // if form is valid
+                    }
+                  },
                   buttonText: 'Login',
                   buttonWidth: MediaQuery.of(context).size.width,
                   buttonHeight: 60,
