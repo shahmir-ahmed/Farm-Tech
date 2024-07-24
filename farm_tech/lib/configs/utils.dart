@@ -7,6 +7,7 @@ class Utils {
   static const Color greenColor = Color(0xff339D44);
   static const Color blackColor1 = Color(0xff292929);
   static const Color lightGreyColor1 = Color(0xffB4B4B4);
+  static const Color lightGreenColor1 = Color(0xffb8ddbe);
 
   // text styles
   static final TextStyle kAppBody1RegularStyle =

@@ -2,6 +2,7 @@
 import 'package:farm_tech/configs/utils.dart';
 import 'package:flutter/material.dart';
 
+// primary green app button
 class PrimaryButton extends StatelessWidget {
   PrimaryButton(
       {required this.onButtonPressed,

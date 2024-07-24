@@ -1,5 +1,5 @@
 import 'package:farm_tech/configs/utils.dart';
-import 'package:farm_tech/presentation/shared/on_boarding/on_boarding_view.dart';
+import 'package:farm_tech/presentation/views/shared/on_boarding/on_boarding_view.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreenView extends StatelessWidget {

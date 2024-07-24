@@ -1,7 +1,8 @@
-import 'package:farm_tech/presentation/seller/authentication/authentication_view.dart';
-import 'package:farm_tech/presentation/shared/splash_screen/splash_screen_view.dart';
+import 'package:farm_tech/presentation/views/seller/authentication/authentication_view.dart';
+import 'package:farm_tech/presentation/views/shared/splash_screen/splash_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -20,7 +21,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         // home: AuthenticationView()
         home: SplashScreenView(
-            // forBuyer: true,
-            ));
+          // forBuyer: true,
+          ),
+    );
   }
 }

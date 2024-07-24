@@ -1,5 +1,4 @@
-import 'package:farm_tech/presentation/seller/authentication/login_view.dart';
-import 'package:farm_tech/presentation/seller/authentication/register_view.dart';
+import 'package:farm_tech/presentation/views/seller/authentication/login_register_forgot_password_view.dart';
 import 'package:flutter/material.dart';
 
 class AuthenticationView extends StatefulWidget {
@@ -20,6 +19,6 @@ class _AuthenticationViewState extends State<AuthenticationView> {
 
   @override
   Widget build(BuildContext context) {
-    return _showSigninScreen ? LoginView(changeScreenMethod: changeScreen) : RegisterView(changeScreenMethod: changeScreen);
+    return _showSigninScreen ? LoginRegisterForgotResetPasswordView(changeScreenMethod: changeScreen, forLoginView: true,) : LoginRegisterForgotResetPasswordView(changeScreenMethod: changeScreen, forSignupView: true,);
   }
 }

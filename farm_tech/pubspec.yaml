@@ -38,7 +38,15 @@ dependencies:
 
   carousel_slider: ^4.2.1
   google_fonts: ^6.2.1
-  firebase_core: ^2.4.1
+  firebase_core: ^3.2.0
+  cloud_firestore: ^5.1.0
+  dotted_border: ^2.1.0
+  # image provider package
+  image_picker: ^1.0.2
+  # flutter image compressor package
+  flutter_image_compress: ^2.3.0
+  # floating snackbar
+  floating_snackbar: ^1.0.5
 
 dev_dependencies:
   flutter_test:
