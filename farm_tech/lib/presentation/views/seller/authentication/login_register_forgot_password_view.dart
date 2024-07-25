@@ -1,6 +1,10 @@
+import 'package:farm_tech/backend/model/user.dart';
+import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/seller/authentication/shop_register/shop_register_view.dart';
+import 'package:farm_tech/presentation/views/seller/home/home_view.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
+import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
 
 class LoginRegisterForgotResetPasswordView extends StatefulWidget {
@@ -47,6 +51,9 @@ class _LoginRegisterForgotResetPasswordViewState
 
   // reg exp variable for name field
   static final RegExp nameRegExp = RegExp(r'^[A-Za-z ]+$');
+
+  // user auth services instance
+  final UserAuthServices _userAuthServices = UserAuthServices();
 
   @override
   Widget build(BuildContext context) {
@@ -199,47 +206,41 @@ class _LoginRegisterForgotResetPasswordViewState
                                 textInputAction: TextInputAction.done,
                                 obscureText:
                                     !_passwordVisible, //This will obscure text dynamically
-                                decoration: InputDecoration(
-                                  focusedBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Utils.greenColor,
-                                      ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(20))),
+                                decoration: Utils.inputFieldDecoration.copyWith(
                                   hintText: 'Password',
-                                  contentPadding: const EdgeInsets.all(26),
-                                  border: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Utils.lightGreyColor1,
-                                      ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(20))),
                                   // Here is key idea
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      // Based on passwordVisible state choose the icon
-                                      _passwordVisible
-                                          ? Icons.visibility_outlined
-                                          : Icons.visibility_off_outlined,
-                                      color: Utils.lightGreyColor1,
-                                      size: 25.0,
+                                  suffixIcon: Padding(
+                                    padding: const EdgeInsets.only(right: 5.0),
+                                    child: IconButton(
+                                      icon: Icon(
+                                        // Based on passwordVisible state choose the icon
+                                        _passwordVisible
+                                            ? Icons.visibility_outlined
+                                            : Icons.visibility_off_outlined,
+                                        color: Utils.lightGreyColor1,
+                                        size: 25.0,
+                                      ),
+                                      onPressed: () {
+                                        // Update the state i.e. toogle the state of passwordVisible variable
+                                        setState(() {
+                                          _passwordVisible = !_passwordVisible;
+                                        });
+                                      },
                                     ),
-                                    onPressed: () {
-                                      // Update the state i.e. toogle the state of passwordVisible variable
-                                      setState(() {
-                                        _passwordVisible = !_passwordVisible;
-                                      });
-                                    },
                                   ),
                                 ),
                                 validator: (value) {
                                   if (widget.forLoginView != null) {
                                     if (value!.trim().isEmpty) {
                                       return 'Password is required';
+                                    } else if (value.trim().length < 6) {
+                                      return 'Password should be at least 6 characters';
                                     }
                                   } else {
                                     if (value!.trim().isEmpty) {
                                       return 'Password is required';
+                                    } else if (value.trim().length < 6) {
+                                      return 'Password should be at least 6 characters';
                                     } else if (confirmPassword != password) {
                                       return 'Both passwords must be same';
                                     }
@@ -274,43 +275,37 @@ class _LoginRegisterForgotResetPasswordViewState
                                     keyboardType: TextInputType.text,
                                     obscureText:
                                         !_confirmPasswordVisible, //This will obscure text dynamically
-                                    decoration: InputDecoration(
-                                      focusedBorder: const OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Utils.greenColor,
-                                          ),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20))),
+                                    decoration:
+                                        Utils.inputFieldDecoration.copyWith(
                                       hintText: 'Confirm Password',
-                                      contentPadding: const EdgeInsets.all(26),
-                                      border: const OutlineInputBorder(
-                                          borderSide: BorderSide(
+                                      suffixIcon: // Here is key idea
+                                          Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 5.0),
+                                        child: IconButton(
+                                          icon: Icon(
+                                            // Based on passwordVisible state choose the icon
+                                            _confirmPasswordVisible
+                                                ? Icons.visibility_outlined
+                                                : Icons.visibility_off_outlined,
                                             color: Utils.lightGreyColor1,
+                                            size: 25.0,
                                           ),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20))),
-                                      // Here is key idea
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          // Based on passwordVisible state choose the icon
-                                          _confirmPasswordVisible
-                                              ? Icons.visibility_outlined
-                                              : Icons.visibility_off_outlined,
-                                          color: Utils.lightGreyColor1,
-                                          size: 25.0,
+                                          onPressed: () {
+                                            // Update the state i.e. toogle the state of passwordVisible variable
+                                            setState(() {
+                                              _confirmPasswordVisible =
+                                                  !_confirmPasswordVisible;
+                                            });
+                                          },
                                         ),
-                                        onPressed: () {
-                                          // Update the state i.e. toogle the state of passwordVisible variable
-                                          setState(() {
-                                            _confirmPasswordVisible =
-                                                !_confirmPasswordVisible;
-                                          });
-                                        },
                                       ),
                                     ),
                                     validator: (value) {
                                       if (value!.trim().isEmpty) {
                                         return 'Please enter password again';
+                                      } else if (value.trim().length < 6) {
+                                        return 'Password should be at least 6 characters';
                                       } else if (confirmPassword != password) {
                                         return 'Both passwords must be same';
                                       }
@@ -347,7 +342,7 @@ class _LoginRegisterForgotResetPasswordViewState
                                     validator: (value) {
                                       if (value!.trim().isEmpty) {
                                         return 'Contact number is required';
-                                      } else if (value!.trim().length < 11) {
+                                      } else if (value.trim().length < 11) {
                                         return 'Please enter complete number';
                                       }
                                       return null;
@@ -401,18 +396,64 @@ class _LoginRegisterForgotResetPasswordViewState
 
                 // next button
                 PrimaryButton(
-                  onButtonPressed: () {
+                  onButtonPressed: () async {
                     // remove focus from last text field filled
                     FocusScope.of(context).requestFocus(new FocusNode());
+
+                    // if form is valid
                     if (_formKey.currentState!.validate()) {
-                      // if form is valid
+                      // for login view
+                      if (widget.forLoginView != null) {
+                        // print
+                        print('email $email');
+                        print('password $password');
+
+                        // authenticate user (either seller/buyer)
+                        final result = await _userAuthServices.authenticateUser(
+                            UserModel(email: email, password: password));
+
+                        print('result: $result');
+
+                        // null result is returned means error occured when invalid email/password
+                        if (result == null) {
+                          // invalid username/password
+                          floatingSnackBar(
+                              message: 'Invalid email or password',
+                              context: context);
+                        } else {
+                          // UserModel user = result;
+                          // valid user
+                          // print('user uid: ${user.uId}');
+                          // then show seller home screen (if for seller login screen)
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeView()));
+                        }
+                      }
                       // for signup screen
-                      if (widget.forSignupView != null) {
+                      else if (widget.forSignupView != null) {
                         print('name $name');
                         print('email $email');
                         print('password $password');
                         print('contactNo $contactNo');
 
+                        /*
+                        // check user account with email already exists or not (returning false/empty list everytime maybe because function is deperecated)
+                        final result = await UserAuthServices()
+                            .accountEmailAlreadyExists(UserModel(email: email));
+
+                        print('result: $result');
+
+                        if (result || result == null) {
+                          // user with email already exists
+                          floatingSnackBar(
+                              message:
+                                  'User with email already exists. Please try different email.',
+                              context: context);
+                        } else {
+                          // valid user
+                          */
                         // push shop register screen
                         Navigator.push(
                             context,
@@ -423,9 +464,7 @@ class _LoginRegisterForgotResetPasswordViewState
                                       email: email,
                                       password: password,
                                     )));
-                      } else if (widget.forLoginView != null) {
-                        // authenticate seller
-                        
+                        // }
                       }
                     }
                   },

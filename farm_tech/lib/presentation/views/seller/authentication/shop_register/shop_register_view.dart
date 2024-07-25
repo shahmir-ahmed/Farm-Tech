@@ -1,5 +1,9 @@
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:farm_tech/backend/model/seller.dart';
+import 'package:farm_tech/backend/model/user.dart';
+import 'package:farm_tech/backend/services/seller_services.dart';
+import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/seller/authentication/authentication_view.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
@@ -43,6 +47,9 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
   File? pickedImage;
   // image error text
   String fileError = '';
+
+  // user auth services instance
+  final UserAuthServices _userAuthServices = UserAuthServices();
 
   // select source to upload image i.e. gallery/camera
   void mediaPickerOptions(context) {
@@ -302,7 +309,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
 
     // show the dialog
     showDialog(
-      // barrierDismissible: false,
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return WillPopScope(
@@ -453,7 +460,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                           validator: (value) {
                             if (value!.trim().isEmpty) {
                               return 'Owner CNIC number is required';
-                            } else if (value!.trim().length < 13) {
+                            } else if (value.trim().length < 13) {
                               return 'Please enter complete CNIC number';
                             }
                             return null;
@@ -489,6 +496,9 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                           dashPattern: const [7, 7],
                           child: GestureDetector(
                             onTap: () {
+                              // remove focus from last text field filled
+                              FocusScope.of(context)
+                                  .requestFocus(new FocusNode());
                               mediaPickerOptions(context);
                             },
                             child: Container(
@@ -575,7 +585,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
 
                         // next button
                         PrimaryButton(
-                          onButtonPressed: () {
+                          onButtonPressed: () async {
                             // remove focus from last text field filled
                             FocusScope.of(context)
                                 .requestFocus(new FocusNode());
@@ -592,24 +602,85 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                               // show creating account alert dialog
                               showCreatingAccountAlertDialog(context);
 
-                              print('shopName $shopName');
-                              print('shopLocation $shopLocation');
-                              print('ownerName $ownerName');
-                              print('ownerCNICNo $ownerCNICNo');
-                              print('ownerContactNo $ownerContactNo');
-                              print('pickedImage!.path ${pickedImage!.path}');
-                              print('shopDescription $shopDescription');
+                              // print('shopName $shopName');
+                              // print('shopLocation $shopLocation');
+                              // print('ownerName $ownerName');
+                              // print('ownerCNICNo $ownerCNICNo');
+                              // print('ownerContactNo $ownerContactNo');
+                              // print('pickedImage!.path ${pickedImage!.path}');
+                              // print('shopDescription $shopDescription');
 
-                              // register seller account with shop details, add profile image in storage
-                              
+                              // signup seller account shop details, add profile image in storage
+                              final result = await _userAuthServices.signUpUser(
+                                  UserModel(
+                                      email: widget.email,
+                                      password: widget.password));
+
+                              if (result == null) {
+                                // close creating account dialog
+                                Navigator.pop(context);
+
+                                // user with email already exists
+                                floatingSnackBar(
+                                    message:
+                                        'User with email already exists. Please try different email.',
+                                    context: context);
+                              } else {
+                                // valid user
+                                UserModel user =
+                                    result; // logged in user object
+
+                                // create user uid with seller document which contains shop details and user details
+                                final result2 = await SellerServices()
+                                    .createSellerDoc(
+                                        SellerModel(
+                                            name: ownerName,
+                                            contactNo: ownerContactNo,
+                                            cnicNo: ownerCNICNo,
+                                            shopName: shopName,
+                                            shopLocation: shopLocation,
+                                            shopDescription: shopDescription),
+                                        user.uId as String);
+
+                                // doc created
+                                if (result2 == 'success') {
+                                  // then
+                                  // save profile image in fb storage
+                                  final result3 = await SellerServices()
+                                      .uploadProfileImage(SellerModel(
+                                          docId: user.uId,
+                                          profileImageUrl: pickedImage!.path));
+
+                                  // close creating account dialog
+                                  Navigator.pop(context);
+
+                                  // profile image uploaded
+                                  if (result3 == 'success') {
+                                    // show account created alert dialog
+                                    showAccountCreatedAlertDialog(context);
+                                  } else {
+                                    // show error
+                                    floatingSnackBar(
+                                        message:
+                                            'Error while uploading profile image. Please try again later.',
+                                        context: context);
+                                  }
+                                } else {
+                                  // show error
+                                  floatingSnackBar(
+                                      message:
+                                          'Error while creating account. Please try again later.',
+                                      context: context);
+                                }
+                              }
 
                               // after 3 secs
-                              Future.delayed(const Duration(seconds: 3), () {
-                                // close previous dialog
-                                Navigator.pop(context);
-                                // show next dialog
-                                showAccountCreatedAlertDialog(context);
-                              });
+                              // Future.delayed(const Duration(seconds: 3), () {
+                              //   // close previous dialog
+                              //   Navigator.pop(context);
+                              //   // show next dialog
+                              //   showAccountCreatedAlertDialog(context);
+                              // });
                             }
                           },
                           buttonText: 'Next',

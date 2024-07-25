@@ -1,39 +1,51 @@
 // To parse this JSON data, do
 //
-//     final userModel = userModelFromJson(jsonString);
+//     final sellerModel = sellerModelFromJson(jsonString);
 
 import 'dart:convert';
 
-UserModel userModelFromJson(String str) => UserModel.fromJson(json.decode(str));
+SellerModel sellerModelFromJson(String str) => SellerModel.fromJson(json.decode(str));
 
-String userModelToJson(UserModel data) => json.encode(data.toJson());
+String sellerModelToJson(SellerModel data) => json.encode(data.toJson());
 
-class UserModel {
-    final String? docId;
-    final String? name;
-    final String? email;
-    final String? contactNo;
+class SellerModel {
+    String? docId;
+    String? name;
+    String? contactNo;
+    String? cnicNo;
+    String? shopName;
+    String? shopLocation;
+    String? shopDescription;
+    String? profileImageUrl;
 
-    UserModel({
+    SellerModel({
         this.docId,
         this.name,
-        this.email,
         this.contactNo,
+        this.cnicNo,
+        this.shopName,
+        this.shopLocation,
+        this.shopDescription,
+        this.profileImageUrl,
     });
 
-    // from json to user model for using in app
-    factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+    factory SellerModel.fromJson(Map<String, dynamic> json) => SellerModel(
         docId: json["id"],
         name: json["name"],
-        email: json["email"],
         contactNo: json["contactNo"],
+        cnicNo: json["cnicNo"],
+        shopName: json["shopName"],
+        shopLocation: json["shopLocation"],
+        shopDescription: json["shopDescription"],
     );
 
-    // user model to json for storing in firestore
     Map<String, dynamic> toJson() => {
-        // "docID": userID,
+        // "docId": docId,
         "name": name,
-        "email": email,
         "contactNo": contactNo,
+        "cnicNo": cnicNo,
+        "shopName": shopName,
+        "shopLocation": shopLocation,
+        "shopDescription": shopDescription,
     };
 }

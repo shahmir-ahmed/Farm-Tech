@@ -2,7 +2,6 @@ import 'package:farm_tech/presentation/views/seller/authentication/authenticatio
 import 'package:farm_tech/presentation/views/shared/splash_screen/splash_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 
 void main() async {
