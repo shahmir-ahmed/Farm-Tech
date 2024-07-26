@@ -62,6 +62,25 @@ class UserAuthServices {
       return null;
     }
   }
+
+  // get auth changing stream
+  Stream<UserModel?>? get authStream {
+    return _firebaseAuth
+        ?.authStateChanges()
+        .map((User? user) => user == null ? null : UserModel(uId: user.uid));
+  }
+
+  // sign out
+  // future b.c this is going to take sometime to complete and allows calling fyunction to wait for this async function
+  Future signOut() async {
+    try {
+      return await _firebaseAuth?.signOut();
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
 /*
   // check user with email already exists or not
   accountEmailAlreadyExists(UserModel userModel) async {

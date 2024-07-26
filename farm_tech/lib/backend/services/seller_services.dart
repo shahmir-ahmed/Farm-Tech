@@ -4,6 +4,8 @@ import 'package:farm_tech/backend/model/seller.dart';
 import 'package:firebase_storage/firebase_storage.dart' as storage;
 
 class SellerServices {
+
+  // create seller document in firestore
   Future createSellerDoc(SellerModel model, String uId) async {
     try {
       // create seller doc with the uid of auth credentials

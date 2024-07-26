@@ -1,4 +1,5 @@
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/seller/home/home_view.dart';
 import 'package:farm_tech/presentation/views/shared/on_boarding/on_boarding_view.dart';
 import 'package:flutter/material.dart';
 
@@ -11,21 +12,40 @@ class SplashScreenView extends StatelessWidget {
   bool? forBuyer;
 
   // pop splash screen and push onboarding screen in future
-  _futurePopAndPush(context) {
-    // after 4 seconds pop this splash screen and push on boarding screen 1
-    Future.delayed(const Duration(seconds: 3), () {
-      // pop
-      Navigator.pop(context);
-      // push
-      Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const OnBoardingView()));
-    });
-  }
+  // _futurePopAndPush(context) {
+  //   // after 4 seconds pop this splash screen and push on boarding screen 1
+  //   Future.delayed(const Duration(seconds: 3), () {
+  //     // pop
+  //     Navigator.pop(context);
+  //     // push
+  //     Navigator.of(context).push(
+  //         MaterialPageRoute(builder: (context) => const OnBoardingView()));
+  //   });
+  // }
+
+  // // pop seller splash screen and push seller home screen in future
+  // _futurePopAndPushForSeller(context) {
+  //   // after 4 seconds pop this splash screen and push
+  //   Future.delayed(const Duration(seconds: 3), () {
+  //     // pop
+  //     Navigator.pop(context);
+  //     // push
+  //     Navigator.of(context)
+  //         .push(MaterialPageRoute(builder: (context) => const HomeView()));
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     // call method
-    _futurePopAndPush(context);
+    // _futurePopAndPush(context);
+
+    // if splash screen is for seller
+    // if (forSeller != null) {
+    //   _futurePopAndPushForSeller(context);
+    // }else{
+    //   _futurePopAndPush(context);
+    // }
     // widget tree
     return Scaffold(
       backgroundColor: Utils.whiteColor,

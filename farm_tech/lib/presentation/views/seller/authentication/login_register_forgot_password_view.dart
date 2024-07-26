@@ -421,14 +421,17 @@ class _LoginRegisterForgotResetPasswordViewState
                               message: 'Invalid email or password',
                               context: context);
                         } else {
-                          // UserModel user = result;
                           // valid user
-                          // print('user uid: ${user.uId}');
-                          // then show seller home screen (if for seller login screen)
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomeView()));
+                          print('user uid: ${result.uId}');
+                          // close auth screen
+                          // Navigator.pop(context);
+                          // // close choose user type screen
+                          // Navigator.pop(context);
+                          // // then show seller home screen (if for seller login screen)
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => HomeView()));
                         }
                       }
                       // for signup screen

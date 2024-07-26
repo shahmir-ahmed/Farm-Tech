@@ -17,6 +17,7 @@ class SellerModel {
     String? shopLocation;
     String? shopDescription;
     String? profileImageUrl;
+    String? createdAt;
 
     SellerModel({
         this.docId,
@@ -26,9 +27,11 @@ class SellerModel {
         this.shopName,
         this.shopLocation,
         this.shopDescription,
+        this.createdAt,
         this.profileImageUrl,
     });
 
+    // when recieving data from firestore so converting json data to model
     factory SellerModel.fromJson(Map<String, dynamic> json) => SellerModel(
         docId: json["id"],
         name: json["name"],
@@ -37,8 +40,10 @@ class SellerModel {
         shopName: json["shopName"],
         shopLocation: json["shopLocation"],
         shopDescription: json["shopDescription"],
+        createdAt: json["createdAt"],
     );
 
+    // when sending data to firestore so model data to json
     Map<String, dynamic> toJson() => {
         // "docId": docId,
         "name": name,
@@ -47,5 +52,6 @@ class SellerModel {
         "shopName": shopName,
         "shopLocation": shopLocation,
         "shopDescription": shopDescription,
+        "createdAt": DateTime.now(),
     };
 }

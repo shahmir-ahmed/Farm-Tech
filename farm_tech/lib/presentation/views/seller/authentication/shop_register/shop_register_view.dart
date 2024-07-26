@@ -263,19 +263,19 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
   showAccountCreatedAlertDialog(BuildContext context) {
     // set up the button
     Widget loginButton = PrimaryButton(
-      buttonText: 'Login',
+      buttonText: 'OK',
       onButtonPressed: () {
         // close alert dialog
         Navigator.pop(context);
         // close shop register screen
         Navigator.pop(context);
         // close sign up screen
-        Navigator.pop(context);
+        // Navigator.pop(context);
         // push authentication view with login true
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const AuthenticationView()));
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => const AuthenticationView()));
       },
       buttonWidth: MediaQuery.of(context).size.width,
       buttonHeight: 60,
