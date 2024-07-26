@@ -1,4 +1,5 @@
 import 'package:farm_tech/backend/model/user.dart';
+import 'package:farm_tech/presentation/views/select_user_type/select_user_type_view.dart';
 import 'package:farm_tech/presentation/views/seller/authentication/authentication_view.dart';
 import 'package:farm_tech/presentation/views/seller/home/home_view.dart';
 import 'package:farm_tech/presentation/views/shared/on_boarding/on_boarding_view.dart';
@@ -15,6 +16,21 @@ class AuthWrapper extends StatefulWidget {
 
 class _AuthWrapperState extends State<AuthWrapper> {
   bool threeSecondsPassed = false;
+
+  bool sellerAuth = false;
+  bool buyerAuth = false;
+
+  showSellerAuth() {
+    setState(() {
+      sellerAuth = true;
+    });
+  }
+
+  showBuyerAuth() {
+    setState(() {
+      buyerAuth = true;
+    });
+  }
 
   @override
   void initState() {
@@ -38,13 +54,29 @@ class _AuthWrapperState extends State<AuthWrapper> {
     if (user == null) {
       print('user not logged in: $user');
       // normal splash screen
-      return threeSecondsPassed ? AuthenticationView() : SplashScreenView();
+      return threeSecondsPassed
+          ? /* if for seller auth true now from select user type screen */
+          sellerAuth
+              ? AuthenticationView(
+                  forSeller: true,
+                )
+              : buyerAuth
+                  ? AuthenticationView(
+                      forBuyer: true,
+                    )
+                  : SelectUserTypeView(
+                      showSellerAuth: showSellerAuth,
+                      showBuyerAuth: showBuyerAuth,
+                    )
+          : SplashScreenView();
     } else {
       print('user logged in: ${user.uId}');
       // seller splash screen
-      return threeSecondsPassed ? HomeView() : SplashScreenView(
-        forSeller: true,
-      );
+      return threeSecondsPassed
+          ? HomeView()
+          : SplashScreenView(
+              forSeller: true,
+            );
     }
   }
 }

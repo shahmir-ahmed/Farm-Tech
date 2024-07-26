@@ -34,7 +34,7 @@ class UserAuthServices {
   // signup user
   Future signUpUser(UserModel userModel) async {
     try {
-      // create user auth with email and password
+      // create user auth with email and password (also logins the user)
       UserCredential result = await _firebaseAuth!
           .createUserWithEmailAndPassword(
               email: userModel.email as String,

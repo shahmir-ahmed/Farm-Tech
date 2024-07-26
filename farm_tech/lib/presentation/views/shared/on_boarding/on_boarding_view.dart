@@ -145,10 +145,10 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                   // close screen and show choose user screen
                   Navigator.pop(context);
                   // push choose user screen
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SelectUserTypeView()));
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => const SelectUserTypeView()));
                 },
                 child: Text('Skip',
                     style: Utils.kAppBody3RegularStyle

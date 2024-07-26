@@ -3,7 +3,10 @@ import 'package:farm_tech/presentation/views/seller/authentication/authenticatio
 import 'package:flutter/material.dart';
 
 class SelectUserTypeView extends StatelessWidget {
-  const SelectUserTypeView({super.key});
+  SelectUserTypeView({required this.showSellerAuth, required this.showBuyerAuth});
+
+  VoidCallback showSellerAuth;
+  VoidCallback showBuyerAuth;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +40,7 @@ class SelectUserTypeView extends StatelessWidget {
               // first column for buyer options
               GestureDetector(
                 onTap: () {
-                  // show buyer login screen
+                  // show buyer Auth
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -48,17 +51,17 @@ class SelectUserTypeView extends StatelessWidget {
                     //         AssetImage("assets/images/buyer-icon.png"),
                     //     radius: 50.0,
                     //     foregroundColor: Utils.whiteColor),
-          
+
                     Image.asset(
                       'assets/images/buyer-icon.png',
                       width: 100,
                     ),
-          
+
                     // space
                     const SizedBox(
                       height: 20.0,
                     ),
-          
+
                     // text
                     Text(
                       'Buyer',
@@ -67,12 +70,12 @@ class SelectUserTypeView extends StatelessWidget {
                   ],
                 ),
               ),
-          
+
               // // gap
               // SizedBox(
               //   width: 10.0,
               // ),
-          
+
               // divider
               const SizedBox(
                 height: 200,
@@ -81,21 +84,22 @@ class SelectUserTypeView extends StatelessWidget {
                   color: Utils.lightGreyColor1,
                 ),
               ),
-          
+
               // // gap
               // SizedBox(
               //   width: 10.0,
               // ),
-          
+
               // second column for seller options
               GestureDetector(
-                onTap: () {
-                  // show seller login screen
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const AuthenticationView()));
-                },
+                // onTap: () {
+                //   // show seller login screen
+                //   Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => const AuthenticationView()));
+                // },
+                onTap: showSellerAuth,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -104,12 +108,12 @@ class SelectUserTypeView extends StatelessWidget {
                       'assets/images/seller-icon.png',
                       width: 100,
                     ),
-          
+
                     // space
                     const SizedBox(
                       height: 20.0,
                     ),
-          
+
                     // text
                     Text(
                       'Seller',
