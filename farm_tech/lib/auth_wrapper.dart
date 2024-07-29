@@ -32,12 +32,20 @@ class _AuthWrapperState extends State<AuthWrapper> {
     });
   }
 
+  // show user type view (by setting both seller and buyer auth false)
+  showUserTypeView() {
+    setState(() {
+      sellerAuth = false;
+      buyerAuth = false;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       setState(() {
         threeSecondsPassed = true;
       });
@@ -64,6 +72,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
                   ? AuthenticationView(
                       forBuyer: true,
                     )
+                  // if both seller and buyer auth are false (initially and when back is pressedn on login/signup)
                   : SelectUserTypeView(
                       showSellerAuth: showSellerAuth,
                       showBuyerAuth: showBuyerAuth,
@@ -73,7 +82,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
       print('user logged in: ${user.uId}');
       // seller splash screen
       return threeSecondsPassed
-          ? HomeView()
+          ? const HomeView()
           : SplashScreenView(
               forSeller: true,
             );

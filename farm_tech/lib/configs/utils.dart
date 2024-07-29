@@ -42,11 +42,15 @@ class Utils {
           ),
           borderRadius: BorderRadius.all(Radius.circular(20))),
       hintText: '',
-      hintStyle: Utils.kAppBody3RegularStyle,
+      hintStyle:
+          Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
       contentPadding: const EdgeInsets.all(26),
       border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20))),
+      enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(
             color: Utils.lightGreyColor1,
+            // color: Colors.pink
           ),
           borderRadius: BorderRadius.all(Radius.circular(20))));
 }

@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShopRegisterView extends StatefulWidget {
   ShopRegisterView(
@@ -656,6 +657,11 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
 
                                   // profile image uploaded
                                   if (result3 == 'success') {
+                                    // save user uid in shared pref.
+                                    SharedPreferences pref =
+                                        await SharedPreferences.getInstance();
+                                    pref.setString('uId',
+                                        user.uId as String); // set user uid
                                     // show account created alert dialog
                                     showAccountCreatedAlertDialog(context);
                                   } else {

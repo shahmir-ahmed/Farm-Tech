@@ -6,6 +6,7 @@ import 'package:farm_tech/presentation/views/seller/home/home_view.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginRegisterForgotResetPasswordView extends StatefulWidget {
   LoginRegisterForgotResetPasswordView(
@@ -13,7 +14,8 @@ class LoginRegisterForgotResetPasswordView extends StatefulWidget {
       this.changeScreenMethod,
       this.forLoginView,
       this.forSignupView,
-      this.forForgotPasswordView});
+      this.forForgotPasswordView,
+      this.showUserTypeView});
 
   // change screen method
   VoidCallback? changeScreenMethod;
@@ -26,6 +28,9 @@ class LoginRegisterForgotResetPasswordView extends StatefulWidget {
 
   // for forgot password view
   bool? forForgotPasswordView;
+
+  // on back pressed show select user type view
+  VoidCallback? showUserTypeView;
 
   @override
   State<LoginRegisterForgotResetPasswordView> createState() =>
@@ -63,8 +68,26 @@ class _LoginRegisterForgotResetPasswordViewState
     );
   }
 
+  // on back pressed
+  onLoginSignupBackPressed() {
+    Navigator.pop(context);
+    widget.showUserTypeView!();
+  }
+
+  // on forgot password screen back pressed
+  onForgotBackPressed() {
+    Navigator.pop(context);
+  }
+
   _getBody() {
-    return SingleChildScrollView(
+    return
+        // WillPopScope(
+        //   onWillPop: () =>
+        //       widget.forLoginView != null || widget.forSignupView != null
+        //           ? onLoginSignupBackPressed()
+        //           : onForgotBackPressed(),
+        //   child:
+        SingleChildScrollView(
       child: Container(
         decoration: BoxDecoration(
             image: DecorationImage(
@@ -423,6 +446,14 @@ class _LoginRegisterForgotResetPasswordViewState
                         } else {
                           // valid user
                           print('user uid: ${result.uId}');
+
+                          // save user uid in shared pref.
+                          SharedPreferences pref =
+                              await SharedPreferences.getInstance();
+                          final set = await pref.setString(
+                              'uId', result.uId); // set user uid
+
+                          print("pref set: $set");
                           // close auth screen
                           // Navigator.pop(context);
                           // // close choose user type screen
@@ -442,21 +473,21 @@ class _LoginRegisterForgotResetPasswordViewState
                         print('contactNo $contactNo');
 
                         /*
-                        // check user account with email already exists or not (returning false/empty list everytime maybe because function is deperecated)
-                        final result = await UserAuthServices()
-                            .accountEmailAlreadyExists(UserModel(email: email));
-
-                        print('result: $result');
-
-                        if (result || result == null) {
-                          // user with email already exists
-                          floatingSnackBar(
-                              message:
-                                  'User with email already exists. Please try different email.',
-                              context: context);
-                        } else {
-                          // valid user
-                          */
+                          // check user account with email already exists or not (returning false/empty list everytime maybe because function is deperecated)
+                          final result = await UserAuthServices()
+                              .accountEmailAlreadyExists(UserModel(email: email));
+      
+                          print('result: $result');
+      
+                          if (result || result == null) {
+                            // user with email already exists
+                            floatingSnackBar(
+                                message:
+                                    'User with email already exists. Please try different email.',
+                                context: context);
+                          } else {
+                            // valid user
+                            */
                         // push shop register screen
                         Navigator.push(
                             context,
@@ -518,6 +549,7 @@ class _LoginRegisterForgotResetPasswordViewState
           ),
         ),
       ),
+      // ),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/auth_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -21,15 +22,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // home: AuthenticationView()
-      // home: SplashScreenView(
-      //       // forBuyer: true,
-      //       ),
-      home: StreamProvider<UserModel?>.value(
-        initialData: null,
-        value: UserAuthServices().authStream,
-        child: AuthWrapper()
+    return AnnotatedRegion(
+        value: const SystemUiOverlayStyle(
+          // statusBarColor: Color(0xffffdabe),
+          statusBarIconBrightness: Brightness.dark,
+        ),
+      child: MaterialApp(
+        // home: AuthenticationView()
+        // home: SplashScreenView(
+        //       // forBuyer: true,
+        //       ),
+        home: StreamProvider<UserModel?>.value(
+          initialData: null,
+          value: UserAuthServices().authStream,
+          child: AuthWrapper()
+        ),
       ),
     );
   }

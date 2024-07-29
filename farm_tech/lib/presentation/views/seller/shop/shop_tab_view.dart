@@ -1,4 +1,5 @@
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/seller/product/upload_product_view.dart';
 import 'package:flutter/material.dart';
 
 class ShopTabView extends StatefulWidget {
@@ -12,6 +13,20 @@ class _ShopTabViewState extends State<ShopTabView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // show add product screen
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const UploadProductView()));
+        },
+        foregroundColor: Utils.whiteColor,
+        backgroundColor: Utils.greenColor,
+        shape: const CircleBorder(),
+        child: const Icon(
+          Icons.add,
+          size: 30,
+        ),
+      ),
       backgroundColor: Utils.whiteColor,
       appBar: AppBar(
         backgroundColor: Utils.whiteColor,
@@ -54,12 +69,12 @@ class _ShopTabViewState extends State<ShopTabView> {
               children: [
                 // Image.network(profileImageUrl)
                 // user profile pic
-                CircleAvatar(
+                const CircleAvatar(
                   backgroundImage: AssetImage('assets/images/asad-ali.png'),
                   radius: 50,
                 ),
                 // space
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
 
@@ -70,7 +85,7 @@ class _ShopTabViewState extends State<ShopTabView> {
                 ),
 
                 // space
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
 
@@ -78,7 +93,7 @@ class _ShopTabViewState extends State<ShopTabView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.star,
                       color: Utils.greenColor,
                       size: 10,
@@ -96,7 +111,7 @@ class _ShopTabViewState extends State<ShopTabView> {
                 ),
 
                 // space
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
 
@@ -114,7 +129,7 @@ class _ShopTabViewState extends State<ShopTabView> {
                             style: Utils.kAppBody2BoldStyle,
                           ),
                           // space
-                          SizedBox(
+                          const SizedBox(
                             height: 3,
                           ),
                           // title
@@ -132,7 +147,7 @@ class _ShopTabViewState extends State<ShopTabView> {
                             style: Utils.kAppBody2BoldStyle,
                           ),
                           // space
-                          SizedBox(
+                          const SizedBox(
                             height: 3,
                           ),
                           // title
@@ -147,7 +162,6 @@ class _ShopTabViewState extends State<ShopTabView> {
                 ),
 
                 // tabs
-                
               ],
             ),
           )
