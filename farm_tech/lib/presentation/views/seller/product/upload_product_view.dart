@@ -86,7 +86,8 @@ class _UploadProductViewState extends State<UploadProductView> {
                   const SizedBox(
                     height: 10,
                   ),
-                  PrimaryButton(
+                  CustomButton(
+                    primaryButton: true,
                     onButtonPressed: () {
                       // close this modal bottom sheet
                       Navigator.pop(context);
@@ -98,7 +99,8 @@ class _UploadProductViewState extends State<UploadProductView> {
                   const SizedBox(
                     height: 5,
                   ),
-                  PrimaryButton(
+                  CustomButton(
+                    primaryButton: true,
                     onButtonPressed: () {
                       // close this modal bottom sheet
                       Navigator.pop(context);
@@ -412,6 +414,7 @@ class _UploadProductViewState extends State<UploadProductView> {
                         )
                       : const SizedBox(),
 
+                  // file error text
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -432,6 +435,7 @@ class _UploadProductViewState extends State<UploadProductView> {
                         )
                       : const SizedBox(),
 
+                  // space
                   const SizedBox(
                     height: 12.0,
                   ),
@@ -599,6 +603,7 @@ class _UploadProductViewState extends State<UploadProductView> {
                         )
                       : const SizedBox(),
 
+                  // dropdown error
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -619,6 +624,7 @@ class _UploadProductViewState extends State<UploadProductView> {
                         )
                       : const SizedBox(),
 
+                  // space
                   const SizedBox(
                     height: 12.0,
                   ),
@@ -652,7 +658,8 @@ class _UploadProductViewState extends State<UploadProductView> {
                   ),
 
                   // upload button
-                  PrimaryButton(
+                  CustomButton(
+                    primaryButton: true,
                     onButtonPressed: () async {
                       // single image is not present
                       if (productImages.isEmpty) {
@@ -670,17 +677,22 @@ class _UploadProductViewState extends State<UploadProductView> {
                       if (_formKey.currentState!.validate() &&
                           productImages.isNotEmpty &&
                           category != categories[0]) {
-                        for (var productImage in productImages) {
-                          print(productImage!.path);
-                        }
-                        print(title);
-                        print(price);
-                        print(stockQuantity);
-                        print(minOrder);
-                        print(category);
-                        print(description);
+                        // for (var productImage in productImages) {
+                        //   print(productImage!.path);
+                        // }
+                        // print(title);
+                        // print(price);
+                        // print(stockQuantity);
+                        // print(minOrder);
+                        // print(category);
+                        // print(description);
 
-                        final uId = await _getUserUid();
+                        // show loading alert dialog
+                        Utils.showCreatingAccountAlertDialog(
+                            context, 'upload_product');
+
+                        final uId =
+                            await _getUserUid(); // get user uid from shared pref
 
                         // create new product doc with seller id of the logged in user
                         final result = await _productServices.createProductDoc(
@@ -693,16 +705,96 @@ class _UploadProductViewState extends State<UploadProductView> {
                                 description: description,
                                 imagesCount: productImages.length,
                                 sellerId: uId));
+
+                        // upload images
+                        // images wont be uploaded if creating document error occured
+                        // error
                         if (result == null) {
+                          // close alert
+                          Navigator.pop(context);
+
+                          // show snackbar
                           floatingSnackBar(
                               message:
                                   'Unable to upload product please try again later.',
                               context: context);
                         } else {
-                          floatingSnackBar(
-                              message: 'Product uploaded successfully',
-                              context: context);
-                          Navigator.pop(context);
+                          print('product doc created');
+
+                          // if only one image
+                          if (productImages.length == 1) {
+                            // upload product image
+                            final result2 =
+                                await _productServices.uploadProductImage(
+                                    result, productImages[0]!.path);
+
+                            // error
+                            if (result2 == null) {
+                              // close alert
+                              Navigator.pop(context);
+
+                              // show snackbar
+                              floatingSnackBar(
+                                  message:
+                                      'Error uploading image. Please try later.',
+                                  context: context);
+                            }
+                            // success
+                            else {
+                              // close alert
+                              Navigator.pop(context);
+
+                              // show snackbar
+                              floatingSnackBar(
+                                  message: 'Product uploaded successfully.',
+                                  context: context);
+
+                              // close screen
+                              Navigator.pop(context);
+                            }
+                          }
+                          // if more than one image
+                          else {
+                            List<String?> result2 =
+                                []; // image uploading results returned list
+
+                            // loop less than size
+                            for (int i = 0; i < productImages.length; i++) {
+                              // upload each image
+                              var result3 =
+                                  await _productServices.uploadProductImage(
+                                      '${result}_${i + 1}',
+                                      productImages[i]!.path);
+
+                              result2.add(
+                                  result3); // adding all results one by one
+                            }
+                            // if results list contains any error
+                            if (result2.contains(null)) {
+                              for (var i = 0; i < result2.length; i++) {
+                                // close alert
+                                Navigator.pop(context);
+
+                                // show snackbar
+                                floatingSnackBar(
+                                    message:
+                                        'Error uploading product image ${result2.indexOf(null) + 1}.',
+                                    context: context);
+                              }
+                            } else {
+                              // close alert
+                              Navigator.pop(context);
+
+                              // show snackbar
+                              // success no error
+                              floatingSnackBar(
+                                  message: 'Product uploaded successfully',
+                                  context: context);
+
+                              // close screen
+                              Navigator.pop(context);
+                            }
+                          }
                         }
                       }
                     },

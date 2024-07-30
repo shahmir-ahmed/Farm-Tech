@@ -79,7 +79,8 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                   const SizedBox(
                     height: 10,
                   ),
-                  PrimaryButton(
+                  CustomButton(
+                    primaryButton: true,
                     onButtonPressed: () {
                       // close this modal bottom sheet
                       Navigator.pop(context);
@@ -91,7 +92,8 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                   const SizedBox(
                     height: 5,
                   ),
-                  PrimaryButton(
+                  CustomButton(
+                    primaryButton: true,
                     onButtonPressed: () {
                       // close this modal bottom sheet
                       Navigator.pop(context);
@@ -196,74 +198,10 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
     }
   }
 
-  // show creating account alert dialog
-  showCreatingAccountAlertDialog(BuildContext context) {
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      // icon: SizedBox(
-      //   width: 48,
-      //   height: 48,
-      //   child: CircularProgressIndicator(
-      //     color: Utils.greenColor,
-      //     backgroundColor: Utils.lightGreenColor1,
-      //     strokeWidth: 5,
-      //   ),
-      // ),
-      contentPadding:
-          const EdgeInsets.symmetric(vertical: 45.0, horizontal: 50),
-      backgroundColor: Utils.whiteColor,
-      // title: Text(
-      //   "Creating",
-      //   style: Utils.kAppHeading6BoldStyle,
-      // ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(
-            width: 48,
-            height: 48,
-            child: CircularProgressIndicator(
-              color: Utils.greenColor,
-              backgroundColor: Utils.lightGreenColor1,
-              strokeWidth: 6,
-            ),
-          ),
-          // space
-          const SizedBox(height: 30),
-          Text(
-            "Creating",
-            style: Utils.kAppHeading6BoldStyle,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            textAlign: TextAlign.center,
-            "Please be patient we are creating your account",
-            style: Utils.kAppBody3RegularStyle
-                .copyWith(color: Utils.lightGreyColor1),
-          ),
-        ],
-      ),
-    );
-
-    // show the dialog
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return WillPopScope(
-            onWillPop: () async =>
-                false, // False will prevent and true will allow to dismiss
-            child: alert);
-      },
-    );
-  }
-
   // show account created alert dialog
   showAccountCreatedAlertDialog(BuildContext context) {
     // set up the button
-    Widget loginButton = PrimaryButton(
+    Widget loginButton = CustomButton(
       buttonText: 'OK',
       onButtonPressed: () {
         // close alert dialog
@@ -585,7 +523,8 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                         ),
 
                         // next button
-                        PrimaryButton(
+                        CustomButton(
+                          primaryButton: true,
                           onButtonPressed: () async {
                             // remove focus from last text field filled
                             FocusScope.of(context)
@@ -601,7 +540,8 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                 pickedImage != null) {
                               // if form is valid
                               // show creating account alert dialog
-                              showCreatingAccountAlertDialog(context);
+                              Utils.showCreatingAccountAlertDialog(
+                                  context, "signup");
 
                               // print('shopName $shopName');
                               // print('shopLocation $shopLocation');

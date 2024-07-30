@@ -5,9 +5,11 @@ class Utils {
   // colors
   static const Color whiteColor = Colors.white;
   static const Color greenColor = Color(0xff339D44);
+  static const Color greyColor = Color(0xffB4B4B4);
   static const Color blackColor1 = Color(0xff292929);
   static const Color blackColor2 = Colors.black;
   static const Color lightGreyColor1 = Color(0xffB4B4B4);
+  static const Color lightGreyColor2 = Color(0xffFBFBFB);
   static const Color lightGreenColor1 = Color(0xffb8ddbe);
 
   // text styles
@@ -30,8 +32,18 @@ class Utils {
   static final TextStyle kAppCaptionRegularStyle = GoogleFonts.raleway(
     fontSize: 11.1,
   );
+  static final TextStyle kAppCaptionMediumStyle = GoogleFonts.raleway(
+    fontSize: 11.1,
+    fontWeight: FontWeight.w500
+  );
+  static final TextStyle kAppCaptionBoldStyle =
+      GoogleFonts.raleway(fontSize: 11.1, fontWeight: FontWeight.bold);
   static final TextStyle kAppCaption2RegularStyle = GoogleFonts.raleway(
     fontSize: 9.3,
+  );
+  static final TextStyle kAppCaption2MediumStyle = GoogleFonts.raleway(
+    fontSize: 9.3,
+    fontWeight: FontWeight.w500
   );
 
   // text form field decoration
@@ -53,4 +65,81 @@ class Utils {
             // color: Colors.pink
           ),
           borderRadius: BorderRadius.all(Radius.circular(20))));
+
+  // show loading alert dialog
+  static showCreatingAccountAlertDialog(
+      BuildContext context, String forScreen) {
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      // icon: SizedBox(
+      //   width: 48,
+      //   height: 48,
+      //   child: CircularProgressIndicator(
+      //     color: Utils.greenColor,
+      //     backgroundColor: Utils.lightGreenColor1,
+      //     strokeWidth: 5,
+      //   ),
+      // ),
+      contentPadding:
+          const EdgeInsets.symmetric(vertical: 45.0, horizontal: 50),
+      backgroundColor: Utils.whiteColor,
+      // title: Text(
+      //   "Creating",
+      //   style: Utils.kAppHeading6BoldStyle,
+      // ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(
+            width: 48,
+            height: 48,
+            child: CircularProgressIndicator(
+              color: Utils.greenColor,
+              backgroundColor: Utils.lightGreenColor1,
+              strokeWidth: 6,
+            ),
+          ),
+          // space
+          const SizedBox(height: 30),
+          Text(
+            forScreen == 'signup'
+                ? "Creating"
+                : forScreen == 'upload_product'
+                    ? "Uploading"
+                    : forScreen == 'login'
+                        ? "Logging in"
+                        : "",
+            style: Utils.kAppHeading6BoldStyle,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            textAlign: TextAlign.center,
+            forScreen == 'signup'
+                ? "Please be patient we are creating your account"
+                : forScreen == 'upload_product'
+                    ? "Product is being uploaded"
+                    : forScreen == 'login'
+                        ? "Please be patient"
+                        : "",
+            style: Utils.kAppBody3RegularStyle
+                .copyWith(color: Utils.lightGreyColor1),
+          ),
+        ],
+      ),
+    );
+
+    // show the dialog
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return WillPopScope(
+            onWillPop: () async =>
+                false, // False will prevent and true will allow to dismiss
+            child: alert);
+      },
+    );
+  }
 }

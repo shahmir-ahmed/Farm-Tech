@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 ProductModel productModelFromJson(String str) => ProductModel.fromJson(json.decode(str));
 
 String productModelToJson(ProductModel data) => json.encode(data.toJson());
@@ -16,8 +18,10 @@ class ProductModel {
     int? minOrder;
     String? category;
     String? description;
+    List<String>? profileImageUrls;
     int? imagesCount;
     String? sellerId;
+    Timestamp? createdAt;
 
     ProductModel({
         this.docId,
@@ -27,12 +31,14 @@ class ProductModel {
         this.minOrder,
         this.category,
         this.description,
+        this.profileImageUrls,
         this.imagesCount,
-        this.sellerId
+        this.sellerId,
+        this.createdAt,
     });
 
     factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
-        docId: json["docId"],
+        // docId: json["docId"],
         title: json["title"],
         price: json["price"],
         stockQuantity: json["stockQuantity"],
@@ -40,7 +46,8 @@ class ProductModel {
         category: json["category"],
         description: json["description"],
         imagesCount: json["imagesCount"],
-        sellerId: json["sellerId"]
+        sellerId: json["sellerId"],
+        createdAt: json["createdAt"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -51,6 +58,7 @@ class ProductModel {
         "category": category,
         "description": description,
         "imagesCount": imagesCount,
-        "sellerId": sellerId
+        "sellerId": sellerId,
+        "createdAt": Timestamp.now()
     };
 }

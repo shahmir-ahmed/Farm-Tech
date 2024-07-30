@@ -418,7 +418,8 @@ class _LoginRegisterForgotResetPasswordViewState
                       ),
 
                 // next button
-                PrimaryButton(
+                CustomButton(
+                  primaryButton: true,
                   onButtonPressed: () async {
                     // remove focus from last text field filled
                     FocusScope.of(context).requestFocus(new FocusNode());
@@ -431,6 +432,9 @@ class _LoginRegisterForgotResetPasswordViewState
                         print('email $email');
                         print('password $password');
 
+                        // show loading alert dialog
+                        Utils.showCreatingAccountAlertDialog(context, 'login');
+
                         // authenticate user (either seller/buyer)
                         final result = await _userAuthServices.authenticateUser(
                             UserModel(email: email, password: password));
@@ -439,6 +443,10 @@ class _LoginRegisterForgotResetPasswordViewState
 
                         // null result is returned means error occured when invalid email/password
                         if (result == null) {
+                          // close alert
+                          Navigator.pop(context);
+
+                          // show snackbar
                           // invalid username/password
                           floatingSnackBar(
                               message: 'Invalid email or password',
@@ -447,6 +455,9 @@ class _LoginRegisterForgotResetPasswordViewState
                           // valid user
                           print('user uid: ${result.uId}');
 
+                          // close alert
+                          Navigator.pop(context);
+
                           // save user uid in shared pref.
                           SharedPreferences pref =
                               await SharedPreferences.getInstance();
@@ -454,6 +465,14 @@ class _LoginRegisterForgotResetPasswordViewState
                               'uId', result.uId); // set user uid
 
                           print("pref set: $set");
+
+                          // // after 3 secs show welcome message
+                          // Future.delayed(Duration(seconds: 3), () {
+                          //   // show snackbar
+                          //   floatingSnackBar(
+                          //       message: 'Welcome back!', context: context);
+                          // });
+
                           // close auth screen
                           // Navigator.pop(context);
                           // // close choose user type screen
@@ -467,10 +486,10 @@ class _LoginRegisterForgotResetPasswordViewState
                       }
                       // for signup screen
                       else if (widget.forSignupView != null) {
-                        print('name $name');
-                        print('email $email');
-                        print('password $password');
-                        print('contactNo $contactNo');
+                        // print('name $name');
+                        // print('email $email');
+                        // print('password $password');
+                        // print('contactNo $contactNo');
 
                         /*
                           // check user account with email already exists or not (returning false/empty list everytime maybe because function is deperecated)

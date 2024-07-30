@@ -1,3 +1,5 @@
+import 'package:farm_tech/backend/model/seller.dart';
+import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
@@ -15,6 +17,7 @@ class HomeTabView extends StatefulWidget {
 class _HomeTabViewState extends State<HomeTabView> {
   late List<Map<String, String>> statsList;
   String uId = '';
+  String sellerName = '';
 
   // logout function
   Future<void> _logoutUser() async {
@@ -25,11 +28,23 @@ class _HomeTabViewState extends State<HomeTabView> {
     print('cleared: $cleared');
   }
 
+  // get user uid
   _getUserUid() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
+    uId = pref.getString("uId") as String;
+
+    // get seller name
+    _getSellerName();
+  }
+
+  // get seller name and set
+  _getSellerName() async {
+    final name =
+        await SellerServices().getSellerName(SellerModel(docId: uId)) as String;
+    print('sellerName $name');
     // set state to let the widget tree know and refresh itself that something (data att.) has changed that it needs to reflect in its tree/view
     setState(() {
-      uId = pref.getString("uId") as String;
+      sellerName = name;
     });
   }
 
@@ -97,7 +112,10 @@ class _HomeTabViewState extends State<HomeTabView> {
                                 ),
                                 // user name
                                 Text(
-                                  uId.substring(0, 16),
+                                  sellerName.isEmpty
+                                      ? ""
+                                      : sellerName.substring(
+                                          0, sellerName.indexOf(' ')),
                                   style: Utils.kAppCaptionRegularStyle,
                                 ),
                               ],
@@ -112,6 +130,9 @@ class _HomeTabViewState extends State<HomeTabView> {
                             // logout user
                             await UserAuthServices().signOut();
                             await _logoutUser();
+                            floatingSnackBar(
+                                message: 'Logged out successfully',
+                                context: context);
                             print('user logged out');
                             // floatingSnackBar(
                             //     message: 'Logged out successfully',
@@ -146,7 +167,7 @@ class _HomeTabViewState extends State<HomeTabView> {
                                   BoxShadow(
                                       color: Color.fromARGB(255, 243, 243, 243),
                                       blurRadius: 2,
-                                      spreadRadius: 3)
+                                      spreadRadius: 2)
                                 ],
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)),
@@ -197,7 +218,7 @@ class _HomeTabViewState extends State<HomeTabView> {
                       child: Image.asset(
                         'assets/images/dashboard-graph.png',
                         width: MediaQuery.of(context).size.width,
-                        // height: 273,
+                        height: 350,
                       ),
                     ),
 
