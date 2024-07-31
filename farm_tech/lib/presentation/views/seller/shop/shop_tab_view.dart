@@ -19,25 +19,25 @@ class ShopTabView extends StatefulWidget {
 class _ShopTabViewState extends State<ShopTabView> {
   bool productTabActive = true;
 
-  String profileImageUrl = '';
+  SellerModel? _sellerModel;
 
-  String uId = '';
+  // String uId = '';
 
-  // get user uid
-  _getUserUid() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    setState(() {
-      uId = pref.getString("uId") as String;
-    });
-  }
+  // // get user uid
+  // _getUserUid() async {
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     uId = pref.getString("uId") as String;
+  //   });
+  // }
 
-  _getSellerImage(String docId) async {
-    final sellerModel =
-        await SellerServices().getProfileImage(SellerModel(docId: docId));
+  // get seller image
+  _getSellerImage(SellerModel sellerModel) async {
+    final profileImageUrl = await SellerServices().getProfileImage(sellerModel);
 
-    if (sellerModel != null) {
+    if (profileImageUrl != null) {
       setState(() {
-        profileImageUrl = sellerModel.profileImageUrl as String;
+        _sellerModel!.profileImageUrl = profileImageUrl;
       });
     }
   }
@@ -46,55 +46,61 @@ class _ShopTabViewState extends State<ShopTabView> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getUserUid(); // get user uid to show products
+    // _getUserUid(); // get user uid to show products using seller id
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // show add product screen
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const UploadProductView()));
-        },
-        foregroundColor: Utils.whiteColor,
-        backgroundColor: Utils.greenColor,
-        shape: const CircleBorder(),
-        child: const Icon(
-          Icons.add,
-          size: 30,
-        ),
-      ),
+      floatingActionButton: _getFloatingActionButton(),
       backgroundColor: Utils.whiteColor,
-      appBar: AppBar(
-        backgroundColor: Utils.whiteColor,
-        title: Text(
-          'Store Profile',
-          style: Utils.kAppHeading6BoldStyle,
-        ),
-        actions: const [
-          // search icon
-          Icon(
-            Icons.search,
-            color: Utils.greenColor,
-          ),
-          SizedBox(
-            width: 15,
-          ),
-          // settings icon
-          Icon(
-            Icons.settings,
-            color: Utils.greenColor,
-          ),
-          SizedBox(
-            width: 30,
-          ),
-        ],
-      ),
+      appBar: _getAppBar(),
       body: _getBody(),
+    );
+  }
+
+  _getFloatingActionButton() {
+    return FloatingActionButton(
+      onPressed: () {
+        // show add product screen
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const UploadProductView()));
+      },
+      foregroundColor: Utils.whiteColor,
+      backgroundColor: Utils.greenColor,
+      shape: const CircleBorder(),
+      child: const Icon(
+        Icons.add,
+        size: 30,
+      ),
+    );
+  }
+
+  _getAppBar() {
+    return AppBar(
+      backgroundColor: Utils.whiteColor,
+      title: Text(
+        'Store Profile',
+        style: Utils.kAppHeading6BoldStyle,
+      ),
+      actions: const [
+        // search icon
+        Icon(
+          Icons.search,
+          color: Utils.greenColor,
+        ),
+        SizedBox(
+          width: 15,
+        ),
+        // settings icon
+        Icon(
+          Icons.settings,
+          color: Utils.greenColor,
+        ),
+        SizedBox(
+          width: 30,
+        ),
+      ],
     );
   }
 
@@ -104,9 +110,14 @@ class _ShopTabViewState extends State<ShopTabView> {
 
     print('sellerData $sellerData');
 
-    if (sellerData != null && profileImageUrl.isEmpty) {
-      // get seller image path
-      _getSellerImage(sellerData.docId as String);
+    if (sellerData != null) {
+      // set seller model
+      _sellerModel = sellerData;
+
+      if (_sellerModel!.profileImageUrl!.isEmpty) {
+        // get seller image path
+        _getSellerImage(_sellerModel!);
+      }
     }
 
     return SingleChildScrollView(
@@ -121,9 +132,11 @@ class _ShopTabViewState extends State<ShopTabView> {
                 // Image.network(profileImageUrl)
                 // user profile pic
                 CircleAvatar(
-                  backgroundImage: profileImageUrl.isEmpty
+                  backgroundImage: _sellerModel == null
                       ? const AssetImage('assets/images/asad-ali.png')
-                      : NetworkImage(profileImageUrl),
+                      : _sellerModel!.profileImageUrl!.isEmpty
+                          ? const AssetImage('assets/images/asad-ali.png')
+                          : NetworkImage(_sellerModel!.profileImageUrl!),
                   radius: 50,
                 ),
                 // space
@@ -133,7 +146,7 @@ class _ShopTabViewState extends State<ShopTabView> {
 
                 // name
                 Text(
-                  sellerData != null ? sellerData.name as String : "",
+                  _sellerModel != null ? _sellerModel!.name as String : "",
                   style: Utils.kAppHeading6BoldStyle,
                 ),
 
@@ -277,18 +290,13 @@ class _ShopTabViewState extends State<ShopTabView> {
 
                 // products container
                 productTabActive
-                    ? uId.isEmpty
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: Utils.greenColor,
-                              backgroundColor: Utils.lightGreyColor1,
-                            ),
-                          )
+                    ? _sellerModel == null
+                        ? const SizedBox()
                         : StreamProvider.value(
                             initialData: null,
                             value: ProductServices()
-                                .getProductsStream(SellerModel(docId: uId)),
-                            child: ProductTabView())
+                                .getProductsStream(_sellerModel!),
+                            child: const ProductTabView())
                     :
                     // info container
                     Container(

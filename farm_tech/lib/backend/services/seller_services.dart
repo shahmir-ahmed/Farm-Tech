@@ -74,7 +74,7 @@ class SellerServices {
   }
 
   // get and return seller profile image for shop screen
-  Future<SellerModel?> getProfileImage(SellerModel model) async {
+  Future<String?> getProfileImage(SellerModel model) async {
     try {
       // get profile image path from storage
       final ref = storage.FirebaseStorage.instance
@@ -87,9 +87,8 @@ class SellerServices {
       final imageUrl = await ref.getDownloadURL();
 
       // if no error occured while getting download url means url is present then set
-      return SellerModel(
-          profileImageUrl:
-              imageUrl); // set the image oath on the profile image of this object
+      return 
+          imageUrl; // set the image oath on the profile image of this object
     } catch (e) {
       // print error
       print("ERR in getProfileImage: ${e.toString()}");

@@ -19,7 +19,7 @@ class ProductServices {
   }
 
   // upload product image method
-  uploadProductImage(String imageName, String imageUrl) async {
+  Future? uploadProductImage(String imageName, String imageUrl) async {
     try {
       final ref = storage.FirebaseStorage.instance
           .ref()
@@ -47,6 +47,26 @@ class ProductServices {
               .toList());
     } catch (e) {
       print('Err in getProductsStream: $e');
+      return null;
+    }
+  }
+
+  // get and return product image for shop screen
+  Future? getProductMainImage(String imageName) async {
+    try {
+      // get product image path from storage
+      final ref = storage.FirebaseStorage.instance
+          .ref()
+          .child('product_images')
+          .child(imageName);
+
+      final imageUrl = await ref.getDownloadURL();
+
+      // if no error occured while getting download url means url is present then set
+      return imageUrl;
+    } catch (e) {
+      // print error
+      print("ERR in getProductImage: ${e.toString()}");
       return null;
     }
   }

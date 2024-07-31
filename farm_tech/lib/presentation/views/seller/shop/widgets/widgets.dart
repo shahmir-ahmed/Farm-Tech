@@ -1,4 +1,5 @@
 import 'package:farm_tech/backend/model/product.dart';
+import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,21 +12,76 @@ class ProductTabView extends StatefulWidget {
 }
 
 class _ProductTabViewState extends State<ProductTabView> {
+  // products list from stream
+  List<ProductModel> productsList = [];
+
+  // get and set product main image from storage
+  _setProductImages() async {
+    for (var i = 0; i < productsList.length; i++) {
+      // based on image count get main image of product
+      if (productsList[i].imagesCount == 1) {
+        // get image
+        final imageUrl = await ProductServices()
+            .getProductMainImage(productsList[i].docId as String);
+
+        // set image
+        if (imageUrl != null) {
+          setState(() {
+            productsList[i].mainImageUrl = imageUrl;
+          });
+        }
+      }
+      // more than one image of product different image name
+      else {
+        // get image
+        final imageUrl = await ProductServices()
+            .getProductMainImage("${productsList[i].docId}_1");
+
+        // set image
+        if (imageUrl != null) {
+          setState(() {
+            productsList[i].mainImageUrl = imageUrl;
+          });
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // consume stream
     final products = Provider.of<List<ProductModel>?>(context);
 
-    print('products $products');
+    // if products are supplied and first product main image path is not set
+    if (products != null && productsList.isEmpty) {
+      productsList = products;
+      // get product image/first image
+      _setProductImages();
+    }
 
-    return Container(
-        height: 340,
-        child: GridView.count(
-            childAspectRatio: 0.74,
-            crossAxisCount: 2,
-            children: products != null
-                ? products.map((productModel) {
-                    return Container(
+    // print('products $products');
+    // print('productsList $productsList');
+
+    return products == null
+        ? const Center(
+            child: CircularProgressIndicator(
+              color: Utils.greenColor,
+              backgroundColor: Utils.lightGreyColor1,
+            ),
+          )
+        // grid view
+        : SizedBox(
+            height: 340,
+            child: GridView.count(
+                childAspectRatio: 0.74,
+                crossAxisCount: 2,
+                children: productsList.map((productModel) {
+                  // individual product container
+                  return GestureDetector(
+                    onTap: () {
+                      // show product details screen
+                    },
+                    child: Container(
                       padding: const EdgeInsets.all(30),
                       decoration: BoxDecoration(
                         border: Border.all(color: Utils.greyColor, width: 0.1),
@@ -35,10 +91,27 @@ class _ProductTabViewState extends State<ProductTabView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // product image
-                          Image.asset(
-                            'assets/images/carousel-image-1.png',
-                            height: 160,
-                          ),
+                          productModel.mainImageUrl!.isEmpty
+                              ?
+                              // Image.asset(
+                              //     'assets/images/carousel-image-1.png',
+                              //     height: 160,
+                              //   )
+                              const SizedBox(
+                                  height: 160,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: Utils.greenColor,
+                                      backgroundColor: Utils.lightGreyColor1,
+                                    ),
+                                  ),
+                                )
+                              : Center(
+                                  child: Image.network(
+                                    productModel.mainImageUrl!,
+                                    height: 160,
+                                  ),
+                                ),
 
                           // space
                           const SizedBox(
@@ -53,20 +126,18 @@ class _ProductTabViewState extends State<ProductTabView> {
                                   productModel.price.toString(),
                                   style: Utils.kAppCaptionBoldStyle,
                                 ),
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.star,
-                                        color: Utils.greenColor,
-                                        size: 11,
-                                      ),
-                                      Text(
-                                        ' 5.0',
-                                        style: Utils.kAppCaption2MediumStyle,
-                                      )
-                                    ],
-                                  ),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.star,
+                                      color: Utils.greenColor,
+                                      size: 11,
+                                    ),
+                                    Text(
+                                      ' 5.0',
+                                      style: Utils.kAppCaption2MediumStyle,
+                                    )
+                                  ],
                                 )
                               ]),
 
@@ -83,11 +154,11 @@ class _ProductTabViewState extends State<ProductTabView> {
                           )
                         ],
                       )),
-                    );
-                  }).toList()
+                    ),
+                  );
+                }).toList()
                 // ..sort((a, b) =>
                 //     b.createdAt.compareTo(a.createdAt))
-
-                : []));
+                ));
   }
 }

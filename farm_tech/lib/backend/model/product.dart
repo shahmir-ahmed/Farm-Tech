@@ -18,7 +18,8 @@ class ProductModel {
     int? minOrder;
     String? category;
     String? description;
-    List<String>? profileImageUrls;
+    String? mainImageUrl;
+    List<String>? imageUrls;
     int? imagesCount;
     String? sellerId;
     Timestamp? createdAt;
@@ -31,7 +32,8 @@ class ProductModel {
         this.minOrder,
         this.category,
         this.description,
-        this.profileImageUrls,
+        this.mainImageUrl,
+        this.imageUrls,
         this.imagesCount,
         this.sellerId,
         this.createdAt,
@@ -45,6 +47,8 @@ class ProductModel {
         minOrder: json["minOrder"],
         category: json["category"],
         description: json["description"],
+        mainImageUrl: "",
+        imageUrls: [],
         imagesCount: json["imagesCount"],
         sellerId: json["sellerId"],
         createdAt: json["createdAt"],

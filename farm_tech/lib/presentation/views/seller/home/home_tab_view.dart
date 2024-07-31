@@ -4,20 +4,21 @@ import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeTabView extends StatefulWidget {
-  const HomeTabView({super.key});
+  HomeTabView({required this.sellerName});
+
+  // seller name from home view
+  String sellerName;
 
   @override
   State<HomeTabView> createState() => _HomeTabViewState();
 }
 
 class _HomeTabViewState extends State<HomeTabView> {
+  // stats list
   late List<Map<String, String>> statsList;
-  String uId = '';
-  String sellerName = '';
 
   // logout function
   Future<void> _logoutUser() async {
@@ -28,31 +29,11 @@ class _HomeTabViewState extends State<HomeTabView> {
     print('cleared: $cleared');
   }
 
-  // get user uid
-  _getUserUid() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    uId = pref.getString("uId") as String;
-
-    // get seller name
-    _getSellerName();
-  }
-
-  // get seller name and set
-  _getSellerName() async {
-    final name =
-        await SellerServices().getSellerName(SellerModel(docId: uId)) as String;
-    print('sellerName $name');
-    // set state to let the widget tree know and refresh itself that something (data att.) has changed that it needs to reflect in its tree/view
-    setState(() {
-      sellerName = name;
-    });
-  }
-
   @override
   void initState() {
-    _getUserUid();
     // TODO: implement initState
     super.initState();
+    // initialize stats list
     statsList = [
       {
         "icon": "assets/images/icon-question-mark.png",
@@ -88,7 +69,7 @@ class _HomeTabViewState extends State<HomeTabView> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(25.0, 25, 25, 15),
+              padding: const EdgeInsets.fromLTRB(25, 25, 25, 15),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -112,10 +93,8 @@ class _HomeTabViewState extends State<HomeTabView> {
                                 ),
                                 // user name
                                 Text(
-                                  sellerName.isEmpty
-                                      ? ""
-                                      : sellerName.substring(
-                                          0, sellerName.indexOf(' ')),
+                                  !widget.sellerName.contains(' ') ? widget.sellerName : widget.sellerName.substring(
+                                          0, widget.sellerName.indexOf(' ')),
                                   style: Utils.kAppCaptionRegularStyle,
                                 ),
                               ],
@@ -123,7 +102,7 @@ class _HomeTabViewState extends State<HomeTabView> {
                           ],
                         ),
                         ElevatedButton(
-                          style: ButtonStyle(
+                          style: const ButtonStyle(
                               backgroundColor:
                                   WidgetStatePropertyAll(Utils.whiteColor)),
                           onPressed: () async {
@@ -138,7 +117,7 @@ class _HomeTabViewState extends State<HomeTabView> {
                             //     message: 'Logged out successfully',
                             //     context: context);
                           },
-                          child: Icon(
+                          child: const Icon(
                             Icons.logout,
                             color: Utils.blackColor2,
                           ),

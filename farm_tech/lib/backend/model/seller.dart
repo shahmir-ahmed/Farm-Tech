@@ -43,6 +43,7 @@ class SellerModel {
         shopName: json["shopName"],
         shopLocation: json["shopLocation"],
         shopDescription: json["shopDescription"],
+        profileImageUrl: "",
         createdAt: json["createdAt"],
       );
 
