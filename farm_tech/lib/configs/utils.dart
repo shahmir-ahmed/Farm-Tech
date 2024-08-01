@@ -10,6 +10,7 @@ class Utils {
   static const Color blackColor2 = Colors.black;
   static const Color lightGreyColor1 = Color(0xffB4B4B4);
   static const Color lightGreyColor2 = Color(0xffFBFBFB);
+  static const Color lightGreyColor3 = Color(0xffD4D4D4);
   static const Color lightGreenColor1 = Color(0xffb8ddbe);
 
   // text styles
@@ -17,12 +18,16 @@ class Utils {
       GoogleFonts.raleway(fontSize: 19.2);
   static final TextStyle kAppBody2RegularStyle =
       GoogleFonts.raleway(fontSize: 16);
+  static final TextStyle kAppBody2MediumStyle =
+      GoogleFonts.raleway(fontSize: 16, fontWeight: FontWeight.w500);
   static final TextStyle kAppBody2BoldStyle =
       GoogleFonts.raleway(fontSize: 16, fontWeight: FontWeight.bold);
   static final TextStyle kAppBody3RegularStyle =
       GoogleFonts.raleway(fontSize: 13.33);
   static final TextStyle kAppBody3MediumStyle =
       GoogleFonts.raleway(fontSize: 13.3, fontWeight: FontWeight.w500);
+  static final TextStyle kAppBody3BoldStyle =
+      GoogleFonts.raleway(fontSize: 13.3, fontWeight: FontWeight.bold);
   static final TextStyle kAppHeading4BoldStyle =
       GoogleFonts.raleway(fontSize: 33.2, fontWeight: FontWeight.bold);
   static final TextStyle kAppHeading5BoldStyle =
@@ -32,36 +37,31 @@ class Utils {
   static final TextStyle kAppCaptionRegularStyle = GoogleFonts.raleway(
     fontSize: 11.1,
   );
-  static final TextStyle kAppCaptionMediumStyle = GoogleFonts.raleway(
-    fontSize: 11.1,
-    fontWeight: FontWeight.w500
-  );
+  static final TextStyle kAppCaptionMediumStyle =
+      GoogleFonts.raleway(fontSize: 11.1, fontWeight: FontWeight.w500);
   static final TextStyle kAppCaptionBoldStyle =
       GoogleFonts.raleway(fontSize: 11.1, fontWeight: FontWeight.bold);
   static final TextStyle kAppCaption2RegularStyle = GoogleFonts.raleway(
     fontSize: 9.3,
   );
-  static final TextStyle kAppCaption2MediumStyle = GoogleFonts.raleway(
-    fontSize: 9.3,
-    fontWeight: FontWeight.w500
-  );
+  static final TextStyle kAppCaption2MediumStyle =
+      GoogleFonts.raleway(fontSize: 9.3, fontWeight: FontWeight.w500);
 
   // text form field decoration
   static final inputFieldDecoration = InputDecoration(
       focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(
-            color: Utils.greenColor,
+            color: greenColor,
           ),
           borderRadius: BorderRadius.all(Radius.circular(20))),
       hintText: '',
-      hintStyle:
-          Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
+      hintStyle: kAppBody3RegularStyle.copyWith(color: lightGreyColor1),
       contentPadding: const EdgeInsets.all(26),
       border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(20))),
       enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(
-            color: Utils.lightGreyColor1,
+            color: lightGreyColor1,
             // color: Colors.pink
           ),
           borderRadius: BorderRadius.all(Radius.circular(20))));
@@ -75,17 +75,17 @@ class Utils {
       //   width: 48,
       //   height: 48,
       //   child: CircularProgressIndicator(
-      //     color: Utils.greenColor,
-      //     backgroundColor: Utils.lightGreenColor1,
+      //     color: greenColor,
+      //     backgroundColor: lightGreenColor1,
       //     strokeWidth: 5,
       //   ),
       // ),
       contentPadding:
           const EdgeInsets.symmetric(vertical: 45.0, horizontal: 50),
-      backgroundColor: Utils.whiteColor,
+      backgroundColor: whiteColor,
       // title: Text(
       //   "Creating",
-      //   style: Utils.kAppHeading6BoldStyle,
+      //   style: kAppHeading6BoldStyle,
       // ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -96,8 +96,8 @@ class Utils {
             width: 48,
             height: 48,
             child: CircularProgressIndicator(
-              color: Utils.greenColor,
-              backgroundColor: Utils.lightGreenColor1,
+              color: greenColor,
+              backgroundColor: lightGreenColor1,
               strokeWidth: 6,
             ),
           ),
@@ -111,7 +111,7 @@ class Utils {
                     : forScreen == 'login'
                         ? "Logging in"
                         : "",
-            style: Utils.kAppHeading6BoldStyle,
+            style: kAppHeading6BoldStyle,
           ),
           const SizedBox(height: 10),
           Text(
@@ -123,8 +123,7 @@ class Utils {
                     : forScreen == 'login'
                         ? "Please be patient"
                         : "",
-            style: Utils.kAppBody3RegularStyle
-                .copyWith(color: Utils.lightGreyColor1),
+            style: kAppBody3RegularStyle.copyWith(color: lightGreyColor1),
           ),
         ],
       ),
@@ -141,5 +140,16 @@ class Utils {
             child: alert);
       },
     );
+  }
+
+  static getAppBar(String title, List<Widget> actions) {
+    return AppBar(
+        scrolledUnderElevation: 0,
+        backgroundColor: whiteColor,
+        title: Text(
+          title,
+          style: kAppHeading6BoldStyle,
+        ),
+        actions: actions.isEmpty ? [] : actions);
   }
 }

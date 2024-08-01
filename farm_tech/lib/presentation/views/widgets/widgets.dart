@@ -53,7 +53,7 @@ class CustomButton extends StatelessWidget {
                         : Colors.red
                 // primary button null
                 : Colors.red,
-            borderRadius: BorderRadius.all(Radius.circular(10))),
+            borderRadius: const BorderRadius.all(const Radius.circular(10))),
         child: Center(
           child: Text(
             buttonText,

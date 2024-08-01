@@ -43,7 +43,7 @@ class ProductServices {
           .where('sellerId', isEqualTo: model.docId)
           .snapshots()
           .map((snapshot) => snapshot.docs
-              .map((doc) => ProductModel.fromJson(doc.data()))
+              .map((doc) => ProductModel.fromJson(doc.data(), doc.id))
               .toList());
     } catch (e) {
       print('Err in getProductsStream: $e');
@@ -51,8 +51,8 @@ class ProductServices {
     }
   }
 
-  // get and return product image for shop screen
-  Future? getProductMainImage(String imageName) async {
+  // get and return product image required
+  Future? getProductImage(String imageName) async {
     try {
       // get product image path from storage
       final ref = storage.FirebaseStorage.instance
@@ -67,6 +67,21 @@ class ProductServices {
     } catch (e) {
       // print error
       print("ERR in getProductImage: ${e.toString()}");
+      return null;
+    }
+  }
+
+  // get a product stream
+  Stream<ProductModel>? getProductStream(ProductModel model) {
+    try {
+      return FirebaseFirestore.instance
+          .collection('products')
+          .doc(model.docId)
+          .snapshots()
+          .map((doc) => ProductModel.fromJson(
+              doc.data() as Map<String, dynamic>, doc.id));
+    } catch (e) {
+      print('Err in getProductsStream: $e');
       return null;
     }
   }

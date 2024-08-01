@@ -6,6 +6,7 @@ import 'package:farm_tech/backend/model/product.dart';
 import 'package:farm_tech/backend/model/user.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/seller/shop/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
@@ -88,6 +89,7 @@ class _UploadProductViewState extends State<UploadProductView> {
                   ),
                   CustomButton(
                     primaryButton: true,
+                    secondaryButton: false,
                     onButtonPressed: () {
                       // close this modal bottom sheet
                       Navigator.pop(context);
@@ -101,6 +103,7 @@ class _UploadProductViewState extends State<UploadProductView> {
                   ),
                   CustomButton(
                     primaryButton: true,
+                    secondaryButton: false,
                     onButtonPressed: () {
                       // close this modal bottom sheet
                       Navigator.pop(context);
@@ -205,6 +208,13 @@ class _UploadProductViewState extends State<UploadProductView> {
     }
   }
 
+  // for carousel
+  onPageChanged(index) {
+    setState(() {
+      _current = index;
+    });
+  }
+
   @override
   void initState() {
     category = categories[0];
@@ -253,70 +263,14 @@ class _UploadProductViewState extends State<UploadProductView> {
               color: const Color.fromARGB(255, 241, 241, 241),
               height: 200,
             )
-          :
-          // images slider
-          Stack(children: [
-              // carousel
-              CarouselSlider(
-                carouselController: _controller,
-                options: CarouselOptions(
-                    viewportFraction: 1.0,
-                    height: 250.0,
-                    // height: MediaQuery.of(context).size.height - 100,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        _current = index;
-                      });
-                    }),
-                items: productImages.asMap().entries.map((entry) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      // single slider widget
-                      return SizedBox(
-                        // height: 200.0,
-                        // width: 340.0,
-                        width: MediaQuery.of(context).size.width,
-                        child: productImages.length >= entry.key + 1
-                            ? Image.file(
-                                productImages[entry.key]!,
-                              )
-                            : Container(
-                                color: Utils.lightGreyColor1,
-                              ),
-                      );
-                    },
-                  );
-                }).toList(),
-              ),
-              // indicator row
-              SizedBox(
-                height: 250,
-                child: Align(
-                  alignment: AlignmentDirectional.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: productImages.asMap().entries.map((entry) {
-                        return GestureDetector(
-                            onTap: () => _controller.animateToPage(entry.key),
-                            child: Container(
-                                width: 7.0,
-                                // width: 7.0,
-                                height: 7.0,
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: 8.0, horizontal: 4.0),
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: _current == entry.key
-                                        ? Utils.whiteColor
-                                        : Utils.lightGreyColor1)));
-                      }).toList(),
-                    ),
-                  ),
-                ),
-              ),
-            ]),
+          : ProductImagesCarousel(
+              controller: _controller,
+              onPageChanged: onPageChanged,
+              productImages: productImages,
+              current: _current,
+              carouselHeight: 250,
+              forUploadProductScreen: true,
+            ),
       // space
       const SizedBox(
         height: 20,
@@ -660,6 +614,7 @@ class _UploadProductViewState extends State<UploadProductView> {
                   // upload button
                   CustomButton(
                     primaryButton: true,
+                    secondaryButton: false,
                     onButtonPressed: () async {
                       // single image is not present
                       if (productImages.isEmpty) {

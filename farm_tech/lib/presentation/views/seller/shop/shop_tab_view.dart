@@ -2,7 +2,7 @@ import 'package:farm_tech/backend/model/seller.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/configs/utils.dart';
-import 'package:farm_tech/presentation/views/seller/product/upload_product_view.dart';
+import 'package:farm_tech/presentation/views/seller/shop/upload_product_view.dart';
 import 'package:farm_tech/presentation/views/seller/shop/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +54,24 @@ class _ShopTabViewState extends State<ShopTabView> {
     return Scaffold(
       floatingActionButton: _getFloatingActionButton(),
       backgroundColor: Utils.whiteColor,
-      appBar: _getAppBar(),
+      appBar: Utils.getAppBar('Store Profile', [
+        // search icon
+        Icon(
+          Icons.search,
+          color: Utils.greenColor,
+        ),
+        SizedBox(
+          width: 15,
+        ),
+        // settings icon
+        Icon(
+          Icons.settings,
+          color: Utils.greenColor,
+        ),
+        SizedBox(
+          width: 30,
+        ),
+      ]),
       body: _getBody(),
     );
   }
@@ -73,34 +90,6 @@ class _ShopTabViewState extends State<ShopTabView> {
         Icons.add,
         size: 30,
       ),
-    );
-  }
-
-  _getAppBar() {
-    return AppBar(
-      backgroundColor: Utils.whiteColor,
-      title: Text(
-        'Store Profile',
-        style: Utils.kAppHeading6BoldStyle,
-      ),
-      actions: const [
-        // search icon
-        Icon(
-          Icons.search,
-          color: Utils.greenColor,
-        ),
-        SizedBox(
-          width: 15,
-        ),
-        // settings icon
-        Icon(
-          Icons.settings,
-          color: Utils.greenColor,
-        ),
-        SizedBox(
-          width: 30,
-        ),
-      ],
     );
   }
 

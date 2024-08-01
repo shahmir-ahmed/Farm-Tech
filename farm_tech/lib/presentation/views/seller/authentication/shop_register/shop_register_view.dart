@@ -81,6 +81,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                   ),
                   CustomButton(
                     primaryButton: true,
+                    secondaryButton: false,
                     onButtonPressed: () {
                       // close this modal bottom sheet
                       Navigator.pop(context);
@@ -94,6 +95,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                   ),
                   CustomButton(
                     primaryButton: true,
+                    secondaryButton: false,
                     onButtonPressed: () {
                       // close this modal bottom sheet
                       Navigator.pop(context);
@@ -202,6 +204,8 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
   showAccountCreatedAlertDialog(BuildContext context) {
     // set up the button
     Widget loginButton = CustomButton(
+      secondaryButton: false,
+      primaryButton: true,
       buttonText: 'OK',
       onButtonPressed: () {
         // close alert dialog
@@ -525,6 +529,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                         // next button
                         CustomButton(
                           primaryButton: true,
+                          secondaryButton: false,
                           onButtonPressed: () async {
                             // remove focus from last text field filled
                             FocusScope.of(context)

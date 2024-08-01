@@ -420,6 +420,7 @@ class _LoginRegisterForgotResetPasswordViewState
                 // next button
                 CustomButton(
                   primaryButton: true,
+                  secondaryButton: false,
                   onButtonPressed: () async {
                     // remove focus from last text field filled
                     FocusScope.of(context).requestFocus(new FocusNode());
