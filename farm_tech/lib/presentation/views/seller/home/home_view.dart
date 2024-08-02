@@ -21,16 +21,8 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   // bottom navigation bar att.
   final List<Widget?> _widgetOptions = <Widget?>[
-    const Center(
-        child: CircularProgressIndicator(
-      color: Utils.greenColor,
-      backgroundColor: Utils.greyColor,
-    )),
-    const Center(
-        child: CircularProgressIndicator(
-      color: Utils.greenColor,
-      backgroundColor: Utils.greyColor,
-    )),
+    Utils.circularProgressIndicator,
+    Utils.circularProgressIndicator,
     const OrderTabView(),
     const ChatTabView(),
     const ProfileTabView(),

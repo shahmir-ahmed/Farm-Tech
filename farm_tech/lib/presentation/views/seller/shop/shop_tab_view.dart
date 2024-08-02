@@ -21,6 +21,8 @@ class _ShopTabViewState extends State<ShopTabView> {
 
   SellerModel? _sellerModel;
 
+  int? productsCount;
+
   // String uId = '';
 
   // // get user uid
@@ -42,6 +44,17 @@ class _ShopTabViewState extends State<ShopTabView> {
     }
   }
 
+  // get seller products count
+  _getSellerProductsCount(SellerModel sellerModel) async {
+    final count = await SellerServices().getSellerProductsCount(sellerModel);
+
+    if (count != null) {
+      setState(() {
+        productsCount = count;
+      });
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -54,24 +67,27 @@ class _ShopTabViewState extends State<ShopTabView> {
     return Scaffold(
       floatingActionButton: _getFloatingActionButton(),
       backgroundColor: Utils.whiteColor,
-      appBar: Utils.getAppBar('Store Profile', [
-        // search icon
-        Icon(
-          Icons.search,
-          color: Utils.greenColor,
-        ),
-        SizedBox(
-          width: 15,
-        ),
-        // settings icon
-        Icon(
-          Icons.settings,
-          color: Utils.greenColor,
-        ),
-        SizedBox(
-          width: 30,
-        ),
-      ]),
+      appBar: Utils.getAppBar(
+          'Store Profile',
+          [
+            // search icon
+            const Icon(
+              Icons.search,
+              color: Utils.greenColor,
+            ),
+            const SizedBox(
+              width: 15,
+            ),
+            // settings icon
+            const Icon(
+              Icons.settings,
+              color: Utils.greenColor,
+            ),
+            const SizedBox(
+              width: 30,
+            ),
+          ],
+          context),
       body: _getBody(),
     );
   }
@@ -106,6 +122,11 @@ class _ShopTabViewState extends State<ShopTabView> {
       if (_sellerModel!.profileImageUrl!.isEmpty) {
         // get seller image path
         _getSellerImage(_sellerModel!);
+      }
+
+      if (productsCount == null) {
+        // get seller total products count
+        _getSellerProductsCount(_sellerModel!);
       }
     }
 
@@ -180,7 +201,10 @@ class _ShopTabViewState extends State<ShopTabView> {
                         children: [
                           // count
                           Text(
-                            '1022',
+                            // '1022',
+                            productsCount == null
+                                ? "0"
+                                : productsCount.toString(),
                             style: Utils.kAppBody2BoldStyle,
                           ),
                           // space

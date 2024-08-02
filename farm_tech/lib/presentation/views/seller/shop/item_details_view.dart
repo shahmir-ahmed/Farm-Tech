@@ -70,7 +70,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
         const SizedBox(
           width: 30,
         ),
-      ]),
+      ], context),
       body: _getBody(context),
       backgroundColor: Utils.whiteColor,
     );
@@ -87,24 +87,16 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
     }
 
     return productModel == null
-        ? const Center(
-            child: const CircularProgressIndicator(
-              color: Utils.greenColor,
-              backgroundColor: Utils.lightGreyColor1,
-            ),
-          )
+        ? const SizedBox(height: 200, child: Utils.circularProgressIndicator)
         : SingleChildScrollView(
+            // main body column
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // product images carousel
                 productModel!.imageUrls!.isEmpty
-                    ? const Center(
-                        child: const CircularProgressIndicator(
-                          color: Utils.greenColor,
-                          backgroundColor: Utils.lightGreyColor1,
-                        ),
-                      )
+                    ? const SizedBox(
+                        height: 200, child: Utils.circularProgressIndicator)
                     : ProductImagesCarousel(
                         controller: _controller,
                         onPageChanged: onPageChanged,
@@ -112,6 +104,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                         current: _current,
                         carouselHeight: 430),
 
+                // price
                 Padding(
                   padding: const EdgeInsets.all(30),
                   child: Column(
@@ -166,7 +159,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                         height: 30,
                       ),
 
-                      // description
+                      // description label
                       Text(
                         'Description',
                         style: Utils.kAppBody3MediumStyle,
@@ -177,6 +170,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                         height: 15,
                       ),
 
+                      // description
                       Row(
                         children: [
                           Expanded(
@@ -203,35 +197,12 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                   color: Utils.lightGreyColor3,
                 ),
 
-                // ratings and reviews
-                Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Ratings & Reviews',
-                          style: Utils.kAppBody3MediumStyle,
-                        ),
-
-                        // see all
-                        GestureDetector(
-                            onTap: () {
-                              // show all ratings and reviews of product screen
-                            },
-                            child: Text(
-                              'See all',
-                              style: Utils.kAppCaptionRegularStyle
-                                  .copyWith(color: Utils.greenColor),
-                            )),
-                      ],
-                    )),
-
-                // ratings
-
-                // product reviews stream
-                StreamProvider.value(value: ReviewServices().getAllProductReviews(productModel!), initialData: null,
-                child: ReviewsView(),)
+                // product reviews section with stream
+                StreamProvider.value(
+                  value: ReviewServices().getAllProductReviews(productModel!),
+                  initialData: null,
+                  child: const ReviewsView(),
+                )
               ],
             ),
           );

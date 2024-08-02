@@ -225,24 +225,7 @@ class _UploadProductViewState extends State<UploadProductView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        title: Text(
-          'Upload product',
-          style: Utils.kAppHeading6BoldStyle,
-        ),
-        backgroundColor: Utils.whiteColor,
-        leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Container(
-            margin: const EdgeInsets.only(left: 20.0),
-            child: Image.asset(
-              'assets/images/back-arrow.png',
-            ),
-          ),
-        ),
-        leadingWidth: 48,
-      ),
+      appBar: Utils.getAppBar('Upload Product', [], context),
       backgroundColor: Utils.whiteColor,
       body: _getBody(),
     );

@@ -66,6 +66,19 @@ class Utils {
           ),
           borderRadius: BorderRadius.all(Radius.circular(20))));
 
+  static const circularProgressIndicatorForAlertDialog =
+      CircularProgressIndicator(
+    color: greenColor,
+    backgroundColor: lightGreenColor1,
+    strokeWidth: 6,
+  );
+
+  static const circularProgressIndicator = Center(
+      child: CircularProgressIndicator(
+    color: greenColor,
+    backgroundColor: lightGreenColor1,
+  ));
+
   // show loading alert dialog
   static showCreatingAccountAlertDialog(
       BuildContext context, String forScreen) {
@@ -93,14 +106,9 @@ class Utils {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(
-            width: 48,
-            height: 48,
-            child: CircularProgressIndicator(
-              color: greenColor,
-              backgroundColor: lightGreenColor1,
-              strokeWidth: 6,
-            ),
-          ),
+              width: 48,
+              height: 48,
+              child: circularProgressIndicatorForAlertDialog),
           // space
           const SizedBox(height: 30),
           Text(
@@ -142,8 +150,18 @@ class Utils {
     );
   }
 
-  static getAppBar(String title, List<Widget> actions) {
+  static getAppBar(String title, List<Widget> actions, context) {
     return AppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            margin: const EdgeInsets.only(left: 20.0),
+            child: Image.asset(
+              'assets/images/back-arrow.png',
+            ),
+          ),
+        ),
+        leadingWidth: 48,
         scrolledUnderElevation: 0,
         backgroundColor: whiteColor,
         title: Text(
