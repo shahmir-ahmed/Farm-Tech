@@ -459,13 +459,15 @@ class _LoginRegisterForgotResetPasswordViewState
                           // close alert
                           Navigator.pop(context);
 
-                          // save user uid in shared pref.
+                          // save user uid, email in shared pref.
                           SharedPreferences pref =
                               await SharedPreferences.getInstance();
                           final set = await pref.setString(
                               'uId', result.uId); // set user uid
+                          final set2 = await pref.setString(
+                              'email', result.email); // set user uid
 
-                          print("pref set: $set");
+                          print("pref set: $set $set2");
 
                           // // after 3 secs show welcome message
                           // Future.delayed(Duration(seconds: 3), () {

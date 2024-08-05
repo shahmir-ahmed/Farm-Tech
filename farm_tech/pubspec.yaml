@@ -54,6 +54,8 @@ dependencies:
   provider: ^6.1.2
   # shared preferences package
   shared_preferences: ^2.2.1
+  # shimmer effect package
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

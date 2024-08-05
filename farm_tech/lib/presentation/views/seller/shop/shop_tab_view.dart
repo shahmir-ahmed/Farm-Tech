@@ -65,31 +65,35 @@ class _ShopTabViewState extends State<ShopTabView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: _getAppbar(),
       floatingActionButton: _getFloatingActionButton(),
       backgroundColor: Utils.whiteColor,
-      appBar: Utils.getAppBar(
-          'Store Profile',
-          [
-            // search icon
-            const Icon(
-              Icons.search,
-              color: Utils.greenColor,
-            ),
-            const SizedBox(
-              width: 15,
-            ),
-            // settings icon
-            const Icon(
-              Icons.settings,
-              color: Utils.greenColor,
-            ),
-            const SizedBox(
-              width: 30,
-            ),
-          ],
-          context),
       body: _getBody(),
     );
+  }
+
+  _getAppbar() {
+    return Utils.getTabAppBar(
+        'Store Profile',
+        [
+          // search icon
+          const Icon(
+            Icons.search,
+            color: Utils.greenColor,
+          ),
+          const SizedBox(
+            width: 15,
+          ),
+          // settings icon
+          const Icon(
+            Icons.settings,
+            color: Utils.greenColor,
+          ),
+          const SizedBox(
+            width: 30,
+          ),
+        ],
+        context);
   }
 
   _getFloatingActionButton() {
@@ -113,7 +117,7 @@ class _ShopTabViewState extends State<ShopTabView> {
     // consume seller data stream here
     final sellerData = Provider.of<SellerModel?>(context);
 
-    print('sellerData $sellerData');
+    // print('sellerData $sellerData');
 
     if (sellerData != null) {
       // set seller model

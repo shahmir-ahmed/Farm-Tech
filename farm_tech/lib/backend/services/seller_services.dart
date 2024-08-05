@@ -95,6 +95,29 @@ class SellerServices {
     }
   }
 
+  // update seller profile image
+  Future<String?> updateProfileImage(SellerModel model) async {
+    try {
+      // get profile image path from storage
+      final ref = storage.FirebaseStorage.instance
+          .ref()
+          .child('seller_profile_images')
+          .child(model.docId as String);
+
+      await ref.delete(); // delete the current object at path and
+
+      // put new file at the reference after deleting
+      await ref.putFile(
+          File(model.profileImageUrl!)); // put new file at the reference
+
+      return 'success';
+    } catch (e) {
+      // print error
+      print("ERR in updateProfileImage: ${e.toString()}");
+      return null;
+    }
+  }
+
   // get individual seller products and return count
   Future<int?> getSellerProductsCount(SellerModel model) async {
     try {
@@ -105,6 +128,21 @@ class SellerServices {
           .then((snapshot) => snapshot.docs.length);
     } catch (e) {
       print('Err in getSellerProductsCount: $e');
+      return null;
+    }
+  }
+
+  // update seller name
+  Future<String?> updateSellerName(SellerModel model) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('sellers')
+          .doc(model.docId)
+          .update({"name": model.name});
+
+      return 'success';
+    } catch (e) {
+      print('Err in updateSellerName: $e');
       return null;
     }
   }

@@ -93,7 +93,9 @@ class _HomeTabViewState extends State<HomeTabView> {
                                 ),
                                 // user name
                                 Text(
-                                  !widget.sellerName.contains(' ') ? widget.sellerName : widget.sellerName.substring(
+                                  !widget.sellerName.contains(' ')
+                                      ? widget.sellerName
+                                      : widget.sellerName.substring(
                                           0, widget.sellerName.indexOf(' ')),
                                   style: Utils.kAppCaptionRegularStyle,
                                 ),
@@ -101,6 +103,7 @@ class _HomeTabViewState extends State<HomeTabView> {
                             ),
                           ],
                         ),
+                        /*
                         ElevatedButton(
                           style: const ButtonStyle(
                               backgroundColor:
@@ -122,6 +125,7 @@ class _HomeTabViewState extends State<HomeTabView> {
                             color: Utils.blackColor2,
                           ),
                         ),
+                        */
                       ],
                     ),
                     // space
@@ -133,7 +137,7 @@ class _HomeTabViewState extends State<HomeTabView> {
                       height: 277,
                       child: GridView.count(
                           physics: const NeverScrollableScrollPhysics(),
-                          childAspectRatio: 1.3,
+                          childAspectRatio: 1.4,
                           crossAxisSpacing: 15,
                           mainAxisSpacing: 10,
                           crossAxisCount: 2,
@@ -146,7 +150,7 @@ class _HomeTabViewState extends State<HomeTabView> {
                                   BoxShadow(
                                       color: Color.fromARGB(255, 243, 243, 243),
                                       blurRadius: 2,
-                                      spreadRadius: 2)
+                                      spreadRadius: 1)
                                 ],
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)),
@@ -167,6 +171,8 @@ class _HomeTabViewState extends State<HomeTabView> {
                                   // count and title column
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       // count
                                       Text(

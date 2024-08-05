@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 
 // primary green app button
 class CustomButton extends StatelessWidget {
-  CustomButton({
-    required this.onButtonPressed,
-    required this.buttonText,
-    this.buttonWidth,
-    this.buttonHeight,
-    this.primaryButton,
-    this.secondaryButton,
-  });
+  CustomButton(
+      {required this.onButtonPressed,
+      required this.buttonText,
+      required this.primaryButton,
+      required this.secondaryButton,
+      this.buttonWidth,
+      this.buttonHeight,
+      this.icon});
 
   VoidCallback onButtonPressed;
   String buttonText;
@@ -19,6 +19,7 @@ class CustomButton extends StatelessWidget {
   double? buttonHeight;
   bool? primaryButton;
   bool? secondaryButton;
+  dynamic icon;
 
   @override
   Widget build(BuildContext context) {
@@ -55,24 +56,73 @@ class CustomButton extends StatelessWidget {
                 : Colors.red,
             borderRadius: const BorderRadius.all(const Radius.circular(10))),
         child: Center(
-          child: Text(
-            buttonText,
-            style: Utils.kAppBody2RegularStyle.copyWith(
-                color: secondaryButton != null
-                    ? secondaryButton!
-                        ? Utils.greyColor
-                        // secondary button false
-                        : primaryButton != null
-                            ? primaryButton!
-                                ? Utils.whiteColor
-                                // primary button false
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              icon != null ? icon! : const SizedBox(),
+              icon != null
+                  ? const SizedBox(
+                      width: 10,
+                    )
+                  : const SizedBox(),
+              Text(
+                buttonText,
+                style: Utils.kAppBody2RegularStyle.copyWith(
+                    color: secondaryButton != null
+                        ? secondaryButton!
+                            ? Utils.greyColor
+                            // secondary button false
+                            : primaryButton != null
+                                ? primaryButton!
+                                    ? Utils.whiteColor
+                                    // primary button false
+                                    : Utils.blackColor2
+                                // primary button null
                                 : Utils.blackColor2
-                            // primary button null
-                            : Utils.blackColor2
-                    // secondary button null
-                    : Utils.blackColor2),
+                        // secondary button null
+                        : Utils.blackColor2),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+class Skeleton extends StatelessWidget {
+  const Skeleton({Key? key, required this.height, required this.width, required this.defaultPadding}) : super(key: key);
+
+  final double height, width, defaultPadding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      width: width,
+      padding: EdgeInsets.all(defaultPadding / 2),
+      decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.04),
+          borderRadius:
+               BorderRadius.all(Radius.circular(defaultPadding))),
+    );
+  }
+}
+
+class CircleSkeleton extends StatelessWidget {
+  const CircleSkeleton({Key? key, this.size = 24}) : super(key: key);
+
+  final double? size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: size,
+      width: size,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor.withOpacity(0.04),
+        shape: BoxShape.circle,
       ),
     );
   }

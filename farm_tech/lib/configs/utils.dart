@@ -16,6 +16,8 @@ class Utils {
   // text styles
   static final TextStyle kAppBody1RegularStyle =
       GoogleFonts.raleway(fontSize: 19.2);
+  static final TextStyle kAppBody1MediumStyle =
+      GoogleFonts.raleway(fontSize: 19.2, fontWeight: FontWeight.w500);
   static final TextStyle kAppBody2RegularStyle =
       GoogleFonts.raleway(fontSize: 16);
   static final TextStyle kAppBody2MediumStyle =
@@ -161,6 +163,18 @@ class Utils {
             ),
           ),
         ),
+        leadingWidth: 48,
+        scrolledUnderElevation: 0,
+        backgroundColor: whiteColor,
+        title: Text(
+          title,
+          style: kAppHeading6BoldStyle,
+        ),
+        actions: actions.isEmpty ? [] : actions);
+  }
+
+  static getTabAppBar(String title, List<Widget> actions, context) {
+    return AppBar(
         leadingWidth: 48,
         scrolledUnderElevation: 0,
         backgroundColor: whiteColor,

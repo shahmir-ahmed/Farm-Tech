@@ -23,7 +23,7 @@ class UserAuthServices {
       // return
       return firebaseUser == null
           ? firebaseUser
-          : UserModel(uId: firebaseUser.uid);
+          : UserModel(uId: firebaseUser.uid, email: firebaseUser.email);
     } catch (error) {
       // error if user account with email already exists or invalid password for an already registered email
       print("Error in authenticateUser: ${error.toString()}");
