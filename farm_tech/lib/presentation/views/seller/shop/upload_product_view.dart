@@ -274,7 +274,7 @@ class _UploadProductViewState extends State<UploadProductView> {
                             _controller.animateToPage(entry.key);
                           },
                           child: Container(
-                            margin: EdgeInsets.only(right: 20),
+                            margin: const EdgeInsets.only(right: 20),
                             width: 70,
                             height: 64,
                             decoration: BoxDecoration(
@@ -317,8 +317,7 @@ class _UploadProductViewState extends State<UploadProductView> {
                             }
                           : () {
                               // remove focus from last text field filled
-                              FocusScope.of(context)
-                                  .requestFocus(new FocusNode());
+                              FocusScope.of(context).unfocus();
                               mediaPickerOptions(context);
                             },
                       child: Container(
@@ -382,6 +381,9 @@ class _UploadProductViewState extends State<UploadProductView> {
                     textCapitalization: TextCapitalization.words,
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
+                    // onFieldSubmitted: (_) {
+                    //   FocusScope.of(context).nextFocus();
+                    // },
                     onChanged: (value) {
                       setState(() {
                         title = value.trim();
@@ -405,6 +407,7 @@ class _UploadProductViewState extends State<UploadProductView> {
 
                   // price field
                   TextFormField(
+                    // focusNode: _focusNode,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.next,
                     onChanged: (value) {
@@ -488,7 +491,7 @@ class _UploadProductViewState extends State<UploadProductView> {
                     decoration: BoxDecoration(
                         border: Border.all(
                             color: dropdownError.isNotEmpty
-                                ? Color.fromARGB(255, 180, 44, 44)
+                                ? const Color.fromARGB(255, 180, 44, 44)
                                 : Utils.lightGreyColor1),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(20))),
@@ -626,8 +629,7 @@ class _UploadProductViewState extends State<UploadProductView> {
                         // print(description);
 
                         // show loading alert dialog
-                        Utils.showCreatingAccountAlertDialog(
-                            context, 'upload_product');
+                        Utils.showLoadingAlertDialog(context, 'upload_product');
 
                         final uId =
                             await _getUserUid(); // get user uid from shared pref

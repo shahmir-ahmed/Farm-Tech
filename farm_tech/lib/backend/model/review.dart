@@ -14,7 +14,7 @@ String reviewModelToJson(ReviewModel data) => json.encode(data.toJson());
 class ReviewModel {
   String? docId;
   String? review;
-  int? starsCount;
+  String? starsCount;
   String? reviewById;
   String? productId; //HGusmi3IPJ7eWjOdCdFj, b6JvxqwDQSYv6KcfZoLs
   String? sellerId;

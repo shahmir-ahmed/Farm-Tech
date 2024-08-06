@@ -68,6 +68,12 @@ class Utils {
           ),
           borderRadius: BorderRadius.all(Radius.circular(20))));
 
+  static const divider = Divider(
+    height: 0.5,
+    thickness: 0.0,
+    color: Utils.lightGreyColor3,
+  );
+
   static const circularProgressIndicatorForAlertDialog =
       CircularProgressIndicator(
     color: greenColor,
@@ -82,8 +88,7 @@ class Utils {
   ));
 
   // show loading alert dialog
-  static showCreatingAccountAlertDialog(
-      BuildContext context, String forScreen) {
+  static showLoadingAlertDialog(BuildContext context, String forScreen) {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       // icon: SizedBox(
@@ -120,7 +125,9 @@ class Utils {
                     ? "Uploading"
                     : forScreen == 'login'
                         ? "Logging in"
-                        : "",
+                        : forScreen == 'edit_profile'
+                            ? "Updating profile"
+                            : "",
             style: kAppHeading6BoldStyle,
           ),
           const SizedBox(height: 10),
@@ -132,7 +139,9 @@ class Utils {
                     ? "Product is being uploaded"
                     : forScreen == 'login'
                         ? "Please be patient"
-                        : "",
+                        : forScreen == 'edit_profile'
+                            ? "Profile is being updated"
+                            : "",
             style: kAppBody3RegularStyle.copyWith(color: lightGreyColor1),
           ),
         ],

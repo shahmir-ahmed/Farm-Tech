@@ -20,6 +20,8 @@ class SellerModel {
   String? shopLocation;
   String? shopDescription;
   String? profileImageUrl;
+  String? avgRating;
+  String? totalReviews;
   Timestamp? createdAt;
 
   SellerModel({
@@ -30,8 +32,10 @@ class SellerModel {
     this.shopName,
     this.shopLocation,
     this.shopDescription,
-    this.createdAt,
     this.profileImageUrl,
+    this.totalReviews,
+    this.avgRating,
+    this.createdAt,
   });
 
   // when recieving data from firestore so converting json data to model

@@ -232,11 +232,7 @@ class _HomeTabViewState extends State<HomeTabView> {
             ),
 
             // divider
-            const Divider(
-              height: 0.5,
-              thickness: 0.0,
-              color: Utils.lightGreyColor1,
-            ),
+            Utils.divider,
 
             const Padding(
               padding: EdgeInsets.all(25),

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_tech/backend/model/product.dart';
+import 'package:farm_tech/backend/model/product_reviews_model.dart';
 import 'package:farm_tech/backend/model/seller.dart';
 import 'package:firebase_storage/firebase_storage.dart' as storage;
 
@@ -82,6 +83,52 @@ class ProductServices {
               doc.data() as Map<String, dynamic>, doc.id));
     } catch (e) {
       print('Err in getProductsStream: $e');
+      return null;
+    }
+  }
+
+  // get product reviews data stream
+  Stream<ProductReviewsModel>? getProductReviewsDataStream(ProductModel model) {
+    try {
+      return FirebaseFirestore.instance
+          .collection('productReviews')
+          .where('productId', isEqualTo: model.docId)
+          .snapshots()
+          .map((snapshot) {
+        // if there are product reviews
+        if (snapshot.docs.isNotEmpty) {
+          // print('doc.data(): ${doc.data()}');
+
+          // calculating avg rating
+          // taking the stars count of each review doc as int into list
+          final starsList = snapshot.docs.map((doc) {
+            return int.parse(doc.get('starsCount'));
+          }).toList();
+
+          // print('starsList $starsList');
+
+          // adding all stars count
+          // adding each value into previous value with initial value set to 0
+          final totalStarsCount = starsList.fold(
+              0, (previousValue, element) => previousValue + element);
+          // print('totalStarsCount $totalStarsCount');
+
+          // dividing total by length of doc to calculate avg rating for the seller
+          final avgRating = (totalStarsCount / snapshot.docs.length).floorToDouble();
+          // final avgRating = double.parse((totalStarsCount / snapshot.docs.length).toStringAsFixed(1));
+          // final avgRating = ((totalStarsCount / snapshot.docs.length) * 10)
+          //         .truncateToDouble() /
+          //     10;
+          // print('avgRating $avgRating');
+
+          // returning seller model having total reviews count and average rating
+          return ProductReviewsModel(avgRating: avgRating.toString());
+        } else {
+          return ProductReviewsModel(avgRating: "0");
+        }
+      });
+    } catch (e) {
+      print('Err in getProductReviewsDataStream: $e');
       return null;
     }
   }

@@ -25,7 +25,7 @@ class _HomeViewState extends State<HomeView> {
     Utils.circularProgressIndicator,
     const OrderTabView(),
     const ChatTabView(),
-    const ProfileTabView(),
+    Utils.circularProgressIndicator
   ];
 
   // current botom navbar index
@@ -41,6 +41,13 @@ class _HomeViewState extends State<HomeView> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  // set order tab as active
+  void setOrderTabAsActive() {
+    setState(() {
+      _selectedIndex = 2;
     });
   }
 
@@ -64,12 +71,16 @@ class _HomeViewState extends State<HomeView> {
     // reinitialize widgets options 1 index
     setState(() {
       _widgetOptions[1] =
-          // shop tab view with stream supplied (same as already)
+          // shop tab view with double stream supplied
           StreamProvider.value(
               initialData: null,
               value:
                   SellerServices().getSellerDataStream(SellerModel(docId: uId)),
-              child: const ShopTabView());
+              child: StreamProvider.value(
+                  initialData: null,
+                  value: SellerServices()
+                      .getSellerReviewsDataStream(SellerModel(docId: uId)),
+                  child: const ShopTabView()));
     });
   }
 
@@ -112,6 +123,10 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // pass function to profile tab
+    _widgetOptions[4] = ProfileTabView(
+      setOrderTabAsActive: setOrderTabAsActive,
+    );
     // get seller uid
     _getUserUid();
   }
@@ -149,66 +164,66 @@ class _HomeViewState extends State<HomeView> {
                         // active icon
                         Image.asset(
                       'assets/images/icon@home-active.png',
-                      width: 24,
-                      height: 24,
+                      width: 27,
+                      height: 27,
                     ),
                     backgroundColor: Colors.white,
                     icon: Image.asset(
                       'assets/images/icon@home.png',
-                      width: 24,
-                      height: 24,
+                      width: 27,
+                      height: 27,
                     ),
                     label: ''),
                 BottomNavigationBarItem(
                     backgroundColor: Colors.white,
                     activeIcon: Image.asset(
                       'assets/images/icon@shop-active.png',
-                      width: 24,
-                      height: 24,
+                      width: 27,
+                      height: 27,
                     ),
                     icon: Image.asset(
                       'assets/images/icon@shop.png',
-                      width: 24,
-                      height: 24,
+                      width: 27,
+                      height: 27,
                     ),
                     label: ''),
                 BottomNavigationBarItem(
                     backgroundColor: Colors.white,
                     activeIcon: Image.asset(
                       'assets/images/icon@orders-active.png',
-                      width: 24,
-                      height: 24,
+                      width: 27,
+                      height: 27,
                     ),
                     icon: Image.asset(
                       'assets/images/icon@orders.png',
-                      width: 24,
-                      height: 24,
+                      width: 27,
+                      height: 27,
                     ),
                     label: ''),
                 BottomNavigationBarItem(
                     backgroundColor: Colors.white,
                     activeIcon: Image.asset(
                       'assets/images/icon@chat-active.png',
-                      width: 24,
-                      height: 24,
+                      width: 27,
+                      height: 27,
                     ),
                     icon: Image.asset(
                       'assets/images/icon@chat.png',
-                      width: 24,
-                      height: 24,
+                      width: 27,
+                      height: 27,
                     ),
                     label: ''),
                 BottomNavigationBarItem(
                     backgroundColor: Colors.white,
                     activeIcon: Image.asset(
                       'assets/images/icon@profile-active.png',
-                      width: 24,
-                      height: 24,
+                      width: 27,
+                      height: 27,
                     ),
                     icon: Image.asset(
                       'assets/images/icon@profile.png',
-                      width: 24,
-                      height: 24,
+                      width: 27,
+                      height: 27,
                     ),
                     label: ''),
               ],

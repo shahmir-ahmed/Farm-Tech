@@ -10,7 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ProfileTabView extends StatefulWidget {
-  const ProfileTabView({super.key});
+  ProfileTabView({required this.setOrderTabAsActive});
+
+  VoidCallback setOrderTabAsActive;
 
   @override
   State<ProfileTabView> createState() => _ProfileTabViewState();
@@ -190,6 +192,8 @@ class _ProfileTabViewState extends State<ProfileTabView> {
                               name: name,
                               email: email,
                               profileImageUrl: profileImageUrl,
+                              getProfileImage: _getSellerProfileImage,
+                              getSellerName: _getSellerName,
                             )));
               }
             },
@@ -205,7 +209,7 @@ class _ProfileTabViewState extends State<ProfileTabView> {
 
         OptionRow(
           text: 'Orders',
-          onPressed: () {},
+          onPressed: widget.setOrderTabAsActive,
         )
       ],
     );

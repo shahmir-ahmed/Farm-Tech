@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:farm_tech/backend/model/product.dart';
+import 'package:farm_tech/backend/model/product_reviews_model.dart';
 import 'package:farm_tech/backend/model/review.dart';
+import 'package:farm_tech/backend/model/seller.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/seller/shop/item_details_view.dart';
@@ -78,93 +80,274 @@ class _ProductTabViewState extends State<ProductTabView> {
                 childAspectRatio: 0.74,
                 crossAxisCount: 2,
                 children: productsList.map((productModel) {
-                  // individual product container
-                  return GestureDetector(
-                    onTap: () {
-                      // show product details screen
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => StreamProvider.value(
-                                  initialData: null,
-                                  value: ProductServices()
-                                      .getProductStream(productModel),
-                                  child: const ItemDetailsView())));
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(30),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Utils.greyColor, width: 0.1),
-                      ),
-                      child: Center(
-                          child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // product image
-                          productModel.mainImageUrl!.isEmpty
-                              ?
-                              // Image.asset(
-                              //     'assets/images/carousel-image-1.png',
-                              //     height: 160,
-                              //   )
-                              const SizedBox(
-                                  height: 160,
-                                  child: Utils.circularProgressIndicator,
-                                )
-                              : Center(
-                                  child: Image.network(
-                                    productModel.mainImageUrl!,
-                                    height: 160,
-                                  ),
-                                ),
-
-                          // space
-                          const SizedBox(
-                            height: 10,
-                          ),
-
-                          // product price and rating row
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  productModel.price.toString(),
-                                  style: Utils.kAppCaptionBoldStyle,
-                                ),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.star,
-                                      color: Utils.greenColor,
-                                      size: 11,
-                                    ),
-                                    Text(
-                                      ' 5.0',
-                                      style: Utils.kAppCaption2MediumStyle,
-                                    )
-                                  ],
-                                )
-                              ]),
-
-                          // space
-                          const SizedBox(
-                            height: 10,
-                          ),
-
-                          // product name
-                          Text(
-                            productModel.title as String,
-                            style: Utils.kAppCaptionMediumStyle
-                                .copyWith(color: Utils.greyColor),
-                          )
-                        ],
-                      )),
-                    ),
-                  );
+                  // product card with stream of product reviews data supplied
+                  return StreamProvider.value(
+                      initialData: null,
+                      value: ProductServices()
+                          .getProductReviewsDataStream(productModel),
+                      child: ProductCard(productModel: productModel));
                 }).toList()
                 // ..sort((a, b) =>
                 //     b.createdAt.compareTo(a.createdAt))
                 ));
+  }
+}
+
+// individual product container
+class ProductCard extends StatelessWidget {
+  ProductCard({required this.productModel});
+
+  ProductModel productModel;
+
+  @override
+  Widget build(BuildContext context) {
+    // consume product reviews data stream
+    final productReviewsData = Provider.of<ProductReviewsModel?>(context);
+
+    // print('productReviewsData $productReviewsData');
+
+    // if (productReviewsData != null) {
+    //   print(
+    //       'productReviewsData ${productReviewsModelToJson(productReviewsData)}');
+    // }
+
+    return GestureDetector(
+      onTap: () {
+        if (productReviewsData != null) {
+          // show product details screen
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => StreamProvider.value(
+                      initialData: null,
+                      value: ProductServices().getProductStream(productModel),
+                      child: ItemDetailsView(
+                          avgRating: productReviewsData.avgRating!))));
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(30),
+        decoration: BoxDecoration(
+          border: Border.all(color: Utils.greyColor, width: 0.1),
+        ),
+        child: Center(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // product image
+            productModel.mainImageUrl!.isEmpty
+                ?
+                // Image.asset(
+                //     'assets/images/carousel-image-1.png',
+                //     height: 160,
+                //   )
+                const SizedBox(
+                    height: 160,
+                    child: Utils.circularProgressIndicator,
+                  )
+                : Center(
+                    child: Image.network(
+                      productModel.mainImageUrl!,
+                      height: 160,
+                    ),
+                  ),
+
+            // space
+            const SizedBox(
+              height: 10,
+            ),
+
+            // product price and rating row
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text(
+                productModel.price.toString(),
+                style: Utils.kAppCaptionBoldStyle,
+              ),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.star,
+                    color: Utils.greenColor,
+                    size: 11,
+                  ),
+                  Text(
+                    " ${productReviewsData != null ? productReviewsData.avgRating as String : 5.0}",
+                    style: Utils.kAppCaption2MediumStyle,
+                  )
+                ],
+              )
+            ]),
+
+            // space
+            const SizedBox(
+              height: 10,
+            ),
+
+            // product name
+            Text(
+              productModel.title as String,
+              style:
+                  Utils.kAppCaptionMediumStyle.copyWith(color: Utils.greyColor),
+            )
+          ],
+        )),
+      ),
+    );
+    ;
+  }
+}
+
+// info tab view
+class InfoTabView extends StatelessWidget {
+  InfoTabView({required this.sellerModel});
+
+  SellerModel sellerModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // shop name
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Shop name:  ',
+                  style: Utils.kAppBody2MediumStyle,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 2.5),
+                    child: Text(
+                      '${sellerModel.shopName}',
+                      style: Utils.kAppBody3RegularStyle,
+                    ),
+                  ),
+                )
+              ],
+            ),
+
+            // space
+            const SizedBox(
+              height: 20,
+            ),
+
+            // shop location
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Shop location:  ',
+                  style: Utils.kAppBody2MediumStyle,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 2.5),
+                    child: Text(
+                      '${sellerModel.shopLocation}',
+                      style: Utils.kAppBody3RegularStyle,
+                    ),
+                  ),
+                )
+              ],
+            ),
+
+            // space
+            const SizedBox(
+              height: 20,
+            ),
+
+            // shop description
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Shop description:  ',
+                  style: Utils.kAppBody2MediumStyle,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 2.5),
+                    child: Text(
+                      '${sellerModel.shopDescription}',
+                      style: Utils.kAppBody3RegularStyle,
+                    ),
+                  ),
+                )
+              ],
+            ),
+
+            // space
+            const SizedBox(
+              height: 35,
+            ),
+
+            // seller name
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Name:  ',
+                  style: Utils.kAppBody2MediumStyle,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 2.5),
+                    child: Text(
+                      '${sellerModel.name}',
+                      style: Utils.kAppBody3RegularStyle,
+                    ),
+                  ),
+                )
+              ],
+            ),
+
+            // space
+            const SizedBox(
+              height: 20,
+            ),
+
+            // contact
+            Row(
+              children: [
+                Text(
+                  'Contact number:  ',
+                  style: Utils.kAppBody2MediumStyle,
+                ),
+                Text(
+                  '${sellerModel.contactNo}',
+                  style: Utils.kAppBody3RegularStyle,
+                )
+              ],
+            ),
+
+            // space
+            const SizedBox(
+              height: 20,
+            ),
+
+            // cnic
+            Row(
+              children: [
+                Text(
+                  'CNIC number:  ',
+                  style: Utils.kAppBody2MediumStyle,
+                ),
+                Text(
+                  '${sellerModel.cnicNo}',
+                  style: Utils.kAppBody3RegularStyle,
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -211,7 +394,7 @@ class ProductImagesCarousel extends StatelessWidget {
                     ? forUploadProductScreen != null
                         ? Image.file(
                             productImages[entry.key]!,
-                            fit: BoxFit.cover,
+                            // fit: BoxFit.cover,
                           )
                         : Image.network(
                             productImages[entry.key]!,
@@ -395,8 +578,8 @@ class SingleUserRatingCard extends StatelessWidget {
 
                         // stars
                         Row(
-                          children:
-                              List.generate(reviewModel.starsCount!, (index) {
+                          children: List.generate(
+                              int.parse(reviewModel.starsCount!), (index) {
                             return const Icon(
                               Icons.star,
                               color: Utils.greenColor,
@@ -443,11 +626,7 @@ class SingleUserRatingCard extends StatelessWidget {
         // index == 4
         //     ? const SizedBox()
         //     :
-        const Divider(
-          height: 0.5,
-          thickness: 0.0,
-          color: Utils.lightGreyColor3,
-        ),
+        Utils.divider
       ],
     );
   }

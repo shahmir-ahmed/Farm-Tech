@@ -13,12 +13,17 @@ class EditProfileView extends StatefulWidget {
       {required this.docId,
       required this.name,
       required this.email,
-      required this.profileImageUrl});
+      required this.profileImageUrl,
+      required this.getSellerName,
+      required this.getProfileImage});
 
   String docId;
   String name;
   String email;
   String profileImageUrl;
+  // profile screen method
+  VoidCallback getProfileImage;
+  VoidCallback getSellerName;
 
   @override
   State<EditProfileView> createState() => _EditProfileViewState();
@@ -322,13 +327,22 @@ class _EditProfileViewState extends State<EditProfileView> {
               onButtonPressed: () async {
                 // if form is valid
                 if (_formKey.currentState!.validate()) {
-                  // if new name is not same as current name then update name
-                  if (name != newName) {
-                    final result = await SellerServices()
-                        .updateSellerName(SellerModel(docId: widget.docId));
+                  
+                  // show loading alert dialog
+                  Utils.showLoadingAlertDialog(context, 'edit_profile');
 
-                    if (result == "success") {
-                      print('name updated');
+                  // if new name is changed
+                  if (newName.isNotEmpty) {
+                    // if new name is not same as current name then update name
+                    if (name != newName) {
+                      final result = await SellerServices().updateSellerName(
+                          SellerModel(docId: widget.docId, name: newName));
+
+                      if (result == "success") {
+                        print('name updated');
+                        // cal previous screen get seller name method
+                        widget.getSellerName();
+                      }
                     }
                   }
 
@@ -341,16 +355,20 @@ class _EditProfileViewState extends State<EditProfileView> {
 
                     if (result2 == 'success') {
                       print('image updated');
+                      // call previous screen get profile image method
+                      widget.getProfileImage();
                     }
                   }
+
+                  // close alert dialog
+                  Navigator.pop(context);
 
                   // close screen
                   Navigator.pop(context);
 
                   // show success message
                   floatingSnackBar(
-                      message: 'Profile updated successfully!',
-                      context: context);
+                      message: 'Profile updated!', context: context);
                 }
               },
               primaryButton: true,

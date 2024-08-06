@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_tech/backend/model/seller.dart';
+import 'package:farm_tech/backend/model/seller_reviews_model.dart';
 import 'package:firebase_storage/firebase_storage.dart' as storage;
 
 class SellerServices {
@@ -53,6 +54,47 @@ class SellerServices {
       });
     } catch (e) {
       print('Err in getSellerDataStream: $e');
+      return null;
+    }
+  }
+
+  // get seller reviews data stream
+  Stream<SellerReviewsModel>? getSellerReviewsDataStream(SellerModel model) {
+    try {
+      return FirebaseFirestore.instance
+          .collection('productReviews')
+          .where('sellerId', isEqualTo: model.docId)
+          .snapshots()
+          .map((snapshot) {
+        // print('doc.data(): ${doc.data()}');
+
+        // calculating avg rating
+        // taking the stars count of each review doc as int into list
+        final starsList = snapshot.docs.map((doc) {
+          return int.parse(doc.get('starsCount'));
+        }).toList();
+
+        // print('starsList $starsList');
+
+        // adding all stars count
+        // adding each value into previous value with initial value set to 0
+        final totalStarsCount = starsList.fold(
+            0, (previousValue, element) => previousValue + element);
+        // print('totalStarsCount $totalStarsCount');
+
+        // dividing total by length of doc to calculate avg rating for the seller
+        final avgRating = (totalStarsCount / snapshot.docs.length).floorToDouble();
+        // final avgRating = double.parse((totalStarsCount / snapshot.docs.length).toStringAsFixed(1));
+        // final avgRating = ((totalStarsCount / snapshot.docs.length)* 10).truncateToDouble() / 10;
+        // print('avgRating $avgRating');
+
+        // returning seller model having total reviews count and average rating
+        return SellerReviewsModel(
+            totalReviewsCount: snapshot.docs.length.toString(),
+            avgRating: avgRating.toString());
+      });
+    } catch (e) {
+      print('Err in getSellerReviewsDataStream: $e');
       return null;
     }
   }

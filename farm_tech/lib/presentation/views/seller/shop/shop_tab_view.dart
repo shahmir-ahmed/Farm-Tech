@@ -1,4 +1,5 @@
 import 'package:farm_tech/backend/model/seller.dart';
+import 'package:farm_tech/backend/model/seller_reviews_model.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/configs/utils.dart';
@@ -55,6 +56,7 @@ class _ShopTabViewState extends State<ShopTabView> {
     }
   }
 
+  // initstate method
   @override
   void initState() {
     // TODO: implement initState
@@ -62,6 +64,7 @@ class _ShopTabViewState extends State<ShopTabView> {
     // _getUserUid(); // get user uid to show products using seller id
   }
 
+  // build method
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,6 +75,7 @@ class _ShopTabViewState extends State<ShopTabView> {
     );
   }
 
+  // get app bar
   _getAppbar() {
     return Utils.getTabAppBar(
         'Store Profile',
@@ -96,6 +100,7 @@ class _ShopTabViewState extends State<ShopTabView> {
         context);
   }
 
+  // get floating action button
   _getFloatingActionButton() {
     return FloatingActionButton(
       onPressed: () {
@@ -113,6 +118,7 @@ class _ShopTabViewState extends State<ShopTabView> {
     );
   }
 
+  // return body
   _getBody() {
     // consume seller data stream here
     final sellerData = Provider.of<SellerModel?>(context);
@@ -134,6 +140,15 @@ class _ShopTabViewState extends State<ShopTabView> {
       }
     }
 
+    // consume seller reviews data stream here
+    final sellerReviewsData = Provider.of<SellerReviewsModel?>(context);
+
+    // print('sellerReviewsData $sellerReviewsData');
+
+    // if (sellerReviewsData != null) {
+    //   print('sellerReviewsData ${sellerReviewsModelToJson(sellerReviewsData)}');
+    // }
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,14 +160,17 @@ class _ShopTabViewState extends State<ShopTabView> {
               children: [
                 // Image.network(profileImageUrl)
                 // user profile pic
-                CircleAvatar(
-                  backgroundImage: _sellerModel == null
-                      ? const AssetImage('assets/images/asad-ali.png')
-                      : _sellerModel!.profileImageUrl!.isEmpty
-                          ? const AssetImage('assets/images/asad-ali.png')
-                          : NetworkImage(_sellerModel!.profileImageUrl!),
-                  radius: 50,
-                ),
+                _sellerModel == null
+                    ? const SizedBox(
+                        height: 100, child: Utils.circularProgressIndicator)
+                    : _sellerModel!.profileImageUrl!.isEmpty
+                        ? const SizedBox(
+                            height: 100, child: Utils.circularProgressIndicator)
+                        : CircleAvatar(
+                            backgroundImage:
+                                NetworkImage(_sellerModel!.profileImageUrl!),
+                            radius: 50,
+                          ),
                 // space
                 const SizedBox(
                   height: 5,
@@ -179,12 +197,14 @@ class _ShopTabViewState extends State<ShopTabView> {
                       size: 10,
                     ),
                     Text(
-                      ' 5.0 ',
+                      sellerReviewsData != null
+                          ? sellerReviewsData.avgRating as String
+                          : ' 5.0 ',
                       style: Utils.kAppCaptionRegularStyle
                           .copyWith(color: Utils.greenColor),
                     ),
                     Text(
-                      '(154 Reviews)',
+                      ' (${sellerReviewsData != null ? sellerReviewsData.totalReviewsCount!.substring(0, 1) : 154} Reviews)',
                       style: Utils.kAppCaptionRegularStyle,
                     )
                   ],
@@ -316,9 +336,15 @@ class _ShopTabViewState extends State<ShopTabView> {
                             child: const ProductTabView())
                     :
                     // info container
-                    Container(
-                        child: const Center(child: Text('Info')),
-                      )
+                    // Container(
+                    //     child: const Center(child: Text('Info')),
+                    //   )
+                    _sellerModel == null
+                        ? const SizedBox(
+                            height: 200,
+                            child: Utils.circularProgressIndicator,
+                          )
+                        : InfoTabView(sellerModel: _sellerModel!)
               ],
             ),
           )

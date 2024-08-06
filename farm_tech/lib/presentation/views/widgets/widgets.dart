@@ -11,7 +11,9 @@ class CustomButton extends StatelessWidget {
       required this.secondaryButton,
       this.buttonWidth,
       this.buttonHeight,
-      this.icon});
+      this.icon,
+      this.textStyle
+      });
 
   VoidCallback onButtonPressed;
   String buttonText;
@@ -20,6 +22,7 @@ class CustomButton extends StatelessWidget {
   bool? primaryButton;
   bool? secondaryButton;
   dynamic icon;
+  TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +70,7 @@ class CustomButton extends StatelessWidget {
                   : const SizedBox(),
               Text(
                 buttonText,
-                style: Utils.kAppBody2RegularStyle.copyWith(
+                style: textStyle ?? Utils.kAppBody2RegularStyle.copyWith(
                     color: secondaryButton != null
                         ? secondaryButton!
                             ? Utils.greyColor
@@ -90,9 +93,13 @@ class CustomButton extends StatelessWidget {
   }
 }
 
-
 class Skeleton extends StatelessWidget {
-  const Skeleton({Key? key, required this.height, required this.width, required this.defaultPadding}) : super(key: key);
+  const Skeleton(
+      {Key? key,
+      required this.height,
+      required this.width,
+      required this.defaultPadding})
+      : super(key: key);
 
   final double height, width, defaultPadding;
 
@@ -104,8 +111,7 @@ class Skeleton extends StatelessWidget {
       padding: EdgeInsets.all(defaultPadding / 2),
       decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.04),
-          borderRadius:
-               BorderRadius.all(Radius.circular(defaultPadding))),
+          borderRadius: BorderRadius.all(Radius.circular(defaultPadding))),
     );
   }
 }

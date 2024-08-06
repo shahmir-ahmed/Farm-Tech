@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ItemDetailsView extends StatefulWidget {
-  const ItemDetailsView({super.key});
+  ItemDetailsView({required this.avgRating});
+
+  String avgRating;
 
   @override
   State<ItemDetailsView> createState() => _ItemDetailsViewState();
@@ -61,16 +63,19 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Utils.getAppBar('Item Details', [
-        // share icon
-        const Icon(
-          Icons.share,
-          color: Utils.greenColor,
-        ),
-        const SizedBox(
-          width: 30,
-        ),
-      ], context),
+      appBar: Utils.getAppBar(
+          'Item Details',
+          [
+            // share icon
+            const Icon(
+              Icons.share,
+              color: Utils.greenColor,
+            ),
+            const SizedBox(
+              width: 30,
+            ),
+          ],
+          context),
       body: _getBody(context),
       backgroundColor: Utils.whiteColor,
     );
@@ -122,26 +127,34 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                       ),
 
                       // rating
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          // 5 stars
-                          Row(
-                            children: [1, 2, 3, 4, 5].map((index) {
-                              return const Icon(
-                                Icons.star,
-                                color: Utils.greenColor,
-                                size: 19,
-                              );
-                            }).toList(),
-                          ),
-                          // rating
-                          Text(
-                            ' 5.0',
-                            style: Utils.kAppBody3MediumStyle,
-                          )
-                        ],
-                      ),
+                      widget.avgRating == "0"
+                          ? Text(
+                              'No rating yet',
+                              style: Utils.kAppBody3MediumStyle
+                                  .copyWith(fontStyle: FontStyle.italic),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                // 5 stars
+
+                                Row(
+                                    children: List.generate(
+                                        double.parse(widget.avgRating).floor(),
+                                        (index) {
+                                  return const Icon(
+                                    Icons.star,
+                                    color: Utils.greenColor,
+                                    size: 19,
+                                  );
+                                })),
+                                // rating
+                                Text(
+                                  ' ${widget.avgRating}',
+                                  style: Utils.kAppBody3MediumStyle,
+                                )
+                              ],
+                            ),
 
                       // space
                       const SizedBox(
@@ -191,11 +204,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                 ),
 
                 // divider
-                const Divider(
-                  height: 0.5,
-                  thickness: 0.0,
-                  color: Utils.lightGreyColor3,
-                ),
+                Utils.divider,
 
                 // product reviews section with stream
                 StreamProvider.value(

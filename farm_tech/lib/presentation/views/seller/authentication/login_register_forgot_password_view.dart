@@ -423,7 +423,7 @@ class _LoginRegisterForgotResetPasswordViewState
                   secondaryButton: false,
                   onButtonPressed: () async {
                     // remove focus from last text field filled
-                    FocusScope.of(context).requestFocus(new FocusNode());
+                    FocusScope.of(context).unfocus();
 
                     // if form is valid
                     if (_formKey.currentState!.validate()) {
@@ -434,7 +434,7 @@ class _LoginRegisterForgotResetPasswordViewState
                         print('password $password');
 
                         // show loading alert dialog
-                        Utils.showCreatingAccountAlertDialog(context, 'login');
+                        Utils.showLoadingAlertDialog(context, 'login');
 
                         // authenticate user (either seller/buyer)
                         final result = await _userAuthServices.authenticateUser(

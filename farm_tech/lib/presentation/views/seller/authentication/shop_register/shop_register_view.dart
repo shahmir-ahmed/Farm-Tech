@@ -441,7 +441,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                             onTap: () {
                               // remove focus from last text field filled
                               FocusScope.of(context)
-                                  .requestFocus(new FocusNode());
+                                  .unfocus();
                               mediaPickerOptions(context);
                             },
                             child: Container(
@@ -533,7 +533,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                           onButtonPressed: () async {
                             // remove focus from last text field filled
                             FocusScope.of(context)
-                                .requestFocus(new FocusNode());
+                                .unfocus();
                             // check image
                             if (pickedImage == null) {
                               setState(() {
@@ -545,7 +545,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                 pickedImage != null) {
                               // if form is valid
                               // show creating account alert dialog
-                              Utils.showCreatingAccountAlertDialog(
+                              Utils.showLoadingAlertDialog(
                                   context, "signup");
 
                               // print('shopName $shopName');
