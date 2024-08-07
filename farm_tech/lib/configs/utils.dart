@@ -1,3 +1,4 @@
+import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -6,6 +7,7 @@ class Utils {
   static const Color whiteColor = Colors.white;
   static const Color greenColor = Color(0xff339D44);
   static const Color greyColor = Color(0xffB4B4B4);
+  static const Color greyColor2 = Color(0xffC4C4C4);
   static const Color blackColor1 = Color(0xff292929);
   static const Color blackColor2 = Colors.black;
   static const Color lightGreyColor1 = Color(0xffB4B4B4);
@@ -147,6 +149,94 @@ class Utils {
         ],
       ),
     );
+
+    // show confirm alert dialog
+    showConfirmAlertDialog(BuildContext context, String forOption) {
+      // set up the button
+      Widget confirmButton = CustomButton(
+        secondaryButton: false,
+        primaryButton: true,
+        buttonText: 'Confirm',
+        onButtonPressed: () {
+          // close alert dialog
+          Navigator.pop(context);
+          // close shop register screen
+          // Navigator.pop(context);
+          // close sign up screen
+          // Navigator.pop(context);
+          // push authentication view with login true
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) => const AuthenticationView()));
+        },
+        buttonWidth: MediaQuery.of(context).size.width,
+        buttonHeight: 60,
+      );
+      Widget cancelButton = CustomButton(
+        secondaryButton: false,
+        primaryButton: true,
+        buttonText: 'OK',
+        onButtonPressed: () {
+          // close alert dialog
+          Navigator.pop(context);
+          // close shop register screen
+          Navigator.pop(context);
+          // close sign up screen
+          // Navigator.pop(context);
+          // push authentication view with login true
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) => const AuthenticationView()));
+        },
+        buttonWidth: MediaQuery.of(context).size.width,
+        buttonHeight: 60,
+      );
+
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        insetPadding:
+            const EdgeInsets.symmetric(horizontal: 30.0, vertical: 45.0),
+        icon: const Icon(
+          Icons.question_mark,
+          size: 40,
+          color: Utils.greenColor,
+        ),
+        // contentPadding:
+        //     const EdgeInsets.symmetric(horizontal: 30.0, vertical: 45.0),
+        backgroundColor: Utils.whiteColor,
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        title: Text(
+          forOption == "cancel"
+              ? "Cancel Order?"
+              : forOption == "complete"
+                  ? "Mark as delivered?"
+                  : "",
+          style: Utils.kAppHeading6BoldStyle,
+        ),
+        content: Text(
+          textAlign: TextAlign.center,
+          forOption == "cancel"
+              ? "Are you sure you want to cancel order?"
+              : forOption == "complete"
+                  ? "Are you sure you want to mark order as delivered?"
+                  : "",
+          style: Utils.kAppBody3RegularStyle
+              .copyWith(color: Utils.lightGreyColor1),
+        ),
+        actions: [cancelButton, confirmButton],
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+          // return alert;
+        },
+      );
+    }
 
     // show the dialog
     showDialog(

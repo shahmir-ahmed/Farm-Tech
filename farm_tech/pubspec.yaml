@@ -56,6 +56,8 @@ dependencies:
   shared_preferences: ^2.2.1
   # shimmer effect package
   shimmer: ^3.0.0
+  # intl package for date time format
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:

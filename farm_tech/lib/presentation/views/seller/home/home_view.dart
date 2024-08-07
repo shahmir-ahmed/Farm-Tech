@@ -23,7 +23,7 @@ class _HomeViewState extends State<HomeView> {
   final List<Widget?> _widgetOptions = <Widget?>[
     Utils.circularProgressIndicator,
     Utils.circularProgressIndicator,
-    const OrderTabView(),
+    Utils.circularProgressIndicator,
     const ChatTabView(),
     Utils.circularProgressIndicator
   ];
@@ -62,8 +62,37 @@ class _HomeViewState extends State<HomeView> {
     // reinitialize shop tab
     _reInitializeShopTab();
 
+    // reinitialize orders tab
+    _reInitializeOrdersTab();
+
     // get seller name now
     _getSellerName();
+  }
+
+  // get seller name and set
+  _getSellerName() async {
+    final name =
+        await SellerServices().getSellerName(SellerModel(docId: uId)) as String;
+    // print('sellerName $name');
+    // set state to let the widget tree know and refresh itself that something (data att.) has changed that it needs to reflect in its tree/view
+    setState(() {
+      sellerName = name;
+    });
+
+    // reinitailize home tab
+    _reInitializeHomeTab();
+  }
+
+  // reinitailize home tab
+  _reInitializeHomeTab() {
+    // reinitialize widgets options
+    setState(() {
+      _widgetOptions[0] =
+          // home tab with seller name
+          HomeTabView(
+        sellerName: sellerName,
+      );
+    });
   }
 
   // for shop tab reinitialize
@@ -84,27 +113,23 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  // get seller name and set
-  _getSellerName() async {
-    final name =
-        await SellerServices().getSellerName(SellerModel(docId: uId)) as String;
-    // print('sellerName $name');
-    // set state to let the widget tree know and refresh itself that something (data att.) has changed that it needs to reflect in its tree/view
-    setState(() {
-      sellerName = name;
-    });
-
-    // reinitailize home tab
-    _reInitializeHomeTab();
-  }
-
-  _reInitializeHomeTab() {
+  // orders tab reintialize
+  _reInitializeOrdersTab() {
     // reinitialize widgets options
     setState(() {
-      _widgetOptions[0] =
-          // home tab with seller name
-          HomeTabView(
-        sellerName: sellerName,
+      _widgetOptions[2] =
+          // orders tab with seller id
+          OrderTabView(sellerId: uId);
+    });
+  }
+
+  // profile tab reintialize
+  _reInitializeProfileTab() {
+    // reinitialize widgets options
+    setState(() {
+      // pass function to profile tab
+      _widgetOptions[4] = ProfileTabView(
+        setOrderTabAsActive: setOrderTabAsActive,
       );
     });
   }
@@ -123,14 +148,15 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // pass function to profile tab
-    _widgetOptions[4] = ProfileTabView(
-      setOrderTabAsActive: setOrderTabAsActive,
-    );
+
+    // reinitialize profile tab
+    _reInitializeProfileTab();
+
     // get seller uid
     _getUserUid();
   }
 
+  // buil method
   @override
   Widget build(BuildContext context) {
     return Scaffold(

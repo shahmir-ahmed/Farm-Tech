@@ -1,9 +1,15 @@
+import 'package:farm_tech/backend/model/seller.dart';
+import 'package:farm_tech/backend/services/order_services.dart';
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/seller/orders/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class OrderTabView extends StatefulWidget {
-  const OrderTabView({super.key});
+  OrderTabView({required this.sellerId});
+
+  String sellerId;
 
   @override
   State<OrderTabView> createState() => _OrderTabViewState();
@@ -89,7 +95,7 @@ class _OrderTabViewState extends State<OrderTabView> {
 
                         // space
                         const SizedBox(
-                          width: 20,
+                          width: 10,
                         ),
 
                         // in progress tab
@@ -117,7 +123,7 @@ class _OrderTabViewState extends State<OrderTabView> {
 
                         // space
                         const SizedBox(
-                          width: 20,
+                          width: 10,
                         ),
 
                         // completed tab
@@ -145,7 +151,7 @@ class _OrderTabViewState extends State<OrderTabView> {
 
                         // space
                         const SizedBox(
-                          width: 20,
+                          width: 10,
                         ),
 
                         // cancelled tab
@@ -192,40 +198,21 @@ class _OrderTabViewState extends State<OrderTabView> {
           Utils.divider,
 
           // active tab column
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: allTabActive
-                ? const SizedBox(
-                    height: 400,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [Text('All Orders')],
-                    ),
-                  )
-                : inProgressTabActive
-                    ? const SizedBox(
-                        height: 400,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [Text('In progress orders')],
-                        ),
-                      )
-                    : completedTabActive
-                        ? const SizedBox(
-                            height: 400,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Text('Completed Orders')],
-                            ),
-                          )
-                        : const SizedBox(
-                            height: 400,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Text('Cancelled Orders')],
-                            ),
-                          ),
-          )
+          StreamProvider.value(
+            initialData: null,
+            value: OrderServices()
+                .getAllOrdersStream(SellerModel(docId: widget.sellerId)),
+            child: SingleChildScrollView(
+                child: allTabActive
+                    ? const AllOrdersTabView()
+                    : inProgressTabActive
+                        ? const InProgressOrdersTabView()
+                        : completedTabActive
+                            ? const CompletedOrdersTabView()
+                            : cancelledTabActive
+                                ? const CancelledOrdersTabView()
+                                : const SizedBox()),
+          ),
         ],
       ),
     );

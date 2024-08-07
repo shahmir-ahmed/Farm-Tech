@@ -72,6 +72,63 @@ class ProductServices {
     }
   }
 
+  // get product name
+  Future<ProductModel?> getProductName(String productId) async {
+    try {
+      final data = await FirebaseFirestore.instance
+          .collection('products')
+          .doc(productId)
+          .get()
+          .then((doc) {
+        return ProductModel(title: doc.get('title'));
+      });
+
+      return data;
+    } catch (e) {
+      // print error
+      print("ERR in getProductName: ${e.toString()}");
+      return null;
+    }
+  }
+
+  // get product category
+  Future<ProductModel?> getProductCategory(String productId) async {
+    try {
+      final data = await FirebaseFirestore.instance
+          .collection('products')
+          .doc(productId)
+          .get()
+          .then((doc) {
+        return ProductModel(category: doc.get('category'));
+      });
+
+      return data;
+    } catch (e) {
+      // print error
+      print("ERR in getProductCategory: ${e.toString()}");
+      return null;
+    }
+  }
+
+  // get product images count
+  Future<ProductModel?> getProductImagesCount(String productId) async {
+    try {
+      final data = await FirebaseFirestore.instance
+          .collection('products')
+          .doc(productId)
+          .get()
+          .then((doc) {
+        return ProductModel(imagesCount: doc.get('imagesCount'));
+      });
+
+      return data;
+    } catch (e) {
+      // print error
+      print("ERR in getProductImagesCount: ${e.toString()}");
+      return null;
+    }
+  }
+
   // get a product stream
   Stream<ProductModel>? getProductStream(ProductModel model) {
     try {
@@ -114,7 +171,8 @@ class ProductServices {
           // print('totalStarsCount $totalStarsCount');
 
           // dividing total by length of doc to calculate avg rating for the seller
-          final avgRating = (totalStarsCount / snapshot.docs.length).floorToDouble();
+          final avgRating =
+              (totalStarsCount / snapshot.docs.length).floorToDouble();
           // final avgRating = double.parse((totalStarsCount / snapshot.docs.length).toStringAsFixed(1));
           // final avgRating = ((totalStarsCount / snapshot.docs.length) * 10)
           //         .truncateToDouble() /
