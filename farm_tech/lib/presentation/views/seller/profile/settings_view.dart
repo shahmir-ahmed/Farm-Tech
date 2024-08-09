@@ -1,6 +1,7 @@
 import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/seller/profile/widgets/widgets.dart';
+import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,106 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
+  // show confirm alert dialog
+  showConfirmAlertDialog(BuildContext context) {
+    // set up the button
+    // confirm button
+    Widget confirmButton = Expanded(
+      child: CustomButton(
+        secondaryButton: false,
+        primaryButton: true,
+        buttonText: 'Logout',
+        onButtonPressed: () async {
+          // close alert dialog
+          Navigator.pop(context);
+
+          // show loading alert dialog
+          Utils.showLoadingAlertDialog(context, 'logout');
+
+          // logout user
+          await UserAuthServices().signOut();
+
+          // close loading alert dialog
+          Navigator.pop(context);
+
+          // close screen
+          Navigator.pop(context);
+
+          // clear shared pref
+          await _logoutUser();
+
+          // show message
+          floatingSnackBar(
+              message: 'Logged out successfully', context: context);
+
+          // print('user logged out');
+        },
+        // buttonWidth: MediaQuery.of(context).size.width,
+        buttonHeight: 60,
+      ),
+    );
+    // cancel button
+    Widget cancelButton = Expanded(
+      child: CustomButton(
+        secondaryButton: true,
+        primaryButton: false,
+        buttonText: 'No',
+        onButtonPressed: () async {
+          // close alert dialog
+          Navigator.pop(context);
+        },
+        // buttonWidth: MediaQuery.of(context).size.width,
+        buttonHeight: 60,
+      ),
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      insetPadding:
+          const EdgeInsets.symmetric(horizontal: 20.0, vertical: 45.0),
+      icon: const Icon(
+        Icons.logout_outlined,
+        size: 60,
+        color: Utils.greenColor,
+      ),
+      // contentPadding:
+      //     const EdgeInsets.symmetric(horizontal: 30.0, vertical: 45.0),
+      backgroundColor: Utils.whiteColor,
+      actionsAlignment: MainAxisAlignment.spaceBetween,
+      title: Text(
+        textAlign: TextAlign.center,
+        "Logout?",
+        style: Utils.kAppHeading6BoldStyle,
+      ),
+      content: Text(
+        textAlign: TextAlign.center,
+        "Are you sure you want to logout?",
+        style:
+            Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
+      ),
+      actions: [
+        Row(
+          children: [
+            cancelButton,
+            // space
+            const SizedBox(
+              width: 15,
+            ),
+            confirmButton
+          ],
+        )
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   // logout function
   Future<void> _logoutUser() async {
     // clear shared pref data for app
@@ -53,24 +154,8 @@ class _SettingsViewState extends State<SettingsView> {
                       ),
                       noTopDivider: true,
                       onPressed: () async {
-                        // logout user
-                        await UserAuthServices().signOut();
-
-                        // close screen
-                        Navigator.pop(context);
-
-                        // clear shared pref
-                        await _logoutUser();
-
-                        // show message
-                        floatingSnackBar(
-                            message: 'Logged out successfully',
-                            context: context);
-
-                        // print('user logged out');
-                        // floatingSnackBar(
-                        //     message: 'Logged out successfully',
-                        //     context: context);
+                        // show confirm alert dialog
+                        showConfirmAlertDialog(context);
                       },
                     )
                   // other than logout other options

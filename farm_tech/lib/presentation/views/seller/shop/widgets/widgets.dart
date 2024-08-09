@@ -199,155 +199,161 @@ class ProductCard extends StatelessWidget {
 
 // info tab view
 class InfoTabView extends StatelessWidget {
-  InfoTabView({required this.sellerModel});
-
-  SellerModel sellerModel;
+  InfoTabView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // shop name
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Shop name:  ',
-                  style: Utils.kAppBody2MediumStyle,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 2.5),
-                    child: Text(
-                      '${sellerModel.shopName}',
-                      style: Utils.kAppBody3RegularStyle,
-                    ),
+    // consume seller data stream here
+    final sellerData = Provider.of<SellerModel?>(context);
+
+    return sellerData == null
+        ? const SizedBox(
+            height: 200,
+            child: Utils.circularProgressIndicator,
+          )
+        : Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // shop name
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Shop name:  ',
+                        style: Utils.kAppBody2MediumStyle,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 2.5),
+                          child: Text(
+                            '${sellerData.shopName}',
+                            style: Utils.kAppBody3RegularStyle,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
 
-            // space
-            const SizedBox(
-              height: 20,
-            ),
-
-            // shop location
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Shop location:  ',
-                  style: Utils.kAppBody2MediumStyle,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 2.5),
-                    child: Text(
-                      '${sellerModel.shopLocation}',
-                      style: Utils.kAppBody3RegularStyle,
-                    ),
+                  // space
+                  const SizedBox(
+                    height: 20,
                   ),
-                )
-              ],
-            ),
 
-            // space
-            const SizedBox(
-              height: 20,
-            ),
-
-            // shop description
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Shop description:  ',
-                  style: Utils.kAppBody2MediumStyle,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 2.5),
-                    child: Text(
-                      '${sellerModel.shopDescription}',
-                      style: Utils.kAppBody3RegularStyle,
-                    ),
+                  // shop location
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Shop location:  ',
+                        style: Utils.kAppBody2MediumStyle,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 2.5),
+                          child: Text(
+                            '${sellerData.shopLocation}',
+                            style: Utils.kAppBody3RegularStyle,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
 
-            // space
-            const SizedBox(
-              height: 35,
-            ),
-
-            // seller name
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Name:  ',
-                  style: Utils.kAppBody2MediumStyle,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 2.5),
-                    child: Text(
-                      '${sellerModel.name}',
-                      style: Utils.kAppBody3RegularStyle,
-                    ),
+                  // space
+                  const SizedBox(
+                    height: 20,
                   ),
-                )
-              ],
-            ),
 
-            // space
-            const SizedBox(
-              height: 20,
-            ),
+                  // shop description
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Shop description:  ',
+                        style: Utils.kAppBody2MediumStyle,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 2.5),
+                          child: Text(
+                            '${sellerData.shopDescription}',
+                            style: Utils.kAppBody3RegularStyle,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
 
-            // contact
-            Row(
-              children: [
-                Text(
-                  'Contact number:  ',
-                  style: Utils.kAppBody2MediumStyle,
-                ),
-                Text(
-                  '${sellerModel.contactNo}',
-                  style: Utils.kAppBody3RegularStyle,
-                )
-              ],
-            ),
+                  // space
+                  const SizedBox(
+                    height: 35,
+                  ),
 
-            // space
-            const SizedBox(
-              height: 20,
-            ),
+                  // seller name
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Name:  ',
+                        style: Utils.kAppBody2MediumStyle,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 2.5),
+                          child: Text(
+                            '${sellerData.name}',
+                            style: Utils.kAppBody3RegularStyle,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
 
-            // cnic
-            Row(
-              children: [
-                Text(
-                  'CNIC number:  ',
-                  style: Utils.kAppBody2MediumStyle,
-                ),
-                Text(
-                  '${sellerModel.cnicNo}',
-                  style: Utils.kAppBody3RegularStyle,
-                )
-              ],
+                  // space
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  // contact
+                  Row(
+                    children: [
+                      Text(
+                        'Contact number:  ',
+                        style: Utils.kAppBody2MediumStyle,
+                      ),
+                      Text(
+                        '${sellerData.contactNo}',
+                        style: Utils.kAppBody3RegularStyle,
+                      )
+                    ],
+                  ),
+
+                  // space
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  // cnic
+                  Row(
+                    children: [
+                      Text(
+                        'CNIC number:  ',
+                        style: Utils.kAppBody2MediumStyle,
+                      ),
+                      Text(
+                        '${sellerData.cnicNo}',
+                        style: Utils.kAppBody3RegularStyle,
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }
 

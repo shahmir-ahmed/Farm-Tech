@@ -1,5 +1,6 @@
 import 'package:farm_tech/backend/model/seller.dart';
 import 'package:farm_tech/backend/model/seller_reviews_model.dart';
+import 'package:farm_tech/backend/services/order_services.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/configs/utils.dart';
@@ -8,62 +9,17 @@ import 'package:farm_tech/presentation/views/seller/shop/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ShopTabView extends StatefulWidget {
-  const ShopTabView({super.key});
+  ShopTabView({required this.sellerId});
+
+  String sellerId;
 
   @override
   State<ShopTabView> createState() => _ShopTabViewState();
 }
 
 class _ShopTabViewState extends State<ShopTabView> {
-  bool productTabActive = true;
-
-  SellerModel? _sellerModel;
-
-  int? productsCount;
-
-  // String uId = '';
-
-  // // get user uid
-  // _getUserUid() async {
-  //   SharedPreferences pref = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     uId = pref.getString("uId") as String;
-  //   });
-  // }
-
-  // get seller image
-  _getSellerImage(SellerModel sellerModel) async {
-    final profileImageUrl = await SellerServices().getProfileImage(sellerModel);
-
-    if (profileImageUrl != null) {
-      setState(() {
-        _sellerModel!.profileImageUrl = profileImageUrl;
-      });
-    }
-  }
-
-  // get seller products count
-  _getSellerProductsCount(SellerModel sellerModel) async {
-    final count = await SellerServices().getSellerProductsCount(sellerModel);
-
-    if (count != null) {
-      setState(() {
-        productsCount = count;
-      });
-    }
-  }
-
-  // initstate method
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // _getUserUid(); // get user uid to show products using seller id
-  }
-
   // build method
   @override
   Widget build(BuildContext context) {
@@ -120,6 +76,98 @@ class _ShopTabViewState extends State<ShopTabView> {
 
   // return body
   _getBody() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: [
+                // dp, name column
+                StreamProvider.value(
+                    initialData: null,
+                    value: SellerServices().getSellerDataStream(
+                        SellerModel(docId: widget.sellerId)),
+                    child: const SellerDetails()),
+
+                // space
+                const SizedBox(
+                  height: 5,
+                ),
+
+                // seller avg. rating, reviews count row
+                StreamProvider.value(
+                    initialData: null,
+                    value: SellerServices().getSellerReviewsDataStream(
+                        SellerModel(docId: widget.sellerId)),
+                    child: const SellerReviewsData()),
+
+                // space
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // store stats
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 150,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // seller products count column
+                      SellerTotalItemsCount(sellerId: widget.sellerId),
+
+                      // seller total sold items count
+                      StreamProvider.value(
+                        value: OrderServices().getSellerSoldItemsStream(
+                            SellerModel(docId: widget.sellerId)),
+                        initialData: null,
+                        child: const SellerSoldItemsCount(),
+                      )
+                    ],
+                  ),
+                ),
+
+                // space
+                const SizedBox(
+                  height: 40,
+                ),
+
+                // product, info tabs container
+                ProductAndInfoTabsContainer(sellerId: widget.sellerId)
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+// seller details column
+class SellerDetails extends StatefulWidget {
+  const SellerDetails({super.key});
+
+  @override
+  State<SellerDetails> createState() => _SellerDetailsState();
+}
+
+class _SellerDetailsState extends State<SellerDetails> {
+  SellerModel? _sellerModel;
+
+  // get seller image
+  _getSellerImage(SellerModel sellerModel) async {
+    final profileImageUrl = await SellerServices().getProfileImage(sellerModel);
+
+    if (profileImageUrl != null) {
+      setState(() {
+        _sellerModel!.profileImageUrl = profileImageUrl;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // consume seller data stream here
     final sellerData = Provider.of<SellerModel?>(context);
 
@@ -133,223 +181,259 @@ class _ShopTabViewState extends State<ShopTabView> {
         // get seller image path
         _getSellerImage(_sellerModel!);
       }
-
-      if (productsCount == null) {
-        // get seller total products count
-        _getSellerProductsCount(_sellerModel!);
-      }
     }
 
+    return Column(
+      children: [
+        // user profile pic
+        _sellerModel == null
+            ? const SizedBox(
+                height: 100, child: Utils.circularProgressIndicator)
+            : _sellerModel!.profileImageUrl!.isEmpty
+                ? const SizedBox(
+                    height: 100, child: Utils.circularProgressIndicator)
+                : CircleAvatar(
+                    backgroundImage:
+                        NetworkImage(_sellerModel!.profileImageUrl!),
+                    radius: 50,
+                  ),
+        // space
+        const SizedBox(
+          height: 5,
+        ),
+
+        // name
+        Text(
+          _sellerModel != null ? _sellerModel!.name as String : "",
+          style: Utils.kAppHeading6BoldStyle,
+        ),
+      ],
+    );
+  }
+}
+
+// seller reviews data row
+class SellerReviewsData extends StatefulWidget {
+  const SellerReviewsData({super.key});
+
+  @override
+  State<SellerReviewsData> createState() => _SellerReviewsDataState();
+}
+
+class _SellerReviewsDataState extends State<SellerReviewsData> {
+  @override
+  Widget build(BuildContext context) {
     // consume seller reviews data stream here
     final sellerReviewsData = Provider.of<SellerReviewsModel?>(context);
 
-    // print('sellerReviewsData $sellerReviewsData');
+    // reviews row
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(
+          Icons.star,
+          color: Utils.greenColor,
+          size: 10,
+        ),
+        Text(
+          sellerReviewsData != null
+              ? sellerReviewsData.avgRating as String
+              : ' 5.0 ',
+          style:
+              Utils.kAppCaptionRegularStyle.copyWith(color: Utils.greenColor),
+        ),
+        Text(
+          ' (${sellerReviewsData != null ? sellerReviewsData.totalReviewsCount!.substring(0, 1) : 154} Reviews)',
+          style: Utils.kAppCaptionRegularStyle,
+        )
+      ],
+    );
+  }
+}
 
-    // if (sellerReviewsData != null) {
-    //   print('sellerReviewsData ${sellerReviewsModelToJson(sellerReviewsData)}');
-    // }
+// seller total items count column
+class SellerTotalItemsCount extends StatefulWidget {
+  SellerTotalItemsCount({required this.sellerId});
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Image.network(profileImageUrl)
-                // user profile pic
-                _sellerModel == null
-                    ? const SizedBox(
-                        height: 100, child: Utils.circularProgressIndicator)
-                    : _sellerModel!.profileImageUrl!.isEmpty
-                        ? const SizedBox(
-                            height: 100, child: Utils.circularProgressIndicator)
-                        : CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(_sellerModel!.profileImageUrl!),
-                            radius: 50,
-                          ),
-                // space
-                const SizedBox(
-                  height: 5,
-                ),
+  String sellerId;
 
-                // name
-                Text(
-                  _sellerModel != null ? _sellerModel!.name as String : "",
-                  style: Utils.kAppHeading6BoldStyle,
-                ),
+  @override
+  State<SellerTotalItemsCount> createState() => _SellerTotalItemsCountState();
+}
 
-                // space
-                const SizedBox(
-                  height: 5,
-                ),
+class _SellerTotalItemsCountState extends State<SellerTotalItemsCount> {
+  int? productsCount;
 
-                // reviews row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.star,
-                      color: Utils.greenColor,
-                      size: 10,
-                    ),
-                    Text(
-                      sellerReviewsData != null
-                          ? sellerReviewsData.avgRating as String
-                          : ' 5.0 ',
-                      style: Utils.kAppCaptionRegularStyle
-                          .copyWith(color: Utils.greenColor),
-                    ),
-                    Text(
-                      ' (${sellerReviewsData != null ? sellerReviewsData.totalReviewsCount!.substring(0, 1) : 154} Reviews)',
-                      style: Utils.kAppCaptionRegularStyle,
-                    )
-                  ],
-                ),
+  // get seller products count
+  _getSellerProductsCount() async {
+    final count = await SellerServices()
+        .getSellerProductsCount(SellerModel(docId: widget.sellerId));
 
-                // space
-                const SizedBox(
-                  height: 20,
-                ),
+    if (count != null) {
+      setState(() {
+        productsCount = count;
+      });
+    }
+  }
 
-                // store stats
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 150,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        children: [
-                          // count
-                          Text(
-                            // '1022',
-                            productsCount == null
-                                ? "0"
-                                : productsCount.toString(),
-                            style: Utils.kAppBody2BoldStyle,
-                          ),
-                          // space
-                          const SizedBox(
-                            height: 3,
-                          ),
-                          // title
-                          Text(
-                            'Total Items',
-                            style: Utils.kAppCaptionRegularStyle,
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          // count
-                          Text(
-                            '200',
-                            style: Utils.kAppBody2BoldStyle,
-                          ),
-                          // space
-                          const SizedBox(
-                            height: 3,
-                          ),
-                          // title
-                          Text(
-                            'Sold Items',
-                            style: Utils.kAppCaptionRegularStyle,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+  @override
+  Widget build(BuildContext context) {
+    // if product count not set then set
+    if (productsCount == null) {
+      // get seller total products count
+      _getSellerProductsCount();
+    }
 
-                // space
-                const SizedBox(
-                  height: 40,
-                ),
+    return Column(
+      children: [
+        // count
+        Text(
+          // '1022',
+          productsCount == null ? "0" : productsCount.toString(),
+          style: Utils.kAppBody2BoldStyle,
+        ),
+        // space
+        const SizedBox(
+          height: 3,
+        ),
+        // title
+        Text(
+          'Total Items',
+          style: Utils.kAppCaptionRegularStyle,
+        ),
+      ],
+    );
+  }
+}
 
-                // tabs
-                // primary button and secondary button
-                Row(
-                  children: [
-                    // space
-                    const SizedBox(
-                      width: 30,
-                    ),
+// seller sold items count column
+class SellerSoldItemsCount extends StatefulWidget {
+  const SellerSoldItemsCount({super.key});
 
-                    Expanded(
-                        child: CustomButton(
-                      primaryButton: productTabActive ? true : false,
-                      secondaryButton: productTabActive ? false : true,
-                      onButtonPressed: () {
-                        if (!productTabActive) {
-                          setState(() {
-                            productTabActive = true;
-                          });
-                        }
-                      },
-                      buttonText: 'Products',
-                      buttonHeight: 50,
-                    )),
+  @override
+  State<SellerSoldItemsCount> createState() => _SellerSoldItemsCountState();
+}
 
-                    // space
-                    const SizedBox(
-                      width: 20,
-                    ),
+class _SellerSoldItemsCountState extends State<SellerSoldItemsCount> {
+  @override
+  Widget build(BuildContext context) {
+    // consume seller reviews data stream here
+    final sellerSoldItemsCount = Provider.of<String?>(context);
 
-                    Expanded(
-                        child: CustomButton(
-                      secondaryButton: productTabActive ? true : false,
-                      primaryButton: productTabActive ? false : true,
-                      onButtonPressed: () {
-                        if (productTabActive) {
-                          setState(() {
-                            productTabActive = false;
-                          });
-                        }
-                      },
-                      buttonText: 'Info',
-                      buttonHeight: 50,
-                    )),
+    return Column(
+      children: [
+        // count
+        Text(
+          sellerSoldItemsCount ?? '200',
+          style: Utils.kAppBody2BoldStyle,
+        ),
+        // space
+        const SizedBox(
+          height: 3,
+        ),
+        // title
+        Text(
+          'Sold Items',
+          style: Utils.kAppCaptionRegularStyle,
+        ),
+      ],
+    );
+  }
+}
 
-                    // space
-                    const SizedBox(
-                      width: 30,
-                    ),
-                  ],
-                ),
+// product, info tabs container
+class ProductAndInfoTabsContainer extends StatefulWidget {
+  ProductAndInfoTabsContainer({required this.sellerId});
 
-                // space
-                const SizedBox(
-                  height: 30,
-                ),
+  String sellerId;
 
-                // products container
-                productTabActive
-                    ? _sellerModel == null
-                        ? const SizedBox()
-                        : StreamProvider.value(
-                            initialData: null,
-                            value: ProductServices()
-                                .getProductsStream(_sellerModel!),
-                            child: const ProductTabView())
-                    :
-                    // info container
-                    // Container(
-                    //     child: const Center(child: Text('Info')),
-                    //   )
-                    _sellerModel == null
-                        ? const SizedBox(
-                            height: 200,
-                            child: Utils.circularProgressIndicator,
-                          )
-                        : InfoTabView(sellerModel: _sellerModel!)
-              ],
+  @override
+  State<ProductAndInfoTabsContainer> createState() =>
+      _ProductAndInfoTabsContainerState();
+}
+
+class _ProductAndInfoTabsContainerState
+    extends State<ProductAndInfoTabsContainer> {
+  bool productTabActive = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // tabs
+        // primary button and secondary button
+        Row(
+          children: [
+            // space
+            const SizedBox(
+              width: 30,
             ),
-          )
-        ],
-      ),
+
+            Expanded(
+                child: CustomButton(
+              primaryButton: productTabActive ? true : false,
+              secondaryButton: productTabActive ? false : true,
+              onButtonPressed: () {
+                if (!productTabActive) {
+                  setState(() {
+                    productTabActive = true;
+                  });
+                }
+              },
+              buttonText: 'Products',
+              buttonHeight: 50,
+            )),
+
+            // space
+            const SizedBox(
+              width: 20,
+            ),
+
+            Expanded(
+                child: CustomButton(
+              secondaryButton: productTabActive ? true : false,
+              primaryButton: productTabActive ? false : true,
+              onButtonPressed: () {
+                if (productTabActive) {
+                  setState(() {
+                    productTabActive = false;
+                  });
+                }
+              },
+              buttonText: 'Info',
+              buttonHeight: 50,
+            )),
+
+            // space
+            const SizedBox(
+              width: 30,
+            ),
+          ],
+        ),
+
+        // space
+        const SizedBox(
+          height: 30,
+        ),
+
+        // products container
+        productTabActive
+            ? StreamProvider.value(
+                initialData: null,
+                value: ProductServices()
+                    .getProductsStream(SellerModel(docId: widget.sellerId)),
+                child: const ProductTabView())
+            :
+            // info container
+            // Container(
+            //     child: const Center(child: Text('Info')),
+            //   )
+            StreamProvider.value(
+                initialData: null,
+                value: SellerServices()
+                    .getSellerDataStream(SellerModel(docId: widget.sellerId)),
+                child: InfoTabView())
+      ],
     );
   }
 }

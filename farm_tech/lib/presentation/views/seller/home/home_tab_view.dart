@@ -18,16 +18,7 @@ class HomeTabView extends StatefulWidget {
 
 class _HomeTabViewState extends State<HomeTabView> {
   // stats list
-  late List<Map<String, String>> statsList;
-
-  // logout function
-  Future<void> _logoutUser() async {
-    // clear shared pref data for app
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    final cleared = await pref.clear();
-
-    print('cleared: $cleared');
-  }
+  late List<Map<String, dynamic>> statsList;
 
   @override
   void initState() {
@@ -38,20 +29,21 @@ class _HomeTabViewState extends State<HomeTabView> {
       {
         "icon": "assets/images/icon-question-mark.png",
         "count": "224",
-        "title": "Total Products"
+        "title": "Total Products",
       },
       {
-        "icon": "assets/images/icon-done-all.png",
+        "icon":
+            "assets/images/icon@orders.png", // "assets/images/icon-done-all.png",
         "count": "154",
         "title": "Total Orders"
       },
       {
-        "icon": "assets/images/icon-earned.png",
+        "icon": Icons.paid_outlined, // "assets/images/icon-earned.png",
         "count": "Rs 12661",
         "title": "Total Earned"
       },
       {
-        "icon": "assets/images/icon-review.png",
+        "icon": Icons.star, // "assets/images/icon-review.png",
         "count": "12",
         "title": "Total Reviews"
       },
@@ -162,11 +154,18 @@ class _HomeTabViewState extends State<HomeTabView> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   // icon
-                                  Image.asset(
-                                    statMap['icon'] as String,
-                                    width: 50,
-                                    height: 50,
-                                  ),
+                                  statMap["title"] == "Total Earned" ||
+                                          statMap["title"] == "Total Reviews"
+                                      ? Icon(
+                                          statMap['icon'],
+                                          size: 55,
+                                          color: Utils.lightGreyColor3,
+                                        )
+                                      : Image.asset(
+                                          statMap['icon'] as String,
+                                          width: 50,
+                                          height: 50,
+                                        ),
 
                                   // count and title column
                                   Column(

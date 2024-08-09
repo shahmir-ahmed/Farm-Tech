@@ -25,6 +25,12 @@ class AllOrdersTabView extends StatelessWidget {
     //   }
     // }
 
+    if (sellerOrders != null) {
+      // Sort the orders first
+      sellerOrders.sort((a, b) =>
+          b.createdAt!.compareTo(a.createdAt!)); // Sort in descending order
+    }
+
     // widget tree
     return sellerOrders == null
         ? const SizedBox(
@@ -36,12 +42,24 @@ class AllOrdersTabView extends StatelessWidget {
               // divider
               Utils.divider,
 
-              // row
-              Column(
-                  children: sellerOrders.map((orderModel) {
-                // single order card
-                return OrderCard(orderModel: orderModel);
-              }).toList())
+              sellerOrders.isEmpty
+                  ? SizedBox(
+                      height: 300,
+                      child: Center(
+                        child: Text(
+                          'No orders',
+                          style: Utils.kAppBody2MediumStyle,
+                        ),
+                      ),
+                    )
+                  :
+                  // column of order cards
+                  Column(
+                      children: sellerOrders.map((orderModel) {
+                      // single order card
+                      return OrderCard(
+                          key: Key(orderModel.docId!), orderModel: orderModel);
+                    }).toList())
             ],
           );
   }
@@ -69,15 +87,30 @@ class InProgressOrdersTabView extends StatelessWidget {
               // divider
               Utils.divider,
 
-              // row
-              Column(
-                  children: sellerOrders
+              sellerOrders
                       .where(
                           (sellerOrder) => sellerOrder.status == "In Progress")
-                      .map((orderModel) {
-                // single order card
-                return OrderCard(orderModel: orderModel);
-              }).toList())
+                      .isEmpty
+                  ? SizedBox(
+                      height: 300,
+                      child: Center(
+                        child: Text(
+                          'No in progress orders',
+                          style: Utils.kAppBody2MediumStyle,
+                        ),
+                      ),
+                    )
+                  :
+                  // column of order cards
+                  Column(
+                      children: sellerOrders
+                          .where((sellerOrder) =>
+                              sellerOrder.status == "In Progress")
+                          .map((orderModel) {
+                      // single order card
+                      return OrderCard(
+                          key: Key(orderModel.docId!), orderModel: orderModel);
+                    }).toList())
             ],
           );
   }
@@ -103,14 +136,29 @@ class CompletedOrdersTabView extends StatelessWidget {
               // divider
               Utils.divider,
 
-              // row
-              Column(
-                  children: sellerOrders
+              sellerOrders
                       .where((sellerOrder) => sellerOrder.status == "Completed")
-                      .map((orderModel) {
-                // single order card
-                return OrderCard(orderModel: orderModel);
-              }).toList())
+                      .isEmpty
+                  ? SizedBox(
+                      height: 300,
+                      child: Center(
+                        child: Text(
+                          'No completed orders',
+                          style: Utils.kAppBody2MediumStyle,
+                        ),
+                      ),
+                    )
+                  :
+                  // column of order cards
+                  Column(
+                      children: sellerOrders
+                          .where((sellerOrder) =>
+                              sellerOrder.status == "Completed")
+                          .map((orderModel) {
+                      // single order card
+                      return OrderCard(
+                          key: Key(orderModel.docId!), orderModel: orderModel);
+                    }).toList())
             ],
           );
   }
@@ -136,14 +184,29 @@ class CancelledOrdersTabView extends StatelessWidget {
               // divider
               Utils.divider,
 
-              // row
-              Column(
-                  children: sellerOrders
+              sellerOrders
                       .where((sellerOrder) => sellerOrder.status == "Cancelled")
-                      .map((orderModel) {
-                // single order card
-                return OrderCard(orderModel: orderModel);
-              }).toList())
+                      .isEmpty
+                  ? SizedBox(
+                      height: 300,
+                      child: Center(
+                        child: Text(
+                          'No cancelled orders',
+                          style: Utils.kAppBody2MediumStyle,
+                        ),
+                      ),
+                    )
+                  :
+                  // column of order cards
+                  Column(
+                      children: sellerOrders
+                          .where((sellerOrder) =>
+                              sellerOrder.status == "Cancelled")
+                          .map((orderModel) {
+                      // single order card
+                      return OrderCard(
+                          key: Key(orderModel.docId!), orderModel: orderModel);
+                    }).toList())
             ],
           );
   }
@@ -151,7 +214,7 @@ class CancelledOrdersTabView extends StatelessWidget {
 
 // single order card
 class OrderCard extends StatefulWidget {
-  OrderCard({required this.orderModel});
+  OrderCard({super.key, required this.orderModel});
 
   OrderModel orderModel;
 

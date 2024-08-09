@@ -1,3 +1,5 @@
+import 'package:farm_tech/backend/model/order.dart';
+import 'package:farm_tech/backend/services/order_services.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -70,12 +72,14 @@ class Utils {
           ),
           borderRadius: BorderRadius.all(Radius.circular(20))));
 
+  // divider
   static const divider = Divider(
     height: 0.5,
     thickness: 0.0,
     color: Utils.lightGreyColor3,
   );
 
+  // circluar progress indicator for alert dialog with more width
   static const circularProgressIndicatorForAlertDialog =
       CircularProgressIndicator(
     color: greenColor,
@@ -83,6 +87,7 @@ class Utils {
     strokeWidth: 6,
   );
 
+  // circluar progress indicator
   static const circularProgressIndicator = Center(
       child: CircularProgressIndicator(
     color: greenColor,
@@ -121,6 +126,7 @@ class Utils {
           // space
           const SizedBox(height: 30),
           Text(
+            textAlign: TextAlign.center,
             forScreen == 'signup'
                 ? "Creating"
                 : forScreen == 'upload_product'
@@ -129,7 +135,13 @@ class Utils {
                         ? "Logging in"
                         : forScreen == 'edit_profile'
                             ? "Updating profile"
-                            : "",
+                            : forScreen == 'cancel_order'
+                                ? "Cancelling order"
+                                : forScreen == 'mark_as_delivered'
+                                    ? "Updating order status"
+                                    : forScreen == 'logout'
+                                        ? "Logging out"
+                                        : "",
             style: kAppHeading6BoldStyle,
           ),
           const SizedBox(height: 10),
@@ -143,106 +155,24 @@ class Utils {
                         ? "Please be patient"
                         : forScreen == 'edit_profile'
                             ? "Profile is being updated"
-                            : "",
+                            : forScreen == 'cancel_order'
+                                ? "Order is being cancelled"
+                                : forScreen == 'mark_as_delivered'
+                                    ? "Marking order as delivered"
+                                    : "",
             style: kAppBody3RegularStyle.copyWith(color: lightGreyColor1),
           ),
         ],
       ),
     );
 
-    // show confirm alert dialog
-    showConfirmAlertDialog(BuildContext context, String forOption) {
-      // set up the button
-      Widget confirmButton = CustomButton(
-        secondaryButton: false,
-        primaryButton: true,
-        buttonText: 'Confirm',
-        onButtonPressed: () {
-          // close alert dialog
-          Navigator.pop(context);
-          // close shop register screen
-          // Navigator.pop(context);
-          // close sign up screen
-          // Navigator.pop(context);
-          // push authentication view with login true
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (context) => const AuthenticationView()));
-        },
-        buttonWidth: MediaQuery.of(context).size.width,
-        buttonHeight: 60,
-      );
-      Widget cancelButton = CustomButton(
-        secondaryButton: false,
-        primaryButton: true,
-        buttonText: 'OK',
-        onButtonPressed: () {
-          // close alert dialog
-          Navigator.pop(context);
-          // close shop register screen
-          Navigator.pop(context);
-          // close sign up screen
-          // Navigator.pop(context);
-          // push authentication view with login true
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (context) => const AuthenticationView()));
-        },
-        buttonWidth: MediaQuery.of(context).size.width,
-        buttonHeight: 60,
-      );
-
-      // set up the AlertDialog
-      AlertDialog alert = AlertDialog(
-        insetPadding:
-            const EdgeInsets.symmetric(horizontal: 30.0, vertical: 45.0),
-        icon: const Icon(
-          Icons.question_mark,
-          size: 40,
-          color: Utils.greenColor,
-        ),
-        // contentPadding:
-        //     const EdgeInsets.symmetric(horizontal: 30.0, vertical: 45.0),
-        backgroundColor: Utils.whiteColor,
-        actionsAlignment: MainAxisAlignment.spaceBetween,
-        title: Text(
-          forOption == "cancel"
-              ? "Cancel Order?"
-              : forOption == "complete"
-                  ? "Mark as delivered?"
-                  : "",
-          style: Utils.kAppHeading6BoldStyle,
-        ),
-        content: Text(
-          textAlign: TextAlign.center,
-          forOption == "cancel"
-              ? "Are you sure you want to cancel order?"
-              : forOption == "complete"
-                  ? "Are you sure you want to mark order as delivered?"
-                  : "",
-          style: Utils.kAppBody3RegularStyle
-              .copyWith(color: Utils.lightGreyColor1),
-        ),
-        actions: [cancelButton, confirmButton],
-      );
-
-      // show the dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alert;
-          // return alert;
-        },
-      );
-    }
-
     // show the dialog
     showDialog(
-      barrierDismissible: false,
+      barrierDismissible:
+          false, // outside of alert dialog tap will not dismiss alert dialog
       context: context,
       builder: (BuildContext context) {
+        // for back pressed
         return WillPopScope(
             onWillPop: () async =>
                 false, // False will prevent and true will allow to dismiss
@@ -251,6 +181,7 @@ class Utils {
     );
   }
 
+  // appbar for screen
   static getAppBar(String title, List<Widget> actions, context) {
     return AppBar(
         leading: GestureDetector(
@@ -272,6 +203,7 @@ class Utils {
         actions: actions.isEmpty ? [] : actions);
   }
 
+  // appbar for tab screen
   static getTabAppBar(String title, List<Widget> actions, context) {
     return AppBar(
         leadingWidth: 48,

@@ -283,6 +283,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                           TextFormField(
                             initialValue: name,
                             keyboardType: TextInputType.name,
+                            textCapitalization: TextCapitalization.words,
                             textInputAction: TextInputAction.done,
                             onChanged: (value) {
                               setState(() {
@@ -327,7 +328,6 @@ class _EditProfileViewState extends State<EditProfileView> {
               onButtonPressed: () async {
                 // if form is valid
                 if (_formKey.currentState!.validate()) {
-                  
                   // show loading alert dialog
                   Utils.showLoadingAlertDialog(context, 'edit_profile');
 

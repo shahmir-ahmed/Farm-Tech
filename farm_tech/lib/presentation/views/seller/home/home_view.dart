@@ -20,7 +20,8 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   // bottom navigation bar att.
-  final List<Widget?> _widgetOptions = <Widget?>[
+  // ignore: prefer_final_fields
+  List<Widget?> _widgetOptions = <Widget?>[
     Utils.circularProgressIndicator,
     Utils.circularProgressIndicator,
     Utils.circularProgressIndicator,
@@ -100,16 +101,8 @@ class _HomeViewState extends State<HomeView> {
     // reinitialize widgets options 1 index
     setState(() {
       _widgetOptions[1] =
-          // shop tab view with double stream supplied
-          StreamProvider.value(
-              initialData: null,
-              value:
-                  SellerServices().getSellerDataStream(SellerModel(docId: uId)),
-              child: StreamProvider.value(
-                  initialData: null,
-                  value: SellerServices()
-                      .getSellerReviewsDataStream(SellerModel(docId: uId)),
-                  child: const ShopTabView()));
+          // shop tab view with seller id
+          ShopTabView(sellerId: uId);
     });
   }
 
