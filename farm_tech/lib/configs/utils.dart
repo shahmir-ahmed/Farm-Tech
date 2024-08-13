@@ -1,6 +1,3 @@
-import 'package:farm_tech/backend/model/order.dart';
-import 'package:farm_tech/backend/services/order_services.dart';
-import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -34,6 +31,8 @@ class Utils {
       GoogleFonts.raleway(fontSize: 13.3, fontWeight: FontWeight.w500);
   static final TextStyle kAppBody3BoldStyle =
       GoogleFonts.raleway(fontSize: 13.3, fontWeight: FontWeight.bold);
+  static final TextStyle kAppHeading3BoldStyle =
+      GoogleFonts.raleway(fontSize: 39.8, fontWeight: FontWeight.bold);
   static final TextStyle kAppHeading4BoldStyle =
       GoogleFonts.raleway(fontSize: 33.2, fontWeight: FontWeight.bold);
   static final TextStyle kAppHeading5BoldStyle =

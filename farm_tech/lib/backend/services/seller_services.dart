@@ -58,7 +58,7 @@ class SellerServices {
     }
   }
 
-  // get seller reviews data stream
+  // get seller reviews data (avg rating and total reviews count) stream
   Stream<SellerReviewsModel>? getSellerReviewsDataStream(SellerModel model) {
     try {
       return FirebaseFirestore.instance
@@ -83,7 +83,8 @@ class SellerServices {
         // print('totalStarsCount $totalStarsCount');
 
         // dividing total by length of doc to calculate avg rating for the seller
-        final avgRating = (totalStarsCount / snapshot.docs.length).floorToDouble();
+        final avgRating =
+            (totalStarsCount / snapshot.docs.length).floorToDouble();
         // final avgRating = double.parse((totalStarsCount / snapshot.docs.length).toStringAsFixed(1));
         // final avgRating = ((totalStarsCount / snapshot.docs.length)* 10).truncateToDouble() / 10;
         // print('avgRating $avgRating');
@@ -93,6 +94,20 @@ class SellerServices {
             totalReviewsCount: snapshot.docs.length.toString(),
             avgRating: avgRating.toString());
       });
+    } catch (e) {
+      print('Err in getSellerReviewsDataStream: $e');
+      return null;
+    }
+  }
+
+  // get seller total reviews count stream
+  Stream<String?>? getTotalReviewsCountStream(SellerModel model) {
+    try {
+      return FirebaseFirestore.instance
+          .collection('productReviews')
+          .where('sellerId', isEqualTo: model.docId)
+          .snapshots()
+          .map((snapshot) => snapshot.docs.length.toString());
     } catch (e) {
       print('Err in getSellerReviewsDataStream: $e');
       return null;
@@ -111,6 +126,20 @@ class SellerServices {
       });
     } catch (e) {
       print('Err in getSellerDataStream: $e');
+      return null;
+    }
+  }
+
+  // get individual seller name stream
+  Stream<String?>? getSellerNameStream(SellerModel model) {
+    try {
+      return FirebaseFirestore.instance
+          .collection('sellers')
+          .doc(model.docId)
+          .snapshots()
+          .map((doc) => doc.get('name'));
+    } catch (e) {
+      print('Err in getSellerNameStream: $e');
       return null;
     }
   }

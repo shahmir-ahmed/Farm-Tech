@@ -56,9 +56,18 @@ class _HomeViewState extends State<HomeView> {
   _getUserUid() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     // set state to let the widget tree know and refresh itself that something (data att.) has changed that it needs to reflect in its tree/view
-    setState(() {
-      uId = pref.getString("uId") as String;
-    });
+    final id = pref.getString("uId");
+
+    // print('id: $id'); // recieving null here when user logs in so null check below
+
+    if (id == null) {
+      // get user id again
+      _getUserUid();
+    } else {
+      setState(() {
+        uId = id;
+      });
+    }
 
     // reinitialize shop tab
     _reInitializeShopTab();
@@ -92,6 +101,7 @@ class _HomeViewState extends State<HomeView> {
           // home tab with seller name
           HomeTabView(
         sellerName: sellerName,
+        setOrderTabAsActive: setOrderTabAsActive,
       );
     });
   }

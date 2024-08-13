@@ -57,10 +57,10 @@ class _AuthWrapperState extends State<AuthWrapper> {
     // consume stream of auth here if user is present then seller splash screen otherwise show auth view
     final user = Provider.of<UserModel?>(context);
 
-    print('user: $user');
+    // print('user: $user');
 
     if (user == null) {
-      print('user not logged in: $user');
+      // print('user not logged in: $user');
       // normal splash screen
       return threeSecondsPassed
           ? /* if for seller auth true now from select user type screen */
@@ -79,7 +79,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
                     )
           : SplashScreenView();
     } else {
-      print('user logged in: ${user.uId}');
+      // print('user logged in: ${user.uId}');
       // seller splash screen
       return threeSecondsPassed
           ? const HomeView()

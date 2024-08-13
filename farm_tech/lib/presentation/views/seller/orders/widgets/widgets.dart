@@ -215,8 +215,11 @@ class CancelledOrdersTabView extends StatelessWidget {
 // single order card
 class OrderCard extends StatefulWidget {
   OrderCard({super.key, required this.orderModel});
+  OrderCard.forHomeTab(
+      {super.key, required this.orderModel, this.forHomeTab = true});
 
   OrderModel orderModel;
+  bool? forHomeTab;
 
   @override
   State<OrderCard> createState() => _OrderCardState();
@@ -311,82 +314,95 @@ class _OrderCardState extends State<OrderCard> {
   Widget build(BuildContext context) {
     // widget tree
     return GestureDetector(
-      onTap: () {
-        if (productName.isEmpty ||
-            productCategory.isEmpty ||
-            productImageUrl.isEmpty) {
-          // not show details screen
-        } else {
-          // show order details screen
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => OrderDetailsView(
-                      orderModel: widget.orderModel,
-                      orderId: convertStringToNumber(widget.orderModel.docId!)
-                          .substring(0, 7),
-                      orderDate: extractDateFromTimestamp(
-                          widget.orderModel.createdAt!),
-                      productModel: ProductModel(
-                          title: productName,
-                          category: productCategory,
-                          mainImageUrl: productImageUrl))));
-        }
-      },
+      onTap: widget.forHomeTab != null
+          ? () {}
+          : () {
+              if (productName.isEmpty ||
+                  productCategory.isEmpty ||
+                  productImageUrl.isEmpty) {
+                // not show details screen
+              } else {
+                // show order details screen
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => OrderDetailsView(
+                            orderModel: widget.orderModel,
+                            orderId:
+                                convertStringToNumber(widget.orderModel.docId!)
+                                    .substring(0, 7),
+                            orderDate: extractDateFromTimestamp(
+                                widget.orderModel.createdAt!),
+                            productModel: ProductModel(
+                                title: productName,
+                                category: productCategory,
+                                mainImageUrl: productImageUrl))));
+              }
+            },
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "#${convertStringToNumber(widget.orderModel.docId!).substring(0, 7)}",
-                      style: Utils.kAppBody3MediumStyle,
-                    ),
-                    // status
-                    Text(
-                      widget.orderModel.status!,
-                      style: Utils.kAppBody3MediumStyle.copyWith(
-                          color: widget.orderModel.status == "In Progress"
-                              ? Colors.orange
-                              : widget.orderModel.status == "Completed"
-                                  ? Utils.greenColor
-                                  : widget.orderModel.status == "Cancelled"
-                                      ? Colors.red
-                                      : Colors.black),
-                    ),
-                  ],
-                ),
+                widget.forHomeTab != null
+                    ? const SizedBox()
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "#${convertStringToNumber(widget.orderModel.docId!).substring(0, 7)}",
+                            style: Utils.kAppBody3MediumStyle,
+                          ),
+                          // status
+                          Text(
+                            widget.orderModel.status!,
+                            style: Utils.kAppBody3MediumStyle.copyWith(
+                                color: widget.orderModel.status == "In Progress"
+                                    ? Colors.orange
+                                    : widget.orderModel.status == "Completed"
+                                        ? Utils.greenColor
+                                        : widget.orderModel.status ==
+                                                "Cancelled"
+                                            ? Colors.red
+                                            : Colors.black),
+                          ),
+                        ],
+                      ),
 
                 // space
-                const SizedBox(
-                  height: 10,
-                ),
+                widget.forHomeTab != null
+                    ? const SizedBox()
+                    : const SizedBox(
+                        height: 10,
+                      ),
 
                 // row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Date placed',
-                      style: Utils.kAppCaptionMediumStyle
-                          .copyWith(color: Utils.greyColor2),
-                    ),
-                    Text(
-                      extractDateFromTimestamp(widget.orderModel.createdAt!),
-                      style: Utils.kAppCaptionMediumStyle
-                          .copyWith(color: Utils.greyColor2),
-                    ),
-                  ],
-                ),
+                widget.forHomeTab != null
+                    ? const SizedBox()
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Date placed',
+                            style: Utils.kAppCaptionMediumStyle
+                                .copyWith(color: Utils.greyColor2),
+                          ),
+                          Text(
+                            extractDateFromTimestamp(
+                                widget.orderModel.createdAt!),
+                            style: Utils.kAppCaptionMediumStyle
+                                .copyWith(color: Utils.greyColor2),
+                          ),
+                        ],
+                      ),
 
                 // space
-                const SizedBox(
-                  height: 20,
-                ),
+                widget.forHomeTab != null
+                    ? const SizedBox()
+                    : const SizedBox(
+                        height: 20,
+                      ),
 
                 // product details
                 Row(
@@ -412,9 +428,22 @@ class _OrderCardState extends State<OrderCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // name
-                          Text(
-                            productName.isEmpty ? "Product Name" : productName,
-                            style: Utils.kAppBody3MediumStyle,
+                          Row(
+                            children: [
+                              Text(
+                                productName.isEmpty
+                                    ? "Product Name"
+                                    : productName,
+                                style: Utils.kAppBody3MediumStyle,
+                              ),
+                              widget.forHomeTab == null
+                                  ? const SizedBox()
+                                  : Text(
+                                      " #${convertStringToNumber(widget.orderModel.docId!).substring(0, 7)}",
+                                      style: Utils.kAppBody3MediumStyle
+                                          .copyWith(color: Utils.greenColor),
+                                    ),
+                            ],
                           ),
 
                           // space

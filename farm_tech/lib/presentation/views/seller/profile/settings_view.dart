@@ -1,5 +1,6 @@
 import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/seller/earnings/earnings_view.dart';
 import 'package:farm_tech/presentation/views/seller/profile/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
@@ -136,14 +137,18 @@ class _SettingsViewState extends State<SettingsView> {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
       child: Column(
-        children: ['Account', 'Earnings', 'Notifications', 'Cache', 'Logout']
-            .map((text) {
+        children: [
+          /*'Account',*/ 'Earnings',
+          /*'Notifications', 'Cache',*/ 'Logout'
+        ].map((text) {
           // single option widget
-          return text == "Earnings" ||
-                  text == "Notifications" ||
-                  text == "Cache" ||
-                  text == "Logout"
-              ? text == "Logout"
+          return
+              // text == "Earnings" ||
+              //         // text == "Notifications" ||
+              //         // text == "Cache" ||
+              //         text == "Logout"
+              //     ?
+              text == "Logout"
                   ? OptionRow(
                       text: text,
                       textColor: Colors.red,
@@ -162,13 +167,19 @@ class _SettingsViewState extends State<SettingsView> {
                   : OptionRow(
                       text: text,
                       noTopDivider: true,
-                      onPressed: () {},
-                    )
-              // account option having top divider
-              : OptionRow(
-                  text: text,
-                  onPressed: () {},
-                );
+                      onPressed: () {
+                        // show earnings screen
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const EarningsView()));
+                      },
+                    );
+          // account option having top divider
+          // : OptionRow(
+          //     text: text,
+          //     onPressed: () {},
+          //   );
         }).toList(),
       ),
     );
