@@ -217,4 +217,19 @@ class SellerServices {
       return null;
     }
   }
+
+  // check seller with a specific doc id exists or not
+  String? checkSellerWithDocId(SellerModel model) {
+    try {
+      FirebaseFirestore.instance
+          .collection('sellers')
+          .doc(model.docId)
+          .toString();
+
+      return 'success'; // if seller with doc id exists then return success
+    } catch (e) {
+      print('Err in checkSellerWithDocId: $e');
+      return null;
+    }
+  }
 }

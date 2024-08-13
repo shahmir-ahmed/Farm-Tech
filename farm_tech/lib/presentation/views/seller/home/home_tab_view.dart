@@ -201,7 +201,7 @@ class _HomeTabViewState extends State<HomeTabView> {
                           },
                           child: Text(
                             'See all',
-                            style: Utils.kAppCaption2RegularStyle
+                            style: Utils.kAppCaptionRegularStyle
                                 .copyWith(color: Utils.greenColor),
                           ),
                         ),
@@ -214,7 +214,7 @@ class _HomeTabViewState extends State<HomeTabView> {
             Utils.divider,
 
             sellerId.isEmpty
-                ? Utils.circularProgressIndicator
+                ? SizedBox(height: 100, child: Utils.circularProgressIndicator)
                 : StreamProvider.value(
                     initialData: null,
                     value: OrderServices().getInProgressOrdersStream(
@@ -454,7 +454,9 @@ class _OrdersInQueueState extends State<OrdersInQueue> {
     final inProgressOrders = Provider.of<List<OrderModel>?>(context);
 
     return inProgressOrders == null
-        ? Utils.circularProgressIndicator
+        ? const SizedBox(
+          height: 200,
+          child: Utils.circularProgressIndicator)
         : Column(
             children: inProgressOrders
                 .map((inProgressOrder) =>

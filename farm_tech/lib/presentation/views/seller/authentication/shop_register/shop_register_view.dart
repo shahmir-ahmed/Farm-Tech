@@ -132,7 +132,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
             message:
                 'The image you are trying to upload is too large. The maximum file size allowed is 10 MB. Please select a smaller image.',
             context: context,
-            duration: Duration(seconds: 6));
+            duration: const Duration(seconds: 6));
         // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         //     duration: Duration(seconds: 6),
         //     content: Text(
@@ -198,70 +198,6 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
       print("Error in compressing image: $e");
       return null;
     }
-  }
-
-  // show account created alert dialog
-  showAccountCreatedAlertDialog(BuildContext context) {
-    // set up the button
-    Widget loginButton = CustomButton(
-      secondaryButton: false,
-      primaryButton: true,
-      buttonText: 'OK',
-      onButtonPressed: () {
-        // close alert dialog
-        Navigator.pop(context);
-        // close shop register screen
-        Navigator.pop(context);
-        // close sign up screen
-        // Navigator.pop(context);
-        // push authentication view with login true
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => const AuthenticationView()));
-      },
-      buttonWidth: MediaQuery.of(context).size.width,
-      buttonHeight: 60,
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      insetPadding:
-          const EdgeInsets.symmetric(horizontal: 30.0, vertical: 45.0),
-      icon: Image.asset(
-        'assets/images/done-icon.png',
-        width: 48,
-        height: 48,
-      ),
-      // contentPadding:
-      //     const EdgeInsets.symmetric(horizontal: 30.0, vertical: 45.0),
-      backgroundColor: Utils.whiteColor,
-      actionsAlignment: MainAxisAlignment.spaceBetween,
-      title: Text(
-        "Account Created",
-        style: Utils.kAppHeading6BoldStyle,
-      ),
-      content: Text(
-        textAlign: TextAlign.center,
-        "You can now access your account",
-        style:
-            Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
-      ),
-      actions: [loginButton],
-    );
-
-    // show the dialog
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return WillPopScope(
-            onWillPop: () async =>
-                false, // False will prevent and true will allow to dismiss
-            child: alert);
-        // return alert;
-      },
-    );
   }
 
   @override
@@ -433,7 +369,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                           // strokeWidth: 2,
                           color: fileError.isEmpty
                               ? Utils.greenColor
-                              : Color.fromARGB(255, 180, 44, 44),
+                              : const Color.fromARGB(255, 180, 44, 44),
                           borderType: BorderType.RRect,
                           radius: const Radius.circular(10),
                           dashPattern: const [7, 7],
@@ -478,17 +414,17 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                             ? const SizedBox(
                                 height: 5.0,
                               )
-                            : SizedBox(),
+                            : const SizedBox(),
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             // space
-                            SizedBox(width: 25),
+                            const SizedBox(width: 25),
                             Text(
                               fileError,
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 180, 44, 44),
+                              style: const TextStyle(
+                                  color: const Color.fromARGB(255, 180, 44, 44),
                                   fontSize: 12),
                             ),
                           ],
@@ -607,8 +543,12 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                         await SharedPreferences.getInstance();
                                     pref.setString('uId',
                                         user.uId as String); // set user uid
+                                    pref.setString('email',
+                                        user.email as String); // set user email
+                                    pref.setString('userType',
+                                        'seller'); // set user type
                                     // show account created alert dialog
-                                    showAccountCreatedAlertDialog(context);
+                                    Utils.showAccountCreatedAlertDialog(context, "seller");
                                   } else {
                                     // show error
                                     floatingSnackBar(

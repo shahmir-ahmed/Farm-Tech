@@ -1,3 +1,4 @@
+import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -75,6 +76,13 @@ class Utils {
   static const divider = Divider(
     height: 0.5,
     thickness: 0.0,
+    color: Utils.lightGreyColor3,
+  );
+
+  // dividerWith2Thickness
+  static const dividerWith1Thickness = Divider(
+    height: 0.5,
+    thickness: 0.3,
     color: Utils.lightGreyColor3,
   );
 
@@ -176,6 +184,72 @@ class Utils {
             onWillPop: () async =>
                 false, // False will prevent and true will allow to dismiss
             child: alert);
+      },
+    );
+  }
+
+  // show account created alert dialog
+  static showAccountCreatedAlertDialog(BuildContext context, String forUser) {
+    // set up the button
+    Widget okButton = CustomButton(
+      secondaryButton: false,
+      primaryButton: true,
+      buttonText: 'OK',
+      onButtonPressed: () {
+        // close alert dialog
+        Navigator.pop(context);
+        if (forUser == 'seller') {
+          // close shop register screen
+          Navigator.pop(context);
+        }
+        // close sign up screen
+        Navigator.pop(context);
+        // push authentication view with login true
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => const AuthenticationView()));
+      },
+      buttonWidth: MediaQuery.of(context).size.width,
+      buttonHeight: 60,
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      insetPadding:
+          const EdgeInsets.symmetric(horizontal: 30.0, vertical: 45.0),
+      icon: Image.asset(
+        'assets/images/done-icon.png',
+        width: 48,
+        height: 48,
+      ),
+      // contentPadding:
+      //     const EdgeInsets.symmetric(horizontal: 30.0, vertical: 45.0),
+      backgroundColor: Utils.whiteColor,
+      actionsAlignment: MainAxisAlignment.spaceBetween,
+      title: Text(
+        "Account Created",
+        style: Utils.kAppHeading6BoldStyle,
+      ),
+      content: Text(
+        textAlign: TextAlign.center,
+        "You can now access your account",
+        style:
+            Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
+      ),
+      actions: [okButton],
+    );
+
+    // show the dialog
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return WillPopScope(
+            onWillPop: () async =>
+                false, // False will prevent and true will allow to dismiss
+            child: alert);
+        // return alert;
       },
     );
   }

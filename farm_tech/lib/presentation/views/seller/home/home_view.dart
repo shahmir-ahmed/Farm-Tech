@@ -1,18 +1,25 @@
 import 'package:farm_tech/backend/model/seller.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/buyer/chat/buyer_chat_tab_view.dart';
 import 'package:farm_tech/presentation/views/seller/chat/chat_tab_view.dart';
 import 'package:farm_tech/presentation/views/seller/home/home_tab_view.dart';
 import 'package:farm_tech/presentation/views/seller/orders/order_tab_view.dart';
 import 'package:farm_tech/presentation/views/seller/profile/profile_tab_view.dart';
 import 'package:farm_tech/presentation/views/seller/shop/shop_tab_view.dart';
+import 'package:farm_tech/presentation/views/buyer/home/buyer_home_tab_view.dart';
+import 'package:farm_tech/presentation/views/buyer/orders/buyer_order_tab_view.dart';
+import 'package:farm_tech/presentation/views/buyer/profile/buyer_profile_tab_view.dart';
+import 'package:farm_tech/presentation/views/buyer/search/buyer_search_tab_view.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+  HomeView({required this.userType});
+
+  String userType;
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -21,12 +28,20 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   // bottom navigation bar att.
   // ignore: prefer_final_fields
-  List<Widget?> _widgetOptions = <Widget?>[
+  List<Widget?> _widgetOptionsSeller = <Widget?>[
     Utils.circularProgressIndicator,
     Utils.circularProgressIndicator,
     Utils.circularProgressIndicator,
     const ChatTabView(),
     Utils.circularProgressIndicator
+  ];
+
+  List<Widget?> _widgetOptionsBuyer = <Widget?>[
+    const BuyerHomeTabView(),
+    const BuyerSearchTabView(),
+    const BuyerOrderTabView(),
+    const BuyerChatTabView(),
+    const BuyerProfileTabView(),
   ];
 
   // current botom navbar index
@@ -97,7 +112,7 @@ class _HomeViewState extends State<HomeView> {
   _reInitializeHomeTab() {
     // reinitialize widgets options
     setState(() {
-      _widgetOptions[0] =
+      _widgetOptionsSeller[0] =
           // home tab with seller name
           HomeTabView(
         sellerName: sellerName,
@@ -110,7 +125,7 @@ class _HomeViewState extends State<HomeView> {
   _reInitializeShopTab() {
     // reinitialize widgets options 1 index
     setState(() {
-      _widgetOptions[1] =
+      _widgetOptionsSeller[1] =
           // shop tab view with seller id
           ShopTabView(sellerId: uId);
     });
@@ -120,7 +135,7 @@ class _HomeViewState extends State<HomeView> {
   _reInitializeOrdersTab() {
     // reinitialize widgets options
     setState(() {
-      _widgetOptions[2] =
+      _widgetOptionsSeller[2] =
           // orders tab with seller id
           OrderTabView(sellerId: uId);
     });
@@ -131,7 +146,7 @@ class _HomeViewState extends State<HomeView> {
     // reinitialize widgets options
     setState(() {
       // pass function to profile tab
-      _widgetOptions[4] = ProfileTabView(
+      _widgetOptionsSeller[4] = ProfileTabView(
         setOrderTabAsActive: setOrderTabAsActive,
       );
     });
@@ -152,11 +167,13 @@ class _HomeViewState extends State<HomeView> {
     // TODO: implement initState
     super.initState();
 
-    // reinitialize profile tab
-    _reInitializeProfileTab();
+    if (widget.userType == 'seller') {
+      // reinitialize profile tab
+      _reInitializeProfileTab();
 
-    // get seller uid
-    _getUserUid();
+      // get seller uid
+      _getUserUid();
+    }
   }
 
   // buil method
@@ -164,7 +181,9 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Utils.whiteColor,
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: widget.userType == 'seller'
+          ? _widgetOptionsSeller.elementAt(_selectedIndex)
+          : _widgetOptionsBuyer.elementAt(_selectedIndex),
       bottomNavigationBar: _getBottomNavigationBar(),
     );
   }
@@ -203,19 +222,33 @@ class _HomeViewState extends State<HomeView> {
                       height: 27,
                     ),
                     label: ''),
-                BottomNavigationBarItem(
-                    backgroundColor: Colors.white,
-                    activeIcon: Image.asset(
-                      'assets/images/icon@shop-active.png',
-                      width: 27,
-                      height: 27,
-                    ),
-                    icon: Image.asset(
-                      'assets/images/icon@shop.png',
-                      width: 27,
-                      height: 27,
-                    ),
-                    label: ''),
+                widget.userType == 'buyer'
+                    ? BottomNavigationBarItem(
+                        backgroundColor: Colors.white,
+                        activeIcon: Image.asset(
+                          'assets/images/icon@search-active.png',
+                          width: 27,
+                          height: 27,
+                        ),
+                        icon: Image.asset(
+                          'assets/images/icon@search.png',
+                          width: 27,
+                          height: 27,
+                        ),
+                        label: '')
+                    : BottomNavigationBarItem(
+                        backgroundColor: Colors.white,
+                        activeIcon: Image.asset(
+                          'assets/images/icon@shop-active.png',
+                          width: 27,
+                          height: 27,
+                        ),
+                        icon: Image.asset(
+                          'assets/images/icon@shop.png',
+                          width: 27,
+                          height: 27,
+                        ),
+                        label: ''),
                 BottomNavigationBarItem(
                     backgroundColor: Colors.white,
                     activeIcon: Image.asset(

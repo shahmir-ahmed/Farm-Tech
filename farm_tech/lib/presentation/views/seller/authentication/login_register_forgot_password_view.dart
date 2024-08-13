@@ -1,4 +1,6 @@
+import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/user.dart';
+import 'package:farm_tech/backend/services/buyer_services.dart';
 import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/seller/authentication/shop_register/shop_register_view.dart';
@@ -9,13 +11,16 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginRegisterForgotResetPasswordView extends StatefulWidget {
-  LoginRegisterForgotResetPasswordView(
-      {super.key,
-      this.changeScreenMethod,
-      this.forLoginView,
-      this.forSignupView,
-      this.forForgotPasswordView,
-      this.showUserTypeView});
+  LoginRegisterForgotResetPasswordView({
+    super.key,
+    this.changeScreenMethod,
+    this.forLoginView,
+    this.forSignupView,
+    this.forForgotPasswordView,
+    // this.showUserTypeView
+    required this.forSeller,
+    required this.forBuyer,
+  });
 
   // change screen method
   VoidCallback? changeScreenMethod;
@@ -30,7 +35,10 @@ class LoginRegisterForgotResetPasswordView extends StatefulWidget {
   bool? forForgotPasswordView;
 
   // on back pressed show select user type view
-  VoidCallback? showUserTypeView;
+  // VoidCallback? showUserTypeView;
+
+  bool forSeller;
+  bool forBuyer;
 
   @override
   State<LoginRegisterForgotResetPasswordView> createState() =>
@@ -69,10 +77,10 @@ class _LoginRegisterForgotResetPasswordViewState
   }
 
   // on back pressed
-  onLoginSignupBackPressed() {
-    Navigator.pop(context);
-    widget.showUserTypeView!();
-  }
+  // onLoginSignupBackPressed() {
+  //   Navigator.pop(context);
+  //   widget.showUserTypeView!();
+  // }
 
   // on forgot password screen back pressed
   onForgotBackPressed() {
@@ -112,9 +120,17 @@ class _LoginRegisterForgotResetPasswordViewState
                 // text
                 Text(
                   widget.forLoginView != null
-                      ? 'Welcome Again!'
+                      ? widget.forSeller
+                          ? 'Welcome Again Seller!'
+                          : widget.forBuyer
+                              ? "Welcome Again Buyer!"
+                              : ""
                       : widget.forSignupView != null
-                          ? 'Create Account'
+                          ? widget.forSeller
+                              ? 'Create Account as Seller'
+                              : widget.forBuyer
+                                  ? 'Create Account as Buyer'
+                                  : ""
                           : 'Forgot Password',
                   style: Utils.kAppHeading6BoldStyle,
                 ),
@@ -398,6 +414,8 @@ class _LoginRegisterForgotResetPasswordViewState
                                       builder: (context) =>
                                           LoginRegisterForgotResetPasswordView(
                                             forForgotPasswordView: true,
+                                            forSeller: widget.forSeller,
+                                            forBuyer: widget.forBuyer,
                                           )));
                             },
                             child: Text('Forgot your password?',
@@ -429,72 +447,131 @@ class _LoginRegisterForgotResetPasswordViewState
                     if (_formKey.currentState!.validate()) {
                       // for login view
                       if (widget.forLoginView != null) {
-                        // print
-                        print('email $email');
-                        print('password $password');
+                        if (widget.forSeller) {
+                          // if for seller login view
+                          // print
+                          // print('email $email');
+                          // print('password $password');
 
-                        // show loading alert dialog
-                        Utils.showLoadingAlertDialog(context, 'login');
+                          // show loading alert dialog
+                          Utils.showLoadingAlertDialog(context, 'login');
 
-                        // authenticate user (either seller/buyer)
-                        final result = await _userAuthServices.authenticateUser(
-                            UserModel(email: email, password: password));
+                          // authenticate user (either seller/buyer)
+                          final result =
+                              await _userAuthServices.authenticateUser(
+                                  UserModel(email: email, password: password));
 
-                        print('result: $result');
+                          // print('result: $result');
 
-                        // null result is returned means error occured when invalid email/password
-                        if (result == null) {
-                          // close alert
-                          Navigator.pop(context);
+                          // null result is returned means error occured when invalid email/password
+                          if (result == null) {
+                            // close alert
+                            Navigator.pop(context);
 
-                          // show snackbar
-                          // invalid username/password
-                          floatingSnackBar(
-                              message: 'Invalid email or password',
-                              context: context);
-                        } else {
-                          // valid user
-                          print('user uid: ${result.uId}');
+                            // show snackbar
+                            // invalid username/password
+                            floatingSnackBar(
+                                message: 'Invalid email or password',
+                                context: context);
+                          } else {
+                            // valid user
+                            // print('user uid: ${result.uId}');
 
-                          // close alert
-                          Navigator.pop(context);
+                            // close alert
+                            Navigator.pop(context);
 
-                          // save user uid, email in shared pref.
-                          SharedPreferences pref =
-                              await SharedPreferences.getInstance();
-                          final set = await pref.setString(
-                              'uId', result.uId); // set user uid
-                          final set2 = await pref.setString(
-                              'email', result.email); // set user uid
+                            // close login screen
+                            Navigator.pop(context);
 
-                          print("pref set: $set $set2");
+                            // save user uid, email in shared pref.
+                            SharedPreferences pref =
+                                await SharedPreferences.getInstance();
+                            final set = await pref.setString(
+                                'uId', result.uId); // set user uid
+                            final set2 = await pref.setString(
+                                'email', email); // set user email
+                            final set3 = await pref.setString(
+                                'userType', "seller"); // set user type
 
-                          // // after 3 secs show welcome message
-                          // Future.delayed(Duration(seconds: 3), () {
-                          //   // show snackbar
-                          //   floatingSnackBar(
-                          //       message: 'Welcome back!', context: context);
-                          // });
+                            print("pref set: $set $set2 $set3");
 
-                          // close auth screen
-                          // Navigator.pop(context);
-                          // // close choose user type screen
-                          // Navigator.pop(context);
-                          // // then show seller home screen (if for seller login screen)
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => HomeView()));
+                            // // after 3 secs show welcome message
+                            // Future.delayed(Duration(seconds: 3), () {
+                            //   // show snackbar
+                            //   floatingSnackBar(
+                            //       message: 'Welcome back!', context: context);
+                            // });
+
+                            // close auth screen
+                            // Navigator.pop(context);
+                            // // close choose user type screen
+                            // Navigator.pop(context);
+                            // // then show seller home screen (if for seller login screen)
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => HomeView()));
+                          }
+                        } else if (widget.forBuyer) {
+                          // login for buyer
+                          /*
+                          // show loading alert dialog
+                          Utils.showLoadingAlertDialog(context, 'login');
+
+                          // authenticate user (either seller/buyer)
+                          final result =
+                              await _userAuthServices.authenticateUser(
+                                  UserModel(email: email, password: password));
+
+                          // print('result: $result');
+
+                          // null result is returned means error occured when invalid email/password
+                          if (result == null) {
+                            // close alert
+                            Navigator.pop(context);
+
+                            // show snackbar
+                            // invalid username/password
+                            floatingSnackBar(
+                                message: 'Invalid email or password',
+                                context: context);
+                          } else {
+                            // valid user
+                            // print('user uid: ${result.uId}');
+
+                            // check the user exists in buyers collection or not
+
+                            // close alert
+                            Navigator.pop(context);
+
+                            // close login screen
+                            Navigator.pop(context);
+
+                            // save user uid, email in shared pref.
+                            SharedPreferences pref =
+                                await SharedPreferences.getInstance();
+                            final set = await pref.setString(
+                                'uId', result.uId); // set user uid
+                            final set2 = await pref.setString(
+                                'email', email); // set user email
+                            final set3 = await pref.setString(
+                                'userType', "buyer"); // set user type
+
+                            print("pref set: $set $set2 $set3");
+                          }
+                            */
                         }
                       }
                       // for signup screen
                       else if (widget.forSignupView != null) {
-                        // print('name $name');
-                        // print('email $email');
-                        // print('password $password');
-                        // print('contactNo $contactNo');
+                        if (widget.forSeller) {
+                          // signup for seller
+                          // print('name $name');
+                          // print('email $email');
+                          // print('password $password');
+                          // print('contactNo $contactNo');
 
-                        /*
+                          /*
                           // check user account with email already exists or not (returning false/empty list everytime maybe because function is deperecated)
                           final result = await UserAuthServices()
                               .accountEmailAlreadyExists(UserModel(email: email));
@@ -510,17 +587,76 @@ class _LoginRegisterForgotResetPasswordViewState
                           } else {
                             // valid user
                             */
-                        // push shop register screen
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ShopRegisterView(
-                                      sellerName: name,
-                                      sellerContactNo: contactNo,
-                                      email: email,
-                                      password: password,
-                                    )));
-                        // }
+                          // push shop register screen
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ShopRegisterView(
+                                        sellerName: name,
+                                        sellerContactNo: contactNo,
+                                        email: email,
+                                        password: password,
+                                      )));
+                          // }
+                        } else if (widget.forBuyer) {
+                          // signup for buyer
+                          // show creating account alert dialog
+                          Utils.showLoadingAlertDialog(context, "signup");
+
+                          // signup buyer account
+                          final result = await _userAuthServices.signUpUser(
+                              UserModel(email: email, password: password));
+
+                          if (result == null) {
+                            // close creating account dialog
+                            Navigator.pop(context);
+
+                            // user with email already exists
+                            floatingSnackBar(
+                                message:
+                                    'User with email already exists. Please try different email.',
+                                context: context);
+                          } else {
+                            // valid user
+                            UserModel user = result; // logged in user object
+
+                            // save user uid, email in shared pref.
+                              SharedPreferences pref =
+                                  await SharedPreferences.getInstance();
+                              final set = await pref.setString(
+                                  'uId', result.uId); // set user uid
+                              final set2 = await pref.setString(
+                                  'email', email); // set user email
+                              final set3 = await pref.setString(
+                                  'userType', "buyer"); // set user uid
+
+                              print("pref set: $set $set2 $set3");
+
+                            // create user uid with buyer document which contains buyer details
+                            final result2 =
+                                await BuyerServices().createBuyerDoc(
+                                    BuyerModel(
+                                      name: name,
+                                      contactNo: contactNo,
+                                    ),
+                                    user.uId!);
+
+                            // doc created
+                            if (result2 == 'success') {
+                              // close creating account dialog
+                              Navigator.pop(context);
+
+                              Utils.showAccountCreatedAlertDialog(
+                                  context, "buyer");
+                            } else {
+                              // show error
+                              floatingSnackBar(
+                                  message:
+                                      'Error while creating account. Please try again later.',
+                                  context: context);
+                            }
+                          }
+                        }
                       }
                     }
                   },

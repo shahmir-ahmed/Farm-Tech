@@ -3,10 +3,8 @@ import 'package:farm_tech/presentation/views/seller/authentication/authenticatio
 import 'package:flutter/material.dart';
 
 class SelectUserTypeView extends StatelessWidget {
-  SelectUserTypeView({required this.showSellerAuth, required this.showBuyerAuth});
-
-  VoidCallback showSellerAuth;
-  VoidCallback showBuyerAuth;
+  // SelectUserTypeView({required this.showSellerAuth, required this.showBuyerAuth});
+  SelectUserTypeView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +39,14 @@ class SelectUserTypeView extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   // show buyer Auth
+                  // push buyer login screen
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AuthenticationView(
+                                forSeller: false,
+                                forBuyer: true,
+                              )));
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -92,14 +98,17 @@ class SelectUserTypeView extends StatelessWidget {
 
               // second column for seller options
               GestureDetector(
-                // onTap: () {
-                //   // show seller login screen
-                //   Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //           builder: (context) => const AuthenticationView()));
-                // },
-                onTap: showSellerAuth,
+                onTap: () {
+                  // push seller login screen
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AuthenticationView(
+                                forSeller: true,
+                                forBuyer: false,
+                              )));
+                },
+                // onTap: showSellerAuth,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

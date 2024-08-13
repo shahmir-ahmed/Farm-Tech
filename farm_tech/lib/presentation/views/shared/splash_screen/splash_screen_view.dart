@@ -76,21 +76,50 @@ class SplashScreenView extends StatelessWidget {
             // for seller splash screen
             // agri hardware image
             forSeller != null
-                ? const Image(
-                    image: AssetImage('assets/images/agri-hardware-logo.png'),
-                    width: 127,
-                    height: 132,
-                  )
-                :
-                // for buyer splash screen
-                forBuyer != null
-                    ?
-                    // agri user image
-                    const Image(
-                        image: AssetImage('assets/images/agri-user-logo.png'),
-                        width: 107,
-                        height: 149,
+                ? forSeller!
+                    // seller splash
+                    ? const Image(
+                        image:
+                            AssetImage('assets/images/agri-hardware-logo.png'),
+                        width: 127,
+                        height: 132,
                       )
+                    :
+                    // seller false
+                    // check for buyer is present
+                    forBuyer != null
+                        ? forBuyer!
+                            ?
+                            // agri user image
+                            const Image(
+                                image: AssetImage(
+                                    'assets/images/agri-user-logo.png'),
+                                width: 107,
+                                height: 149,
+                              )
+                            // buyer false (so both cannot be false means not provide any value if not show seller/buyer splash)
+                            : SizedBox()
+                        // both are null (means value not provided)
+                        : const Image(
+                            image: AssetImage(
+                                'assets/images/farm-tech-logo-with-text.png'),
+                            width: 230,
+                            height: 80,
+                          )
+                // seller is null
+                : forBuyer != null
+                    ? forBuyer!
+                        ?
+                        // agri user image
+                        const Image(
+                            image:
+                                AssetImage('assets/images/agri-user-logo.png'),
+                            width: 107,
+                            height: 149,
+                          )
+                        // buyer false (so both cannot be false means not provide any value if not show seller/buyer splash)
+                        : SizedBox()
+                    // both are null (means value not provided)
                     : const Image(
                         image: AssetImage(
                             'assets/images/farm-tech-logo-with-text.png'),
