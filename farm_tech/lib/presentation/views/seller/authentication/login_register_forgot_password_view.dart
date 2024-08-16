@@ -71,6 +71,7 @@ class _LoginRegisterForgotResetPasswordViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: Utils.getAuthAppBar('', context),
       backgroundColor: Utils.whiteColor,
       body: _getBody(),
     );
@@ -514,7 +515,7 @@ class _LoginRegisterForgotResetPasswordViewState
                           }
                         } else if (widget.forBuyer) {
                           // login for buyer
-                          /*
+                          
                           // show loading alert dialog
                           Utils.showLoadingAlertDialog(context, 'login');
 
@@ -559,7 +560,7 @@ class _LoginRegisterForgotResetPasswordViewState
 
                             print("pref set: $set $set2 $set3");
                           }
-                            */
+                            
                         }
                       }
                       // for signup screen

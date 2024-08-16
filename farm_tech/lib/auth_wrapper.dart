@@ -1,10 +1,5 @@
-import 'package:farm_tech/backend/model/buyer.dart';
-import 'package:farm_tech/backend/model/seller.dart';
 import 'package:farm_tech/backend/model/user.dart';
-import 'package:farm_tech/backend/services/buyer_services.dart';
-import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/presentation/views/select_user_type/select_user_type_view.dart';
-import 'package:farm_tech/presentation/views/seller/authentication/authentication_view.dart';
 import 'package:farm_tech/presentation/views/seller/home/home_view.dart';
 import 'package:farm_tech/presentation/views/shared/on_boarding/on_boarding_view.dart';
 import 'package:farm_tech/presentation/views/shared/splash_screen/splash_screen_view.dart';
@@ -21,13 +16,17 @@ class AuthWrapper extends StatefulWidget {
 }
 
 class _AuthWrapperState extends State<AuthWrapper> {
-  bool twoSecondsPassed1 = false;
+  bool twoSecondsPassed1 = false; // for no user logged in splash timer
 
   bool twoSecondsPassed2 = false;
 
   bool isChecking = true;
 
   String userType = '';
+
+  SharedPreferences? pref;
+
+  // String? loggedInUserType;
 
 /*
   bool sellerAuth = false;
@@ -87,10 +86,9 @@ class _AuthWrapperState extends State<AuthWrapper> {
   }
   */
 
-  _checkLoggedInUserTypeInPref() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-
-    final type = pref.getString("userType");
+  // check and set the user type var value from shared pref based on the value in shared pref
+  _checkLoggedInUserTypeInPref() {
+    final type = pref!.getString("userType");
 
     print('user type in shared pref: $type');
 
@@ -106,8 +104,15 @@ class _AuthWrapperState extends State<AuthWrapper> {
         userType = 'buyer';
         print('user type set as buyer');
       });
-    } else {
-      // if not present yet then check again b/c user logged in then after then userType value in shared pref is set when registering
+    }
+    // if null
+    else {
+      print('user type is null in shared pref');
+      // set as empty because previous user's type is saved here in userType value and when different user logs in again shared pref take time to save and if not saved yet then the same previous user type screen will be displayed
+      setState(() {
+        userType == '';
+      });
+      // if not present yet then check again b/c user is logged in then after sometime userType value in shared pref is set when registering
       // after 2 secs interval check again
       Future.delayed(const Duration(seconds: 2), () {
         _checkLoggedInUserTypeInPref();
@@ -120,11 +125,24 @@ class _AuthWrapperState extends State<AuthWrapper> {
       Future.delayed(const Duration(seconds: 2), () {
         setState(() {
           twoSecondsPassed2 = true;
+          print('second two seconds passed');
         });
       });
     }
   }
 
+  // return current user logged in type i.e. buyer/seller
+  String? _getLoggedInUserTypeFromPref() {
+    print('returning user type');
+
+    final type = pref!.getString("userType");
+
+    print('user type in shared pref: $type');
+
+    return type;
+  }
+
+  // initial splash timer for general splash screen to stay
   _startInitialSplashTimer() {
     // for general splash screen if no user is logged in (first time)
     Future.delayed(const Duration(seconds: 2), () {
@@ -139,6 +157,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
         }
         */
         twoSecondsPassed1 = true;
+        print('first two seconds passed');
       });
     });
   }
@@ -148,6 +167,14 @@ class _AuthWrapperState extends State<AuthWrapper> {
     // TODO: implement initState
     super.initState();
     _startInitialSplashTimer(); // runs when firrt time app starts
+
+    // initialize shared pref instance for the app
+    SharedPreferences.getInstance().then((instance) {
+      setState(() {
+        pref = instance;
+        print('pref instance set');
+      });
+    });
   }
 
   @override
@@ -157,7 +184,9 @@ class _AuthWrapperState extends State<AuthWrapper> {
 
     // print('user: $user');
 
+    // user not logged in
     if (user == null) {
+      print('user is not logged in');
       // print('user not logged in: $user');
       // normal splash screen
       return twoSecondsPassed1
@@ -180,19 +209,53 @@ class _AuthWrapperState extends State<AuthWrapper> {
                     */
           SelectUserTypeView()
           : SplashScreenView();
-    } else {
+    }
+    // user logged in
+    else {
+      print('user is logged in');
       // print('user logged in: ${user.uId}');
 
-      // set user type var as empty b/c when user loggs out and then different type user logs in again then this value will not be changed because already it is set so set again. (need to renintizlize somewhere)
+      // set user type var as empty b/c when user loggs out and then different type user logs in again then this value will not be changed so current saved user type value based home screen will be shown i.e. if seller logs out and buyer logs in again then type is not changed so seller with new uis does not exist in collection so error in showing data in seller home screen, because already it is set so set again. (need to renintizlize somewhere)
 
-      // check user user type in shared pref
-      // if still empty then fetch
-      if (userType.isEmpty) {
-        _checkLoggedInUserTypeInPref();
-        print('checking user type');
+      // check user type in shared pref
+      if (pref != null) {
+        // if empty then fetch
+        if (userType.isEmpty) {
+          _checkLoggedInUserTypeInPref();
+          print('checking user type');
+        }
+        // check and get the current value in shared pref that which type user is logged in if it is same as current type then not change userType value and if not same then change the type value
+        else {
+          print('checking user type again');
+
+          String? loggedInUserType = _getLoggedInUserTypeFromPref();
+
+          // same user type of current logged in and previous logged in user
+          if (loggedInUserType == userType) {
+            // do nothing
+            print('same user type');
+          } else if (loggedInUserType == null) {
+            print('user type not present');
+
+            // set user type state var as empty again
+            setState(() {
+              userType = '';
+            });
+
+            // if not set yet then null here then get and set again after 2 secs
+            Future.delayed(const Duration(seconds: 2), () {
+              _checkLoggedInUserTypeInPref();
+            });
+          } else if (loggedInUserType != userType) {
+            print('different user type');
+
+            // if not same then set the user type value again
+            _checkLoggedInUserTypeInPref();
+          }
+        }
       }
 
-      print('userType: $userType');
+      print('userType state var: $userType');
 
       // seller//buyer splash screen
       return isChecking
@@ -204,9 +267,12 @@ class _AuthWrapperState extends State<AuthWrapper> {
                   ? HomeView(
                       userType: userType,
                     )
-                  // still empty (cannot come here because twoseondspassed 2 is not passed until the type value is non empty (see check function)) (so for else value sake written)
-                  : Placeholder()
-                  // if 2 seconds are not passed and user type is not set yet then both value below will be false and general splash will be displayed
+                  // still not know which user type
+                  : SplashScreenView()
+              // if logged in user type is not set yet then means a new user has logged in just now so wait and then verify the user type and then show relevant splash screen
+              // : loggedInUserType == null
+              //     ? SplashScreenView()
+              // if 2 seconds are not passed and user type is not set yet then both value below will be false and general splash will be displayed
               : SplashScreenView(
                   forSeller: userType == "seller" ? true : false,
                   forBuyer: userType == "buyer" ? true : false,

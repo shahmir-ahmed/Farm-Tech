@@ -1,3 +1,4 @@
+import 'package:farm_tech/configs/utils.dart';
 import 'package:flutter/material.dart';
 
 class BuyerSearchTabView extends StatefulWidget {
@@ -11,6 +12,7 @@ class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _getBody(),
+      backgroundColor: Utils.whiteColor,
     );
   }
 

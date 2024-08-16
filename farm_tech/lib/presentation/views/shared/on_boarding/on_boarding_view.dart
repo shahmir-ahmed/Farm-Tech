@@ -1,4 +1,4 @@
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart' as carousel;
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/select_user_type/select_user_type_view.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,7 @@ class OnBoardingView extends StatefulWidget {
 
 class _OnBoardingViewState extends State<OnBoardingView> {
   int _current = 0;
-  final CarouselController _controller = CarouselController();
+  final carousel.CarouselSliderController _controller = carousel.CarouselSliderController();
 
   final imgList = [
     "assets/images/carousel-image-1.png",
@@ -48,9 +48,9 @@ class _OnBoardingViewState extends State<OnBoardingView> {
       child: Column(
         children: [
           // carousel
-          CarouselSlider(
+          carousel.CarouselSlider(
             carouselController: _controller,
-            options: CarouselOptions(
+            options: carousel.CarouselOptions(
                 viewportFraction: 1.0,
                 autoPlay: true,
                 // height: 430.0,

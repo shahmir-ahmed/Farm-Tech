@@ -167,6 +167,8 @@ class _HomeViewState extends State<HomeView> {
     // TODO: implement initState
     super.initState();
 
+    // print('user type: ${widget.userType}'); -/
+
     if (widget.userType == 'seller') {
       // reinitialize profile tab
       _reInitializeProfileTab();
@@ -179,6 +181,7 @@ class _HomeViewState extends State<HomeView> {
   // buil method
   @override
   Widget build(BuildContext context) {
+    // print('user type: ${widget.userType}'); -/
     return Scaffold(
       backgroundColor: Utils.whiteColor,
       body: widget.userType == 'seller'

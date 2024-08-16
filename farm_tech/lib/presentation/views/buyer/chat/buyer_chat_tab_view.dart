@@ -1,3 +1,4 @@
+import 'package:farm_tech/configs/utils.dart';
 import 'package:flutter/material.dart';
 
 class BuyerChatTabView extends StatefulWidget {
@@ -11,6 +12,7 @@ class _BuyerChatTabViewState extends State<BuyerChatTabView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _getBody(),
+      backgroundColor: Utils.whiteColor,
     );
   }
 

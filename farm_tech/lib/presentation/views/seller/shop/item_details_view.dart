@@ -1,4 +1,4 @@
-import 'package:carousel_slider/carousel_controller.dart';
+import 'package:carousel_slider/carousel_controller.dart' as carousel;
 import 'package:farm_tech/backend/model/product.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/backend/services/review_services.dart';
@@ -19,7 +19,7 @@ class ItemDetailsView extends StatefulWidget {
 class _ItemDetailsViewState extends State<ItemDetailsView> {
   int _current = 0;
 
-  final CarouselController _controller = CarouselController();
+  final carousel.CarouselSliderController _controller = carousel.CarouselSliderController();
 
   // product images file objects
   // List productImages = [

@@ -1,4 +1,4 @@
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart' as carousel;
 import 'package:farm_tech/backend/model/product.dart';
 import 'package:farm_tech/backend/model/product_reviews_model.dart';
 import 'package:farm_tech/backend/model/review.dart';
@@ -368,7 +368,7 @@ class ProductImagesCarousel extends StatelessWidget {
       this.forUploadProductScreen,
       this.forItemDetailsScreen});
 
-  CarouselController controller;
+  carousel.CarouselSliderController controller;
   void Function(int) onPageChanged;
   List productImages;
   int current;
@@ -381,9 +381,9 @@ class ProductImagesCarousel extends StatelessWidget {
     // images slider
     return Stack(children: [
       // carousel
-      CarouselSlider(
+      carousel.CarouselSlider(
         carouselController: controller,
-        options: CarouselOptions(
+        options: carousel.CarouselOptions(
             viewportFraction: 1.0,
             height: carouselHeight,
             // height: MediaQuery.of(context).size.height - 100,

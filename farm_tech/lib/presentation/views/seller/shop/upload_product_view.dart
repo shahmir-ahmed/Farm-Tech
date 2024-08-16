@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:carousel_slider/carousel_controller.dart';
+import 'package:carousel_slider/carousel_controller.dart' as carousel;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:farm_tech/backend/model/product.dart';
@@ -45,11 +45,12 @@ class _UploadProductViewState extends State<UploadProductView> {
     "Forestry",
     "Livestock",
     "Dairy",
+    "Dry Fruits",
     "Fish Farming",
   ];
 
   int _current = 0;
-  final CarouselController _controller = CarouselController();
+  final carousel.CarouselSliderController _controller = carousel.CarouselSliderController();
 
   // product services instance
   final ProductServices _productServices = ProductServices();

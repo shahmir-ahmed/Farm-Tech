@@ -276,6 +276,27 @@ class Utils {
         actions: actions.isEmpty ? [] : actions);
   }
 
+  // appbar for login, sigup, forgot
+  static getAuthAppBar(String title, context) {
+    return AppBar(
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            margin: const EdgeInsets.only(left: 20.0),
+            child: Image.asset(
+              'assets/images/back-arrow.png',
+            ),
+          ),
+        ),
+        leadingWidth: 48,
+        scrolledUnderElevation: 0,
+        backgroundColor: whiteColor.withOpacity(0.0),
+        title: Text(
+          title,
+          style: kAppHeading6BoldStyle,
+        ));
+  }
+
   // appbar for tab screen
   static getTabAppBar(String title, List<Widget> actions, context) {
     return AppBar(
