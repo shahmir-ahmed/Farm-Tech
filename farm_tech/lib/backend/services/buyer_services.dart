@@ -32,4 +32,20 @@ class BuyerServices{
       return null;
     }
   }
+
+    // get individual buyer name
+  Future<String?> getBuyerName(BuyerModel model) async {
+    try {
+      return await FirebaseFirestore.instance
+          .collection('buyers')
+          .doc(model.docId)
+          .get()
+          .then((doc) {
+        return doc.get('name').toString();
+      });
+    } catch (e) {
+      print('Err in getBuyerName: $e');
+      return null;
+    }
+  }
 }

@@ -12,8 +12,7 @@ class CustomButton extends StatelessWidget {
       this.buttonWidth,
       this.buttonHeight,
       this.icon,
-      this.textStyle
-      });
+      this.textStyle});
 
   VoidCallback onButtonPressed;
   String buttonText;
@@ -70,20 +69,21 @@ class CustomButton extends StatelessWidget {
                   : const SizedBox(),
               Text(
                 buttonText,
-                style: textStyle ?? Utils.kAppBody2RegularStyle.copyWith(
-                    color: secondaryButton != null
-                        ? secondaryButton!
-                            ? Utils.greyColor
-                            // secondary button false
-                            : primaryButton != null
-                                ? primaryButton!
-                                    ? Utils.whiteColor
-                                    // primary button false
+                style: textStyle ??
+                    Utils.kAppBody2RegularStyle.copyWith(
+                        color: secondaryButton != null
+                            ? secondaryButton!
+                                ? Utils.greyColor
+                                // secondary button false
+                                : primaryButton != null
+                                    ? primaryButton!
+                                        ? Utils.whiteColor
+                                        // primary button false
+                                        : Utils.blackColor2
+                                    // primary button null
                                     : Utils.blackColor2
-                                // primary button null
-                                : Utils.blackColor2
-                        // secondary button null
-                        : Utils.blackColor2),
+                            // secondary button null
+                            : Utils.blackColor2),
               ),
             ],
           ),
@@ -130,6 +130,22 @@ class CircleSkeleton extends StatelessWidget {
         color: Theme.of(context).primaryColor.withOpacity(0.04),
         shape: BoxShape.circle,
       ),
+    );
+  }
+}
+
+// products grid view
+class ProductsGridView extends StatelessWidget {
+  ProductsGridView({required this.children});
+
+  List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.count(
+      childAspectRatio: 0.75,
+      crossAxisCount: 2,
+      children: children,
     );
   }
 }

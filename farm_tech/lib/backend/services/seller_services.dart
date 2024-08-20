@@ -125,7 +125,7 @@ class SellerServices {
         return doc.get('name').toString();
       });
     } catch (e) {
-      print('Err in getSellerDataStream: $e');
+      print('Err in getSellerName: $e');
       return null;
     }
   }

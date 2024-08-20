@@ -1,4 +1,6 @@
+import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/seller.dart';
+import 'package:farm_tech/backend/services/buyer_services.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/buyer/chat/buyer_chat_tab_view.dart';
@@ -37,7 +39,7 @@ class _HomeViewState extends State<HomeView> {
   ];
 
   List<Widget?> _widgetOptionsBuyer = <Widget?>[
-    const BuyerHomeTabView(),
+    Utils.circularProgressIndicator,
     const BuyerSearchTabView(),
     const BuyerOrderTabView(),
     const BuyerChatTabView(),
@@ -53,6 +55,9 @@ class _HomeViewState extends State<HomeView> {
   // seller name
   String sellerName = '';
 
+  // buyer name
+  String buyerName = '';
+
   // on bottom option tab clicked
   void _onItemTapped(int index) {
     setState(() {
@@ -64,6 +69,13 @@ class _HomeViewState extends State<HomeView> {
   void setOrderTabAsActive() {
     setState(() {
       _selectedIndex = 2;
+    });
+  }
+
+  // set buyer search tab as active
+  void setBuyerSearchTabAsActive() {
+    setState(() {
+      _selectedIndex = 1;
     });
   }
 
@@ -84,14 +96,19 @@ class _HomeViewState extends State<HomeView> {
       });
     }
 
-    // reinitialize shop tab
-    _reInitializeShopTab();
+    if (widget.userType == 'seller') {
+      // reinitialize shop tab
+      _reInitializeShopTab();
 
-    // reinitialize orders tab
-    _reInitializeOrdersTab();
+      // reinitialize orders tab
+      _reInitializeOrdersTab();
 
-    // get seller name now
-    _getSellerName();
+      // get seller name now
+      _getSellerName();
+    } else {
+      // get buyer name now
+      _getBuyerName();
+    }
   }
 
   // get seller name and set
@@ -117,6 +134,33 @@ class _HomeViewState extends State<HomeView> {
           HomeTabView(
         sellerName: sellerName,
         setOrderTabAsActive: setOrderTabAsActive,
+      );
+    });
+  }
+
+  // get buyer name and set
+  _getBuyerName() async {
+    final name =
+        await BuyerServices().getBuyerName(BuyerModel(docId: uId)) as String;
+
+    // print('buyerName $name');
+    setState(() {
+      buyerName = name;
+    });
+
+    // reinitailize home tab
+    _reInitializeBuyerHomeTab();
+  }
+
+  // reinitailize home tab
+  _reInitializeBuyerHomeTab() {
+    // reinitialize widgets options
+    setState(() {
+      _widgetOptionsBuyer[0] =
+          // home tab with buyer name and set search tab as active function
+          BuyerHomeTabView(
+        buyerName: buyerName,
+        setSearchTabAsActive: setBuyerSearchTabAsActive,
       );
     });
   }
@@ -172,10 +216,9 @@ class _HomeViewState extends State<HomeView> {
     if (widget.userType == 'seller') {
       // reinitialize profile tab
       _reInitializeProfileTab();
-
-      // get seller uid
-      _getUserUid();
     }
+    // get seller/buyer uid
+    _getUserUid();
   }
 
   // buil method
@@ -230,13 +273,13 @@ class _HomeViewState extends State<HomeView> {
                         backgroundColor: Colors.white,
                         activeIcon: Image.asset(
                           'assets/images/icon@search-active.png',
-                          width: 27,
-                          height: 27,
+                          width: 32,
+                          height: 32,
                         ),
                         icon: Image.asset(
                           'assets/images/icon@search.png',
-                          width: 27,
-                          height: 27,
+                          width: 32,
+                          height: 32,
                         ),
                         label: '')
                     : BottomNavigationBarItem(

@@ -7,6 +7,7 @@ import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/seller/shop/item_details_view.dart';
 import 'package:farm_tech/presentation/views/seller/shop/ratings_reviews_view.dart';
+import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -60,7 +61,7 @@ class _ProductTabViewState extends State<ProductTabView> {
     // consume stream
     final products = Provider.of<List<ProductModel>?>(context);
 
-    // if products are supplied and first product main image path is not set
+    // if products are supplied and products list is empty
     if (products != null && productsList.isEmpty) {
       // print('first product doc id ${products.first.docId}');
       productsList = products;
@@ -76,17 +77,15 @@ class _ProductTabViewState extends State<ProductTabView> {
         // grid view
         : SizedBox(
             height: 340,
-            child: GridView.count(
-                childAspectRatio: 0.74,
-                crossAxisCount: 2,
+            child: ProductsGridView(
                 children: productsList.map((productModel) {
-                  // product card with stream of product reviews data supplied
-                  return StreamProvider.value(
-                      initialData: null,
-                      value: ProductServices()
-                          .getProductReviewsDataStream(productModel),
-                      child: ProductCard(productModel: productModel));
-                }).toList()
+              // product card with stream of product reviews data supplied
+              return StreamProvider.value(
+                  initialData: null,
+                  value: ProductServices()
+                      .getProductReviewsDataStream(productModel),
+                  child: ProductCard(productModel: productModel));
+            }).toList()
                 // ..sort((a, b) =>
                 //     b.createdAt.compareTo(a.createdAt))
                 ));
@@ -97,12 +96,18 @@ class _ProductTabViewState extends State<ProductTabView> {
 class ProductCard extends StatelessWidget {
   ProductCard({required this.productModel});
 
+  // for seller
+
+  // for buyer
+
   ProductModel productModel;
 
   @override
   Widget build(BuildContext context) {
     // consume product reviews data stream
     final productReviewsData = Provider.of<ProductReviewsModel?>(context);
+
+    // print('productsList: ${productModel.mainImageUrl}');
 
     // print('productReviewsData $productReviewsData');
 
@@ -130,8 +135,7 @@ class ProductCard extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(color: Utils.greyColor, width: 0.1),
         ),
-        child: Center(
-            child: Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // product image
@@ -145,10 +149,16 @@ class ProductCard extends StatelessWidget {
                     height: 160,
                     child: Utils.circularProgressIndicator,
                   )
-                : Center(
-                    child: Image.network(
-                      productModel.mainImageUrl!,
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: SizedBox(
+                      width: 165,
                       height: 160,
+                      child: Image.network(
+                        fit: BoxFit.fill,
+                        productModel.mainImageUrl!,
+                        // height: 160,
+                      ),
                     ),
                   ),
 
@@ -158,42 +168,55 @@ class ProductCard extends StatelessWidget {
             ),
 
             // product price and rating row
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text(
-                productModel.price.toString(),
-                style: Utils.kAppCaptionBoldStyle,
-              ),
-              Row(
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
-                    Icons.star,
-                    color: Utils.greenColor,
-                    size: 11,
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "PKR ${productModel.price.toString()}",
+                          style: Utils.kAppCaptionBoldStyle,
+                        ),
+                        Row(
+                          children: [
+                            productReviewsData != null
+                                ? productReviewsData.avgRating == "0"
+                                    ? SizedBox()
+                                    : const Icon(
+                                        Icons.star,
+                                        color: Utils.greenColor,
+                                        size: 11,
+                                      )
+                                : SizedBox(),
+                            Text(
+                              " ${productReviewsData != null ? productReviewsData.avgRating == "0" ? "" : productReviewsData.avgRating! : 5.0}",
+                              style: Utils.kAppCaption2MediumStyle,
+                            )
+                          ],
+                        )
+                      ]),
+
+                  // space
+                  const SizedBox(
+                    height: 10,
                   ),
+
+                  // product name
                   Text(
-                    " ${productReviewsData != null ? productReviewsData.avgRating as String : 5.0}",
-                    style: Utils.kAppCaption2MediumStyle,
+                    productModel.title as String,
+                    style: Utils.kAppCaptionMediumStyle
+                        .copyWith(color: Utils.greyColor),
                   )
                 ],
-              )
-            ]),
-
-            // space
-            const SizedBox(
-              height: 10,
+              ),
             ),
-
-            // product name
-            Text(
-              productModel.title as String,
-              style:
-                  Utils.kAppCaptionMediumStyle.copyWith(color: Utils.greyColor),
-            )
           ],
-        )),
+        ),
       ),
     );
-    ;
   }
 }
 

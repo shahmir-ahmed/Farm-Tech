@@ -421,7 +421,7 @@ class _ProductAndInfoTabsContainerState
             ? StreamProvider.value(
                 initialData: null,
                 value: ProductServices()
-                    .getProductsStream(SellerModel(docId: widget.sellerId)),
+                    .getSellerProductsStream(SellerModel(docId: widget.sellerId)),
                 child: const ProductTabView())
             :
             // info container

@@ -37,7 +37,7 @@ class ProductServices {
   }
 
   // get seller products stream
-  Stream<List<ProductModel>>? getProductsStream(SellerModel model) {
+  Stream<List<ProductModel>>? getSellerProductsStream(SellerModel model) {
     try {
       return FirebaseFirestore.instance
           .collection('products')
@@ -187,6 +187,35 @@ class ProductServices {
       });
     } catch (e) {
       print('Err in getProductReviewsDataStream: $e');
+      return null;
+    }
+  }
+
+  // specific category products stream
+  Stream<List<ProductModel>>? getCategoryProductsStream(String category) {
+    try {
+      return FirebaseFirestore.instance
+          .collection('products')
+          .where('category', isEqualTo: category)
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => ProductModel.fromJson(doc.data(), doc.id))
+              .toList());
+    } catch (e) {
+      print('Err in getCategoryProductsStream: $e');
+      return null;
+    }
+  }
+
+  // get all products stream
+  Stream<List<ProductModel>>? getAllProductsStream() {
+    try {
+      return FirebaseFirestore.instance.collection('products').snapshots().map(
+          (snapshot) => snapshot.docs
+              .map((doc) => ProductModel.fromJson(doc.data(), doc.id))
+              .toList());
+    } catch (e) {
+      print('Err in getAllProductsStream: $e');
       return null;
     }
   }
