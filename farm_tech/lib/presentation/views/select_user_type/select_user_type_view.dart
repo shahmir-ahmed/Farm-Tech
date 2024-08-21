@@ -1,5 +1,5 @@
 import 'package:farm_tech/configs/utils.dart';
-import 'package:farm_tech/presentation/views/seller/authentication/authentication_view.dart';
+import 'package:farm_tech/presentation/views/shared/authentication/authentication_view.dart';
 import 'package:flutter/material.dart';
 
 class SelectUserTypeView extends StatelessWidget {

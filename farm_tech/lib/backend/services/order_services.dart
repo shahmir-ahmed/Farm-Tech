@@ -33,14 +33,15 @@ class OrderServices {
   }
 
   // get in progress orders stream
-  Stream<List<OrderModel>?>? getInProgressOrdersStream(SellerModel sellerModel) {
+  Stream<List<OrderModel>?>? getInProgressOrdersStream(
+      SellerModel sellerModel) {
     try {
       return FirebaseFirestore.instance
           .collection('orders')
           .where('sellerId', isEqualTo: sellerModel.docId)
           .snapshots()
           .map((snapshot) => snapshot.docs
-             .where((doc) => doc.get('status') == "In Progress")
+              .where((doc) => doc.get('status') == "In Progress")
               .map((doc) => OrderModel.fromJson(doc.data(), doc.id))
               .toList());
     } catch (e) {
@@ -77,6 +78,23 @@ class OrderServices {
               .toString());
     } catch (e) {
       print('Error in getSellerSoldItemsStream: $e');
+      return null;
+    }
+  }
+
+  // get seller orders count which are sold (means status as completed) count
+  Future<String?>? getSellerSoldItemsCount(SellerModel sellerModel) {
+    try {
+      return FirebaseFirestore.instance
+          .collection('orders')
+          .where('sellerId', isEqualTo: sellerModel.docId)
+          .get()
+          .then((snapshot) => snapshot.docs
+              .where((doc) => doc.get('status') == "Completed")
+              .length
+              .toString());
+    } catch (e) {
+      print('Error in getSellerSoldItemsCount: $e');
       return null;
     }
   }

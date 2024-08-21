@@ -13,6 +13,7 @@ class Utils {
   static const Color lightGreyColor1 = Color(0xffB4B4B4);
   static const Color lightGreyColor2 = Color(0xffFBFBFB);
   static const Color lightGreyColor3 = Color(0xffD4D4D4);
+  static const Color lightGreyColor4 = Color(0xffB3B3B3);
   static const Color lightGreenColor1 = Color(0xffb8ddbe);
 
   // text styles
@@ -40,6 +41,8 @@ class Utils {
       GoogleFonts.raleway(fontSize: 27.6, fontWeight: FontWeight.bold);
   static final TextStyle kAppHeading6BoldStyle =
       GoogleFonts.raleway(fontSize: 23, fontWeight: FontWeight.bold);
+  static final TextStyle kAppHeading6MediumStyle =
+      GoogleFonts.raleway(fontSize: 23, fontWeight: FontWeight.w500);
   static final TextStyle kAppCaptionRegularStyle = GoogleFonts.raleway(
     fontSize: 11.1,
   );
@@ -99,6 +102,13 @@ class Utils {
       child: CircularProgressIndicator(
     color: greenColor,
     backgroundColor: lightGreenColor1,
+  ));
+
+  // opposite color circluar progress indicator
+  static const circularProgressIndicatorLightGreen = Center(
+      child: CircularProgressIndicator(
+    color: lightGreenColor1,
+    backgroundColor: greenColor,
   ));
 
   // show loading alert dialog

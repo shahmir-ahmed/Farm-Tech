@@ -5,7 +5,7 @@ import 'package:farm_tech/backend/model/review.dart';
 import 'package:farm_tech/backend/model/seller.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/configs/utils.dart';
-import 'package:farm_tech/presentation/views/seller/shop/item_details_view.dart';
+import 'package:farm_tech/presentation/views/shared/item_details/item_details_view.dart';
 import 'package:farm_tech/presentation/views/seller/shop/ratings_reviews_view.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -94,11 +94,12 @@ class _ProductTabViewState extends State<ProductTabView> {
 
 // individual product container
 class ProductCard extends StatelessWidget {
-  ProductCard({required this.productModel});
+  ProductCard({required this.productModel, this.forBuyer});
 
   // for seller
 
   // for buyer
+  bool? forBuyer;
 
   ProductModel productModel;
 
@@ -119,15 +120,27 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (productReviewsData != null) {
-          // show product details screen
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => StreamProvider.value(
-                      initialData: null,
-                      value: ProductServices().getProductStream(productModel),
-                      child: ItemDetailsView(
-                          avgRating: productReviewsData.avgRating!))));
+          // show product details screen for buyer
+          if (forBuyer != null) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => StreamProvider.value(
+                        initialData: null,
+                        value: ProductServices().getProductStream(productModel),
+                        child: ItemDetailsView(
+                            avgRating: productReviewsData.avgRating!, forBuyer: true,))));
+          } else {
+            // show product details screen for seller
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => StreamProvider.value(
+                        initialData: null,
+                        value: ProductServices().getProductStream(productModel),
+                        child: ItemDetailsView(
+                            avgRating: productReviewsData.avgRating!))));
+          }
         }
       },
       child: Container(

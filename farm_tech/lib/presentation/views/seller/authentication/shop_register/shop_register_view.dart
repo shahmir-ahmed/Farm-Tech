@@ -5,7 +5,7 @@ import 'package:farm_tech/backend/model/user.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
-import 'package:farm_tech/presentation/views/seller/authentication/authentication_view.dart';
+import 'package:farm_tech/presentation/views/shared/authentication/authentication_view.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';

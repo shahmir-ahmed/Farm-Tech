@@ -1,4 +1,4 @@
-import 'package:farm_tech/presentation/views/seller/authentication/login_register_forgot_password_view.dart';
+import 'package:farm_tech/presentation/views/shared/authentication/login_register_forgot_password_view.dart';
 import 'package:flutter/material.dart';
 
 class AuthenticationView extends StatefulWidget {

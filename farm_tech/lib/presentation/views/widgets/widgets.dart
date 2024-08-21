@@ -12,7 +12,8 @@ class CustomButton extends StatelessWidget {
       this.buttonWidth,
       this.buttonHeight,
       this.icon,
-      this.textStyle});
+      this.textStyle,
+      this.widget});
 
   VoidCallback onButtonPressed;
   String buttonText;
@@ -22,6 +23,8 @@ class CustomButton extends StatelessWidget {
   bool? secondaryButton;
   dynamic icon;
   TextStyle? textStyle;
+  // if no icon/text needed and need to show a widget in center then provide this value only
+  Widget? widget;
 
   @override
   Widget build(BuildContext context) {
@@ -67,24 +70,26 @@ class CustomButton extends StatelessWidget {
                       width: 10,
                     )
                   : const SizedBox(),
-              Text(
-                buttonText,
-                style: textStyle ??
-                    Utils.kAppBody2RegularStyle.copyWith(
-                        color: secondaryButton != null
-                            ? secondaryButton!
-                                ? Utils.greyColor
-                                // secondary button false
-                                : primaryButton != null
-                                    ? primaryButton!
-                                        ? Utils.whiteColor
-                                        // primary button false
-                                        : Utils.blackColor2
-                                    // primary button null
-                                    : Utils.blackColor2
-                            // secondary button null
-                            : Utils.blackColor2),
-              ),
+              widget != null
+                  ? widget!
+                  : Text(
+                      buttonText,
+                      style: textStyle ??
+                          Utils.kAppBody2RegularStyle.copyWith(
+                              color: secondaryButton != null
+                                  ? secondaryButton!
+                                      ? Utils.greyColor
+                                      // secondary button false
+                                      : primaryButton != null
+                                          ? primaryButton!
+                                              ? Utils.whiteColor
+                                              // primary button false
+                                              : Utils.blackColor2
+                                          // primary button null
+                                          : Utils.blackColor2
+                                  // secondary button null
+                                  : Utils.blackColor2),
+                    ),
             ],
           ),
         ),
