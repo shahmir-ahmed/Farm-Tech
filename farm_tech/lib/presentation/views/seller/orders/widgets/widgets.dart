@@ -477,7 +477,7 @@ class _OrderCardState extends State<OrderCard> {
 
                               // quantity
                               Text(
-                                'Qty: ${widget.orderModel.quantity} Kg',
+                                'Qty: ${widget.orderModel.quantity}',
                                 style: Utils.kAppCaptionMediumStyle
                                     .copyWith(color: Utils.greyColor2),
                               ),

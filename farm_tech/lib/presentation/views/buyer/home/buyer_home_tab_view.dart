@@ -1,7 +1,10 @@
+import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/product.dart';
+import 'package:farm_tech/backend/services/cart_services.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/buyer/cart/cart_view.dart';
 import 'package:farm_tech/presentation/views/buyer/categories/all_categories_view.dart';
 import 'package:farm_tech/presentation/views/buyer/home/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/buyer/widgets/widgets.dart';
@@ -12,8 +15,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class BuyerHomeTabView extends StatefulWidget {
   BuyerHomeTabView(
-      {required this.buyerName, required this.setSearchTabAsActive});
+      {required this.buyerId, required this.buyerName, required this.setSearchTabAsActive});
 
+  String buyerId;
   String buyerName;
   VoidCallback setSearchTabAsActive;
 
@@ -74,7 +78,17 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                     ],
                   ),
                   GestureDetector(
-                    onTap: () async {
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => StreamProvider.value(
+                                value: CartServices().getBuyerCartItemsStream(BuyerModel(docId: widget.buyerId)),
+                                initialData: null,
+                                child: const CartView())));
+                    },
+                    /*
+                    () async {
                       // logout user
                       await UserAuthServices().signOut();
                       await _logoutUser();
@@ -85,6 +99,7 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                       //     message: 'Logged out successfully',
                       //     context: context);
                     },
+                    */
                     child: Container(
                       padding: EdgeInsets.all(15),
                       decoration: BoxDecoration(

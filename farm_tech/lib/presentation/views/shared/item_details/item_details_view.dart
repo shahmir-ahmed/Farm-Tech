@@ -392,7 +392,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => AddToCartBuyNowView(
-                                      title: 'Add To Cart',
+                                      title: 'Add to Cart',
                                       avgRating: widget.avgRating,
                                       productModel: productModel!)));
                         }

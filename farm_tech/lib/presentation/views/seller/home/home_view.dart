@@ -159,6 +159,7 @@ class _HomeViewState extends State<HomeView> {
       _widgetOptionsBuyer[0] =
           // home tab with buyer name and set search tab as active function
           BuyerHomeTabView(
+            buyerId: uId,
         buyerName: buyerName,
         setSearchTabAsActive: setBuyerSearchTabAsActive,
       );

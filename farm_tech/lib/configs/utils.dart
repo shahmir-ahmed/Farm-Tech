@@ -264,6 +264,97 @@ class Utils {
     );
   }
 
+  // show confirm alert dialog
+  static showConfirmAlertDialog(
+      BuildContext context, VoidCallback onConfirmPressed, String forScreen) {
+    // set up the button
+    // confirm button
+    Widget confirmButton = Expanded(
+      child: CustomButton(
+        secondaryButton: false,
+        primaryButton: true,
+        buttonText: forScreen == 'logout'
+            ? 'Logout'
+            : forScreen == 'cart'
+                ? 'Yes'
+                : '',
+        onButtonPressed: onConfirmPressed,
+        // buttonWidth: MediaQuery.of(context).size.width,
+        buttonHeight: 60,
+      ),
+    );
+    // cancel button
+    Widget cancelButton = Expanded(
+      child: CustomButton(
+        secondaryButton: true,
+        primaryButton: false,
+        buttonText: 'No',
+        onButtonPressed: () async {
+          // close alert dialog
+          Navigator.pop(context);
+        },
+        // buttonWidth: MediaQuery.of(context).size.width,
+        buttonHeight: 60,
+      ),
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      insetPadding:
+          const EdgeInsets.symmetric(horizontal: 50.0, vertical: 65.0),
+      icon: forScreen == 'logout'
+          ? Icon(
+              forScreen == 'logout' ? Icons.logout_outlined : Icons.abc,
+              size: 60,
+              color: Utils.greenColor,
+            )
+          : null,
+      // contentPadding:
+      //     const EdgeInsets.symmetric(horizontal: 30.0, vertical: 45.0),
+      backgroundColor: Utils.whiteColor,
+      actionsAlignment: MainAxisAlignment.spaceBetween,
+      title: Text(
+        textAlign: TextAlign.center,
+        forScreen == 'logout'
+            ? 'Logout?'
+            : forScreen == 'cart'
+                ? 'Remove items?'
+                : '',
+        style: Utils.kAppHeading6BoldStyle,
+      ),
+      content: Text(
+        textAlign: TextAlign.center,
+        forScreen == 'logout'
+            ? 'Are your sure you want to logout?'
+            : forScreen == 'cart'
+                ? 'Are your sure you want to remove items from cart?'
+                : '',
+        style:
+            Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
+      ),
+      actions: [
+        Row(
+          children: [
+            cancelButton,
+            // space
+            const SizedBox(
+              width: 15,
+            ),
+            confirmButton
+          ],
+        )
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   // appbar for screen
   static getAppBar(String title, List<Widget> actions, context) {
     return AppBar(

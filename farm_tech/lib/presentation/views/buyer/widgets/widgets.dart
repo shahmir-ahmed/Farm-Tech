@@ -1,11 +1,17 @@
+import 'package:farm_tech/backend/model/buyer.dart';
+import 'package:farm_tech/backend/model/cart_item.dart';
 import 'package:farm_tech/backend/model/product.dart';
+import 'package:farm_tech/backend/services/cart_services.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/buyer/cart/cart_view.dart';
 import 'package:farm_tech/presentation/views/seller/shop/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/shared/item_details/item_details_view.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
+import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // specific category products view
 class ProductsView extends StatefulWidget {
@@ -139,6 +145,17 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
 
   final counterFieldController = TextEditingController();
 
+  String buyerId = '';
+
+  // get buyer uid/doc id from shared pref
+  _getBuyerDocId() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    setState(() {
+      buyerId = pref.getString("uId") as String;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -146,7 +163,9 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
     counter = widget.productModel.minOrder!;
 
     counterFieldController.text = counter.toString();
+
     // print('counter $counter');
+    _getBuyerDocId();
   }
 
   @override
@@ -311,6 +330,7 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
                                   // - icon
                                   GestureDetector(
                                     onTap: () {
+                                      // counter is not at 1 and at minimum order value then can reduce
                                       if (counter != 1 &&
                                           counter !=
                                               widget.productModel.minOrder!) {
@@ -402,8 +422,41 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
                           // add button
                           CustomButton(
                               buttonHeight: 60,
-                              onButtonPressed: () {},
-                              buttonText: 'Add',
+                              onButtonPressed: () async {
+                                if (buyerId.isNotEmpty) {
+                                  if (widget.title == 'Add to Cart') {
+
+                                    // calculate total (price * quantity)
+                                    int total = widget.productModel.price! * counter;
+
+                                    // add item to cart
+                                    final result = await CartServices()
+                                        .addItemToCart(CartItemModel(
+                                            quantity: counter.toString(),
+                                            total: total.toString(),
+                                            productId:
+                                                widget.productModel.docId,
+                                            buyerId: buyerId));
+
+                                    if (result == 'success') {
+                                      // item added to cart
+                                      // show success message
+                                      floatingSnackBar(
+                                          message: 'Item added to cart',
+                                          context: context);
+                                    }else{
+                                      floatingSnackBar(
+                                          message: 'Error adding item to cart. Please try again later.',
+                                          context: context);
+                                    }
+                                  } else {
+                                    // proceed to checkout
+                                  }
+                                }
+                              },
+                              buttonText: widget.title == 'Add to Cart'
+                                  ? 'Add'
+                                  : 'Proceed to Checkout',
                               primaryButton: true,
                               secondaryButton: false)
                         ],
