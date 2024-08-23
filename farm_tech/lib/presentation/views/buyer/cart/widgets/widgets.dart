@@ -1,9 +1,13 @@
-// single order card
 import 'package:farm_tech/backend/model/cart_item.dart';
+import 'package:farm_tech/backend/model/product.dart';
+import 'package:farm_tech/backend/model/product_reviews_model.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/shared/item_details/item_details_view.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+// single cart item card
 class CartItemCard extends StatefulWidget {
   CartItemCard(
       {super.key,
@@ -100,154 +104,211 @@ class _CartItemCardState extends State<CartItemCard> {
   @override
   Widget build(BuildContext context) {
     // widget tree
-    return GestureDetector(
-      onTap: () {
-        if (productName.isEmpty ||
-            productCategory.isEmpty ||
-            productImageUrl.isEmpty) {
-          // not show details screen
-        } else {
-          // show product details screen
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (context) =>
-          //             ItemDetailsView(avgRating: 'avgRating')));
-        }
-      },
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                // product details
-                Row(
-                  children: [
+    return Column(
+      children: [
+        // divider
+        Utils.divider,
+        
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              // product details
+              Row(
+                children: [
+                  widget.removeClicked
+                      ?
+                      // show checkbox
+                      Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomCheckbox(
+                                value: widget.checkBoxValue,
+                                onChanged: widget.onCheckBoxClicked),
+                          ],
+                        )
+                      : SizedBox(),
 
-                    widget.removeClicked
-                        ?
-                        // show checkbox
-                        Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CustomCheckbox(
-                                  value: widget.checkBoxValue,
-                                  onChanged: widget.onCheckBoxClicked),
-                            ],
-                          )
-                        : SizedBox(),
+                  widget.removeClicked
+                      ?
+                      // space
+                      const SizedBox(
+                          width: 20,
+                        )
+                      : SizedBox(),
 
-                    widget.removeClicked
-                        ?
-                        // space
-                        const SizedBox(
-                            width: 20,
-                          )
-                        : SizedBox(),
-
-                    // image
-                    productImageUrl.isEmpty
-                        ? const SizedBox(
-                            width: 90, child: Utils.circularProgressIndicator)
-                        : Image.network(
+                  // image
+                  productImageUrl.isEmpty
+                      ? const SizedBox(
+                          width: 90, child: Utils.circularProgressIndicator)
+                      : GestureDetector(
+                          onTap: () {
+                            // show product details screen
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => StreamProvider.value(
+                                        value: ProductServices()
+                                            .getProductAvgRatingStream(
+                                                ProductModel(
+                                                    docId: widget.cartItemModel
+                                                        .productId)),
+                                        initialData: null,
+                                        child: CartItemDetailsViewBridge(
+                                            productModel: ProductModel(
+                                                docId: widget.cartItemModel
+                                                    .productId)))));
+                          },
+                          child: Image.network(
                             productImageUrl,
                             width: 90,
                             height: 80,
                           ),
+                        ),
 
-                    // Image.asset(
-                    //   'assets/images/featured-product-image-4.jpg',
-                    //   width: 90,
-                    //   height: 80,
-                    // ),
+                  // Image.asset(
+                  //   'assets/images/featured-product-image-4.jpg',
+                  //   width: 90,
+                  //   height: 80,
+                  // ),
 
-                    // space
-                    const SizedBox(
-                      width: 20,
-                    ),
+                  // space
+                  const SizedBox(
+                    width: 20,
+                  ),
 
-                    // column
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // name
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
+                  // column
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // name
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                if (productName.isNotEmpty) {
+                                  // show product details screen
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => StreamProvider.value(
+                                              value: ProductServices()
+                                                  .getProductAvgRatingStream(
+                                                      ProductModel(
+                                                          docId: widget
+                                                              .cartItemModel
+                                                              .productId)),
+                                              initialData: null,
+                                              child: CartItemDetailsViewBridge(
+                                                  productModel: ProductModel(
+                                                      docId: widget
+                                                          .cartItemModel
+                                                          .productId)))));
+                                }
+                              },
+                              child: Text(
                                 productName.isEmpty
                                     ? "Product Name"
                                     : productName,
                                 style: Utils.kAppBody3MediumStyle,
                               ),
-                              widget.removeClicked
-                                  ? SizedBox()
-                                  :
-                                  // remove text
-                                  GestureDetector(
-                                      onTap: widget.onRemoveClicked,
-                                      child: Text(
-                                        'Remove',
-                                        style: Utils.kAppBody3MediumStyle
-                                            .copyWith(color: Utils.greenColor),
-                                      ),
+                            ),
+                            widget.removeClicked
+                                ? SizedBox()
+                                :
+                                // remove text
+                                GestureDetector(
+                                    onTap: widget.onRemoveClicked,
+                                    child: Text(
+                                      'Remove',
+                                      style: Utils.kAppBody3MediumStyle
+                                          .copyWith(color: Utils.greenColor),
                                     ),
-                            ],
-                          ),
+                                  ),
+                          ],
+                        ),
 
-                          // space
-                          const SizedBox(
-                            height: 5,
-                          ),
+                        // space
+                        const SizedBox(
+                          height: 5,
+                        ),
 
-                          // category
-                          Text(
-                            productCategory.isEmpty
-                                ? 'Category'
-                                : productCategory,
-                            style: Utils.kAppCaptionMediumStyle
-                                .copyWith(color: Utils.greyColor2),
-                          ),
+                        // category
+                        Text(
+                          productCategory.isEmpty
+                              ? 'Category'
+                              : productCategory,
+                          style: Utils.kAppCaptionMediumStyle
+                              .copyWith(color: Utils.greyColor2),
+                        ),
 
-                          // space
-                          const SizedBox(
-                            height: 10,
-                          ),
+                        // space
+                        const SizedBox(
+                          height: 10,
+                        ),
 
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // price
-                              Text(
-                                "PKR ${widget.cartItemModel.total!}",
-                                // "PKR 900",
-                                style: Utils.kAppBody2MediumStyle
-                                    .copyWith(color: Utils.greenColor),
-                              ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // price
+                            Text(
+                              "PKR ${widget.cartItemModel.total!}",
+                              // "PKR 900",
+                              style: Utils.kAppBody2MediumStyle
+                                  .copyWith(color: Utils.greenColor),
+                            ),
 
-                              // quantity
-                              Text(
-                                'Qty: ${widget.cartItemModel.quantity}',
-                                // "Qty: 1",
-                                style: Utils.kAppCaptionMediumStyle
-                                    .copyWith(color: Utils.greyColor2),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ],
-            ),
+                            // quantity
+                            Text(
+                              'Qty: ${widget.cartItemModel.quantity}',
+                              // "Qty: 1",
+                              style: Utils.kAppCaptionMediumStyle
+                                  .copyWith(color: Utils.greyColor2),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ],
           ),
-          // divider
-          Utils.divider,
-        ],
-      ),
+        ),
+        // divider
+        // Utils.divider,
+      ],
+    );
+  }
+}
+
+// cart item and item details view bridge widget for product reviews i.e. avg rating data consumer
+class CartItemDetailsViewBridge extends StatefulWidget {
+  CartItemDetailsViewBridge({required this.productModel});
+
+  ProductModel productModel;
+
+  @override
+  State<CartItemDetailsViewBridge> createState() =>
+      _CartItemDetailsViewBridgeState();
+}
+
+class _CartItemDetailsViewBridgeState extends State<CartItemDetailsViewBridge> {
+  @override
+  Widget build(BuildContext context) {
+    // consume product reviews data stream
+    final productAvgRating = Provider.of<String?>(context);
+
+    print('productAvgRating: $productAvgRating');
+
+    return StreamProvider.value(
+      value: ProductServices().getProductStream(widget.productModel),
+      initialData: null,
+      child: ItemDetailsView(
+          forBuyer: true,
+          avgRating: productAvgRating == null ? "0" : productAvgRating),
     );
   }
 }

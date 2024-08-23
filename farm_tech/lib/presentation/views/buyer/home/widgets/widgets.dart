@@ -14,12 +14,12 @@ class HomeFeaturedProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // consume product reviews data stream
-    final productReviewsData = Provider.of<ProductReviewsModel?>(context);
+    // consume product avg rating
+    final productAvgRating = Provider.of<String?>(context);
 
     return GestureDetector(
       onTap: () {
-        if (productReviewsData != null) {
+        if (productAvgRating != null) {
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -27,7 +27,9 @@ class HomeFeaturedProductCard extends StatelessWidget {
                       initialData: null,
                       value: ProductServices().getProductStream(productModel),
                       child: ItemDetailsView(
-                          avgRating: productReviewsData.avgRating!, forBuyer: true,))));
+                        avgRating: productAvgRating,
+                        forBuyer: true,
+                      ))));
         }
       },
       child: Container(
@@ -97,8 +99,8 @@ class HomeFeaturedProductCard extends StatelessWidget {
                       // rating row
                       Row(
                         children: [
-                          productReviewsData != null
-                              ? productReviewsData.avgRating == "0"
+                          productAvgRating != null
+                              ? productAvgRating == "0"
                                   ? SizedBox()
                                   : const Icon(
                                       Icons.star,
@@ -107,7 +109,7 @@ class HomeFeaturedProductCard extends StatelessWidget {
                                     )
                               : SizedBox(),
                           Text(
-                            " ${productReviewsData != null ? productReviewsData.avgRating == "0" ? "" : productReviewsData.avgRating! : 5.0}",
+                            " ${productAvgRating != null ? productAvgRating == "0" ? "" : productAvgRating : 5.0}",
                             style: Utils.kAppCaption2MediumStyle,
                           )
                         ],

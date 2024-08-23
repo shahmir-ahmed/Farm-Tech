@@ -15,7 +15,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class BuyerHomeTabView extends StatefulWidget {
   BuyerHomeTabView(
-      {required this.buyerId, required this.buyerName, required this.setSearchTabAsActive});
+      {required this.buyerId,
+      required this.buyerName,
+      required this.setSearchTabAsActive});
 
   String buyerId;
   String buyerName;
@@ -83,9 +85,10 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => StreamProvider.value(
-                                value: CartServices().getBuyerCartItemsStream(BuyerModel(docId: widget.buyerId)),
-                                initialData: null,
-                                child: const CartView())));
+                                  value: CartServices().getBuyerCartItemsStream(
+                                      BuyerModel(docId: widget.buyerId)),
+                                  initialData: null,
+                                  child: const CartView())));
                     },
                     /*
                     () async {
@@ -253,8 +256,9 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                         // }
                       },
                       child: Container(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                        margin: title == 'Miscellaneous'
+                            ? EdgeInsets.fromLTRB(10, 0, 18, 0)
+                            : EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                         width: 135,
                         height: 140,
                         padding: EdgeInsets.all(15),
@@ -584,7 +588,7 @@ class _FeaturedSectionState extends State<FeaturedSection> {
                     children: productsList.map((productModel) {
                   return StreamProvider.value(
                       value: ProductServices()
-                          .getProductReviewsDataStream(productModel),
+                          .getProductAvgRatingStream(productModel),
                       initialData: null,
                       child:
                           HomeFeaturedProductCard(productModel: productModel));

@@ -16,6 +16,8 @@ class AllCategoriesView extends StatelessWidget {
     "Dairy",
     "Dry Fruits",
     "Fish Farming",
+    "Fruits",
+    "Vegetables",
   ];
 
   @override

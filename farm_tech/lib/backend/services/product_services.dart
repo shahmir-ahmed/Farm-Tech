@@ -144,8 +144,8 @@ class ProductServices {
     }
   }
 
-  // get product reviews data stream
-  Stream<ProductReviewsModel>? getProductReviewsDataStream(ProductModel model) {
+  // get product avg rating stream
+  Stream<String?>? getProductAvgRatingStream(ProductModel model) {
     try {
       return FirebaseFirestore.instance
           .collection('productReviews')
@@ -180,9 +180,11 @@ class ProductServices {
           // print('avgRating $avgRating');
 
           // returning seller model having total reviews count and average rating
-          return ProductReviewsModel(avgRating: avgRating.toString());
+          // return ProductReviewsModel(avgRating: avgRating.toString());
+          return avgRating.toString();
         } else {
-          return ProductReviewsModel(avgRating: "0");
+          // return ProductReviewsModel(avgRating: "0");
+          return "0";
         }
       });
     } catch (e) {

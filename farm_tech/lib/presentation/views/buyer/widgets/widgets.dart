@@ -112,7 +112,7 @@ class _ProductsViewState extends State<ProductsView> {
                 return StreamProvider.value(
                     initialData: null,
                     value: ProductServices()
-                        .getProductReviewsDataStream(productModel),
+                        .getProductAvgRatingStream(productModel),
                     child: ProductCard(
                       productModel: productModel,
                       forBuyer: true,
@@ -147,6 +147,8 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
 
   String buyerId = '';
 
+  int total = 0;
+
   // get buyer uid/doc id from shared pref
   _getBuyerDocId() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -160,9 +162,15 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    // set counter to minimum order value initially
     counter = widget.productModel.minOrder!;
 
+    // set the counter value in field
     counterFieldController.text = counter.toString();
+
+    // set total value
+    total = widget.productModel.price! * counter;
 
     // print('counter $counter');
     _getBuyerDocId();
@@ -334,10 +342,14 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
                                       if (counter != 1 &&
                                           counter !=
                                               widget.productModel.minOrder!) {
+                                                // decrease count
                                         counter--;
                                         setState(() {
+                                          // update counter field
                                           counterFieldController.text =
                                               counter.toString();
+                                              // update total
+                                          total = widget.productModel.price! * counter;
                                         });
                                       }
                                     },
@@ -390,10 +402,14 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
                                     onTap: () {
                                       if (counter <
                                           widget.productModel.stockQuantity!) {
+                                            // increase count
                                         counter++;
                                         setState(() {
+                                          // update counter field
                                           counterFieldController.text =
                                               counter.toString();
+                                              // update total
+                                              total = widget.productModel.price! * counter;
                                         });
                                       }
                                     },
@@ -408,7 +424,8 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
 
                               // price
                               Text(
-                                'PKR ${widget.productModel.price.toString()}',
+                                // 'PKR ${widget.productModel.price.toString()}',
+                                'PKR ${total.toString()}',
                                 style: Utils.kAppBody1MediumStyle,
                               ),
                             ],
@@ -427,7 +444,7 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
                                   if (widget.title == 'Add to Cart') {
 
                                     // calculate total (price * quantity)
-                                    int total = widget.productModel.price! * counter;
+                                    // int total = widget.productModel.price! * counter;
 
                                     // add item to cart
                                     final result = await CartServices()

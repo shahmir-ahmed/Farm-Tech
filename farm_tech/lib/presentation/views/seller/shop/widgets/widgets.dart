@@ -83,7 +83,7 @@ class _ProductTabViewState extends State<ProductTabView> {
               return StreamProvider.value(
                   initialData: null,
                   value: ProductServices()
-                      .getProductReviewsDataStream(productModel),
+                      .getProductAvgRatingStream(productModel),
                   child: ProductCard(productModel: productModel));
             }).toList()
                 // ..sort((a, b) =>
@@ -105,8 +105,8 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // consume product reviews data stream
-    final productReviewsData = Provider.of<ProductReviewsModel?>(context);
+    // consume product avg rating stream
+    final productAvgRating = Provider.of<String?>(context);
 
     // print('productsList: ${productModel.mainImageUrl}');
 
@@ -119,7 +119,7 @@ class ProductCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        if (productReviewsData != null) {
+        if (productAvgRating != null) {
           // show product details screen for buyer
           if (forBuyer != null) {
             Navigator.push(
@@ -129,7 +129,7 @@ class ProductCard extends StatelessWidget {
                         initialData: null,
                         value: ProductServices().getProductStream(productModel),
                         child: ItemDetailsView(
-                            avgRating: productReviewsData.avgRating!, forBuyer: true,))));
+                            avgRating: productAvgRating, forBuyer: true,))));
           } else {
             // show product details screen for seller
             Navigator.push(
@@ -139,7 +139,7 @@ class ProductCard extends StatelessWidget {
                         initialData: null,
                         value: ProductServices().getProductStream(productModel),
                         child: ItemDetailsView(
-                            avgRating: productReviewsData.avgRating!))));
+                            avgRating: productAvgRating))));
           }
         }
       },
@@ -195,8 +195,8 @@ class ProductCard extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            productReviewsData != null
-                                ? productReviewsData.avgRating == "0"
+                            productAvgRating != null
+                                ? productAvgRating == "0"
                                     ? SizedBox()
                                     : const Icon(
                                         Icons.star,
@@ -205,7 +205,7 @@ class ProductCard extends StatelessWidget {
                                       )
                                 : SizedBox(),
                             Text(
-                              " ${productReviewsData != null ? productReviewsData.avgRating == "0" ? "" : productReviewsData.avgRating! : 5.0}",
+                              " ${productAvgRating != null ? productAvgRating == "0" ? "" : productAvgRating : 5.0}",
                               style: Utils.kAppCaption2MediumStyle,
                             )
                           ],

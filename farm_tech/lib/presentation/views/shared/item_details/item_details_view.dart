@@ -151,7 +151,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
     }
 
     return productModel == null
-        ? const SizedBox(height: 200, child: Utils.circularProgressIndicator)
+        ? const SizedBox(height: 430, child: Utils.circularProgressIndicator)
         : SingleChildScrollView(
             // main body column
             child: Column(
@@ -160,7 +160,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                 // product images carousel
                 productModel!.imageUrls!.isEmpty
                     ? const SizedBox(
-                        height: 200, child: Utils.circularProgressIndicator)
+                        height: 430, child: Utils.circularProgressIndicator)
                     : ProductImagesCarousel(
                         controller: _controller,
                         onPageChanged: onPageChanged,

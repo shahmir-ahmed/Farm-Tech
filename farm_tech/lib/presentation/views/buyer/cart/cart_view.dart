@@ -1,6 +1,9 @@
 import 'package:farm_tech/backend/model/cart_item.dart';
+import 'package:farm_tech/backend/services/cart_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/buyer/cart/widgets/widgets.dart';
+import 'package:farm_tech/presentation/views/widgets/widgets.dart';
+import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +18,7 @@ class _CartViewState extends State<CartView> {
   // any product remove button clicked
   bool _removeClicked = false;
 
-  // products marked as checked (contains id of the cart product)
+  // items marked as checked (contains doc id of the cart item)
   List<String> checkedItems = [];
 
   @override
@@ -30,9 +33,61 @@ class _CartViewState extends State<CartView> {
                       GestureDetector(
                         onTap: () {
                           // show confirmation dialog
-                          Utils.showConfirmAlertDialog(context, () {
-                            // remove items from cart present in checked products list
-                          }, 'cart');
+                          Utils.showConfirmAlertDialog(context, () async {
+                            // set remove clicked as false
+                            setState(() {
+                              _removeClicked = false;
+                            });
+
+                            // close alert dialog
+                            Navigator.pop(context);
+
+                            // results list
+                            List results = [];
+
+                            // remove items from carts collection present in checked items list
+                            for (var i = 0; i < checkedItems.length; i++) {
+                              final result = await CartServices()
+                                  .removeItemFromCart(
+                                      CartItemModel(docId: checkedItems[i]));
+
+                              print('result $i: $result');
+
+                              results.add(result);
+                            }
+
+                            // if removing any item error occured
+                            if (results.contains(null)) {
+                              if (checkedItems.length == 1) {
+                                floatingSnackBar(
+                                    message:
+                                        'Error removing item. PLease try again later',
+                                    context: context);
+                              } else {
+                                floatingSnackBar(
+                                    message:
+                                        'Error removing items. PLease try again later',
+                                    context: context);
+                              }
+                            } else {
+                              if (checkedItems.length == 1) {
+                                // show success message for single item removed
+                                floatingSnackBar(
+                                    message:
+                                        'Item removed from cart successfully',
+                                    context: context);
+                              } else {
+                                // show success message
+                                floatingSnackBar(
+                                    message:
+                                        'Items removed from cart successfully',
+                                    context: context);
+                              }
+                            }
+                          },
+                              checkedItems.length == 1
+                                  ? 'cart_single_item'
+                                  : 'cart');
                         },
                         child: Text(
                           'Remove',
@@ -67,10 +122,15 @@ class _CartViewState extends State<CartView> {
   }
 
   _getBody() {
-    // consume cart products stream
+    // consume cart items stream
     final cartItems = Provider.of<List<CartItemModel>?>(context);
 
-    print('cartItems $cartItems');
+    // print('cartItems $cartItems');
+
+    if (cartItems != null) {
+      // sort cart items based on createdAt timestamp
+      cartItems.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+    }
 
     return cartItems == null
         ? SizedBox(
@@ -79,44 +139,73 @@ class _CartViewState extends State<CartView> {
               child: Utils.circularProgressIndicator,
             ),
           )
-        : SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // divider
-                Utils.divider,
-
-                // cart products
-                Column(
-                  children: cartItems.map((cartItemModel) {
-                    return CartItemCard(
-                      cartItemModel: cartItemModel,
-                        removeClicked: _removeClicked,
-                        checkBoxValue:
-                            checkedItems.contains(cartItemModel.docId) ? true : false,
-                        onCheckBoxClicked: () {
-                          // if not added then add other wise remove
-                          if (!checkedItems.contains(cartItemModel.docId)) {
-                            // add this cart item doc id in check products list
-                            setState(() {
-                              checkedItems.add(cartItemModel.docId!);
-                            });
-                          } else {
-                            // remove this cart item doc id from check products list
-                            setState(() {
-                              checkedItems.remove(cartItemModel.docId);
-                            });
-                          }
-                        },
-                        onRemoveClicked: () {
-                          setState(() {
-                            _removeClicked = true;
-                          });
-                        });
-                  }).toList(),
-                )
-              ],
-            ),
-          );
+        : cartItems.isEmpty
+            ? SizedBox(
+                // height: MediaQuery.of(context).size.height,
+                height: 200,
+                child: Center(
+                  child: Text(
+                    'Your cart is empty.',
+                    style: Utils.kAppBody2RegularStyle,
+                  ),
+                ),
+              )
+            : SingleChildScrollView(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height-100,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // cart items
+                        Column(
+                          children: cartItems.map((cartItemModel) {
+                            return CartItemCard(
+                                key: Key(cartItemModel.docId!),
+                                cartItemModel: cartItemModel,
+                                removeClicked: _removeClicked,
+                                checkBoxValue:
+                                    checkedItems.contains(cartItemModel.docId)
+                                        ? true
+                                        : false,
+                                onCheckBoxClicked: () {
+                                  // if not added then add other wise remove
+                                  if (!checkedItems.contains(cartItemModel.docId)) {
+                                    // add this cart item doc id in check items list
+                                    setState(() {
+                                      checkedItems.add(cartItemModel.docId!);
+                                    });
+                                  } else {
+                                    // remove this cart item doc id from check items list
+                                    setState(() {
+                                      checkedItems.remove(cartItemModel.docId);
+                                    });
+                                  }
+                                },
+                                onRemoveClicked: () {
+                                  setState(() {
+                                    // set remove clicked as true
+                                    _removeClicked = true;
+                    
+                                    // add this item doc id in checked items list
+                                    checkedItems.add(cartItemModel.docId!);
+                                  });
+                                });
+                          }).toList(),
+                        ),
+                    
+                        // proceed to checkout button
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: CustomButton(onButtonPressed: (){}, buttonText: 'Proceed To Checkout', primaryButton: true, secondaryButton: false, buttonWidth: MediaQuery.of(context).size.width, buttonHeight: 60,),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              );
   }
+
 }

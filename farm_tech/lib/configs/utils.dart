@@ -275,7 +275,7 @@ class Utils {
         primaryButton: true,
         buttonText: forScreen == 'logout'
             ? 'Logout'
-            : forScreen == 'cart'
+            : forScreen == 'cart_single_item' || forScreen == 'cart'
                 ? 'Yes'
                 : '',
         onButtonPressed: onConfirmPressed,
@@ -317,6 +317,8 @@ class Utils {
         textAlign: TextAlign.center,
         forScreen == 'logout'
             ? 'Logout?'
+            : forScreen == 'cart_single_item'
+                ? 'Remove item?'
             : forScreen == 'cart'
                 ? 'Remove items?'
                 : '',
@@ -326,6 +328,8 @@ class Utils {
         textAlign: TextAlign.center,
         forScreen == 'logout'
             ? 'Are your sure you want to logout?'
+            : forScreen == 'cart_single_item'
+                ? 'Are your sure you want to remove item from cart?'
             : forScreen == 'cart'
                 ? 'Are your sure you want to remove items from cart?'
                 : '',

@@ -47,6 +47,8 @@ class _UploadProductViewState extends State<UploadProductView> {
     "Dairy",
     "Dry Fruits",
     "Fish Farming",
+    "Fruits",
+    "Vegetables",
   ];
 
   int _current = 0;
