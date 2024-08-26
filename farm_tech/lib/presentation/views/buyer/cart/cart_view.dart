@@ -2,6 +2,7 @@ import 'package:farm_tech/backend/model/cart_item.dart';
 import 'package:farm_tech/backend/services/cart_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/buyer/cart/widgets/widgets.dart';
+import 'package:farm_tech/presentation/views/buyer/checkout/checkout_view.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
@@ -152,7 +153,7 @@ class _CartViewState extends State<CartView> {
               )
             : SingleChildScrollView(
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height-100,
+                  height: MediaQuery.of(context).size.height - 100,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Column(
@@ -172,7 +173,8 @@ class _CartViewState extends State<CartView> {
                                         : false,
                                 onCheckBoxClicked: () {
                                   // if not added then add other wise remove
-                                  if (!checkedItems.contains(cartItemModel.docId)) {
+                                  if (!checkedItems
+                                      .contains(cartItemModel.docId)) {
                                     // add this cart item doc id in check items list
                                     setState(() {
                                       checkedItems.add(cartItemModel.docId!);
@@ -188,18 +190,33 @@ class _CartViewState extends State<CartView> {
                                   setState(() {
                                     // set remove clicked as true
                                     _removeClicked = true;
-                    
+
                                     // add this item doc id in checked items list
                                     checkedItems.add(cartItemModel.docId!);
                                   });
                                 });
                           }).toList(),
                         ),
-                    
+
                         // proceed to checkout button
                         Padding(
                           padding: const EdgeInsets.all(20.0),
-                          child: CustomButton(onButtonPressed: (){}, buttonText: 'Proceed To Checkout', primaryButton: true, secondaryButton: false, buttonWidth: MediaQuery.of(context).size.width, buttonHeight: 60,),
+                          child: CustomButton(
+                            onButtonPressed: () {
+                              // show checkout view with cart items passed
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CheckoutView(
+                                            cartItems: cartItems,
+                                          )));
+                            },
+                            buttonText: 'Proceed To Checkout',
+                            primaryButton: true,
+                            secondaryButton: false,
+                            buttonWidth: MediaQuery.of(context).size.width,
+                            buttonHeight: 60,
+                          ),
                         )
                       ],
                     ),
@@ -207,5 +224,4 @@ class _CartViewState extends State<CartView> {
                 ),
               );
   }
-
 }

@@ -12,21 +12,25 @@ class BuyerModel {
     String? docId;
     String? name;
     String? contactNo;
+    String? address;
 
     BuyerModel({
         this.docId,
         this.name,
         this.contactNo,
+        this.address,
     });
 
     factory BuyerModel.fromJson(Map<String, dynamic> json, String docId) => BuyerModel(
         docId: docId,
         name: json["name"],
         contactNo: json["contactNo"],
+        address: json["address"],
     );
 
     Map<String, dynamic> toJson() => {
         "name": name,
         "contactNo": contactNo,
+        "address": address,
     };
 }

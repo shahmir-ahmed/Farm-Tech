@@ -18,7 +18,8 @@ class BuyerServices{
     }
   }
 
-    // check buyer with a specific doc id exists or not
+  /*
+  // check buyer with a specific doc id exists or not
   String? checkBuyerWithDocId(BuyerModel model) {
     try {
       FirebaseFirestore.instance
@@ -32,6 +33,7 @@ class BuyerServices{
       return null;
     }
   }
+  */
 
     // get individual buyer name
   Future<String?> getBuyerName(BuyerModel model) async {
