@@ -418,7 +418,16 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                     child: CustomButton(
                       // buttonWidth: MediaQuery.of(context).size.width - 150,
                       buttonHeight: 60,
-                      onButtonPressed: () {},
+                      onButtonPressed: () {
+                        // show buy now view
+                        Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddToCartBuyNowView(
+                                      title: 'Buy Now',
+                                      avgRating: widget.avgRating,
+                                      productModel: productModel!)));
+                      },
                       widget: productModel == null
                           ? SizedBox(
                               width: 25,

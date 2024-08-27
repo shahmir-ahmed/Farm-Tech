@@ -33,4 +33,8 @@ class BuyerModel {
         "contactNo": contactNo,
         "address": address,
     };
+
+    Map<String, dynamic> addressToJson() => {
+        "address": address,
+    };
 }

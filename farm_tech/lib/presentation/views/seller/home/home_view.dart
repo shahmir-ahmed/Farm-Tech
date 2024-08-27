@@ -141,7 +141,7 @@ class _HomeViewState extends State<HomeView> {
   // get buyer name and set
   _getBuyerName() async {
     final name =
-        await BuyerServices().getBuyerName(BuyerModel(docId: uId)) as String;
+        await BuyerServices().getName(BuyerModel(docId: uId)) as String;
 
     // print('buyerName $name');
     setState(() {

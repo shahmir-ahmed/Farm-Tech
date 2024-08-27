@@ -5,6 +5,7 @@ import 'package:farm_tech/backend/services/cart_services.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/buyer/cart/cart_view.dart';
+import 'package:farm_tech/presentation/views/buyer/checkout/checkout_view.dart';
 import 'package:farm_tech/presentation/views/seller/shop/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/shared/item_details/item_details_view.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
@@ -342,14 +343,15 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
                                       if (counter != 1 &&
                                           counter !=
                                               widget.productModel.minOrder!) {
-                                                // decrease count
+                                        // decrease count
                                         counter--;
                                         setState(() {
                                           // update counter field
                                           counterFieldController.text =
                                               counter.toString();
-                                              // update total
-                                          total = widget.productModel.price! * counter;
+                                          // update total
+                                          total = widget.productModel.price! *
+                                              counter;
                                         });
                                       }
                                     },
@@ -402,14 +404,15 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
                                     onTap: () {
                                       if (counter <
                                           widget.productModel.stockQuantity!) {
-                                            // increase count
+                                        // increase count
                                         counter++;
                                         setState(() {
                                           // update counter field
                                           counterFieldController.text =
                                               counter.toString();
-                                              // update total
-                                              total = widget.productModel.price! * counter;
+                                          // update total
+                                          total = widget.productModel.price! *
+                                              counter;
                                         });
                                       }
                                     },
@@ -442,9 +445,12 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
                               onButtonPressed: () async {
                                 if (buyerId.isNotEmpty) {
                                   if (widget.title == 'Add to Cart') {
-
                                     // calculate total (price * quantity)
                                     // int total = widget.productModel.price! * counter;
+
+                                    // show loading alert dialog
+                                    Utils.showLoadingAlertDialog(
+                                        context, 'add_item_to_cart');
 
                                     // add item to cart
                                     final result = await CartServices()
@@ -455,19 +461,40 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
                                                 widget.productModel.docId,
                                             buyerId: buyerId));
 
-                                    if (result == 'success') {
+                                    if (result != null) {
                                       // item added to cart
                                       // show success message
                                       floatingSnackBar(
                                           message: 'Item added to cart',
                                           context: context);
-                                    }else{
+                                    } else {
                                       floatingSnackBar(
-                                          message: 'Error adding item to cart. Please try again later.',
+                                          message:
+                                              'Error adding item to cart. Please try again later.',
                                           context: context);
                                     }
+
+                                    // close loading alert dialog
+                                    Navigator.pop(context);
                                   } else {
-                                    // proceed to checkout
+                                    // proceed to checkout button
+
+                                    // show checkout view with only this passed to checkout view
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => CheckoutView(
+                                                  cartItems: [
+                                                    CartItemModel(
+                                                        quantity:
+                                                            counter.toString(),
+                                                        total: total.toString(),
+                                                        productId: widget
+                                                            .productModel.docId,
+                                                        buyerId: buyerId)
+                                                  ],
+                                                  showRemoveItemOption: false,
+                                                )));
                                   }
                                 }
                               },

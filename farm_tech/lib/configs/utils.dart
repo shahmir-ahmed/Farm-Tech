@@ -158,6 +158,16 @@ class Utils {
                                     ? "Updating order status"
                                     : forScreen == 'logout'
                                         ? "Logging out"
+                                    : forScreen == 'update_address'
+                                        ? "Updating address"
+                                    : forScreen == 'remove_cart_item'
+                                        ? "Removing item"
+                                    : forScreen == 'remove_cart_items'
+                                        ? "Removing items"
+                                    : forScreen == 'add_item_to_cart'
+                                        ? "Adding item"
+                                    : forScreen == 'proceed_to_checkout'
+                                        ? "Checking out"
                                         : "",
             style: kAppHeading6BoldStyle,
           ),
@@ -176,6 +186,16 @@ class Utils {
                                 ? "Order is being cancelled"
                                 : forScreen == 'mark_as_delivered'
                                     ? "Marking order as delivered"
+                                : forScreen == 'update_address'
+                                    ? "Please be patient"
+                                : forScreen == 'remove_cart_item'
+                                    ? "Removing item from cart"
+                                : forScreen == 'remove_cart_items'
+                                    ? "Removing items from cart"
+                                : forScreen == 'add_item_to_cart'
+                                    ? "Adding item to cart"
+                                : forScreen == 'proceed_to_checkout'
+                                    ? "Proceeding to checkout"
                                     : "",
             style: kAppBody3RegularStyle.copyWith(color: lightGreyColor1),
           ),

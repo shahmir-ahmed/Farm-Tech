@@ -7,7 +7,7 @@ class CartServices {
   addItemToCart(CartItemModel cartModel) async {
     try {
       // check if already same product is added in cart then increase the quanity and total in existing cart item
-      await FirebaseFirestore.instance
+      return await FirebaseFirestore.instance
           .collection('carts')
           .where('buyerId', isEqualTo: cartModel.buyerId)
           .where('productId', isEqualTo: cartModel.productId)
@@ -37,15 +37,19 @@ class CartServices {
               .collection('carts')
               .doc(snapshot.docs.first.id)
               .update(updatedCartItemModel.toJson());
+
+          return snapshot.docs.first.id;
         } else {
           // create new cart item doc
-          await FirebaseFirestore.instance
+          final docRef = await FirebaseFirestore.instance
               .collection('carts')
               .add(cartModel.toJson());
+
+          return docRef.id;
         }
       });
 
-      return 'success';
+      // return 'success';
     } catch (e) {
       print('Error in addItemToCart: $e');
       return null;

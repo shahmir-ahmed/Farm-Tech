@@ -635,7 +635,7 @@ class _LoginRegisterForgotResetPasswordViewState
 
                             // create user uid with buyer document which contains buyer details
                             final result2 =
-                                await BuyerServices().createBuyerDoc(
+                                await BuyerServices().createDoc(
                                     BuyerModel(
                                       name: name,
                                       contactNo: contactNo,

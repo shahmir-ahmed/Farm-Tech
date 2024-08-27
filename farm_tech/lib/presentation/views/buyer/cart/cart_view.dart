@@ -43,6 +43,15 @@ class _CartViewState extends State<CartView> {
                             // close alert dialog
                             Navigator.pop(context);
 
+                            // show loading alert dialog based on length of removing items
+                            if (checkedItems.length == 1) {
+                              Utils.showLoadingAlertDialog(
+                                  context, 'remove_cart_item');
+                            } else {
+                              Utils.showLoadingAlertDialog(
+                                  context, 'remove_cart_items');
+                            }
+
                             // results list
                             List results = [];
 
@@ -52,22 +61,25 @@ class _CartViewState extends State<CartView> {
                                   .removeItemFromCart(
                                       CartItemModel(docId: checkedItems[i]));
 
-                              print('result $i: $result');
+                              // print('result $i: $result');
 
                               results.add(result);
                             }
+
+                            // close loading alert dialog
+                            Navigator.pop(context);
 
                             // if removing any item error occured
                             if (results.contains(null)) {
                               if (checkedItems.length == 1) {
                                 floatingSnackBar(
                                     message:
-                                        'Error removing item. PLease try again later',
+                                        'Error removing item. Please try again later',
                                     context: context);
                               } else {
                                 floatingSnackBar(
                                     message:
-                                        'Error removing items. PLease try again later',
+                                        'Error removing items. Please try again later',
                                     context: context);
                               }
                             } else {
@@ -203,12 +215,14 @@ class _CartViewState extends State<CartView> {
                           padding: const EdgeInsets.all(20.0),
                           child: CustomButton(
                             onButtonPressed: () {
-                              // show checkout view with cart items passed
+                              // print('cartItems $cartItems');
+                              // show checkout view with cart items passed to view
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => CheckoutView(
                                             cartItems: cartItems,
+                                            showRemoveItemOption: true,
                                           )));
                             },
                             buttonText: 'Proceed To Checkout',
