@@ -129,6 +129,25 @@ class ProductServices {
     }
   }
 
+  // get product seller id
+  Future<ProductModel?> getProductSellerId(ProductModel productModel) async {
+    try {
+      final data = await FirebaseFirestore.instance
+          .collection('products')
+          .doc(productModel.docId)
+          .get()
+          .then((doc) {
+        return ProductModel(sellerId: doc.get('sellerId'));
+      });
+
+      return data;
+    } catch (e) {
+      // print error
+      print("ERR in getProductSellerId: ${e.toString()}");
+      return null;
+    }
+  }
+
   // get a product stream
   Stream<ProductModel>? getProductStream(ProductModel model) {
     try {

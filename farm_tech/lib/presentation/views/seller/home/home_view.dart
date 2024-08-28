@@ -28,7 +28,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  // bottom navigation bar att.
+  // bottom navigation bar widget options seller
   // ignore: prefer_final_fields
   List<Widget?> _widgetOptionsSeller = <Widget?>[
     Utils.circularProgressIndicator,
@@ -38,6 +38,7 @@ class _HomeViewState extends State<HomeView> {
     Utils.circularProgressIndicator
   ];
 
+  // bottom navigation bar widget options buyer
   List<Widget?> _widgetOptionsBuyer = <Widget?>[
     Utils.circularProgressIndicator,
     const BuyerSearchTabView(),

@@ -158,17 +158,26 @@ class Utils {
                                     ? "Updating order status"
                                     : forScreen == 'logout'
                                         ? "Logging out"
-                                    : forScreen == 'update_address'
-                                        ? "Updating address"
-                                    : forScreen == 'remove_cart_item'
-                                        ? "Removing item"
-                                    : forScreen == 'remove_cart_items'
-                                        ? "Removing items"
-                                    : forScreen == 'add_item_to_cart'
-                                        ? "Adding item"
-                                    : forScreen == 'proceed_to_checkout'
-                                        ? "Checking out"
-                                        : "",
+                                        : forScreen == 'update_address'
+                                            ? "Updating address"
+                                            : forScreen == 'remove_cart_item'
+                                                ? "Removing item"
+                                                : forScreen ==
+                                                        'remove_cart_items'
+                                                    ? "Removing items"
+                                                    : forScreen ==
+                                                            'add_item_to_cart'
+                                                        ? "Adding item"
+                                                        : forScreen ==
+                                                                'proceed_to_checkout'
+                                                            ? "Checking out"
+                                                            : forScreen ==
+                                                                    'placing_order'
+                                                                ? "Placing order"
+                                                                : forScreen ==
+                                                                        'placing_orders'
+                                                                    ? "Placing orders"
+                                                                    : "",
             style: kAppHeading6BoldStyle,
           ),
           const SizedBox(height: 10),
@@ -186,17 +195,25 @@ class Utils {
                                 ? "Order is being cancelled"
                                 : forScreen == 'mark_as_delivered'
                                     ? "Marking order as delivered"
-                                : forScreen == 'update_address'
-                                    ? "Please be patient"
-                                : forScreen == 'remove_cart_item'
-                                    ? "Removing item from cart"
-                                : forScreen == 'remove_cart_items'
-                                    ? "Removing items from cart"
-                                : forScreen == 'add_item_to_cart'
-                                    ? "Adding item to cart"
-                                : forScreen == 'proceed_to_checkout'
-                                    ? "Proceeding to checkout"
-                                    : "",
+                                    : forScreen == 'update_address'
+                                        ? "Please be patient"
+                                        : forScreen == 'remove_cart_item'
+                                            ? "Removing item from cart"
+                                            : forScreen == 'remove_cart_items'
+                                                ? "Removing items from cart"
+                                                : forScreen ==
+                                                        'add_item_to_cart'
+                                                    ? "Adding item to cart"
+                                                    : forScreen ==
+                                                            'proceed_to_checkout'
+                                                        ? "Proceeding to checkout"
+                                                        : forScreen ==
+                                                                'placing_order'
+                                                            ? "Please be patient we are placing your order"
+                                                            : forScreen ==
+                                                                    'placing_orders'
+                                                                ? "Please be patient we are placing your orders"
+                                                                : "",
             style: kAppBody3RegularStyle.copyWith(color: lightGreyColor1),
           ),
         ],
@@ -339,9 +356,9 @@ class Utils {
             ? 'Logout?'
             : forScreen == 'cart_single_item'
                 ? 'Remove item?'
-            : forScreen == 'cart'
-                ? 'Remove items?'
-                : '',
+                : forScreen == 'cart'
+                    ? 'Remove items?'
+                    : '',
         style: Utils.kAppHeading6BoldStyle,
       ),
       content: Text(
@@ -350,9 +367,9 @@ class Utils {
             ? 'Are your sure you want to logout?'
             : forScreen == 'cart_single_item'
                 ? 'Are your sure you want to remove item from cart?'
-            : forScreen == 'cart'
-                ? 'Are your sure you want to remove items from cart?'
-                : '',
+                : forScreen == 'cart'
+                    ? 'Are your sure you want to remove items from cart?'
+                    : '',
         style:
             Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
       ),

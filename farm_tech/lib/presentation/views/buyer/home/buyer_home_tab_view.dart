@@ -28,6 +28,7 @@ class BuyerHomeTabView extends StatefulWidget {
 }
 
 class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
+  /*
   // logout function
   Future<void> _logoutUser() async {
     // clear shared pref data for app
@@ -36,6 +37,7 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
 
     print('cleared: $cleared');
   }
+  */
 
   @override
   Widget build(BuildContext context) {

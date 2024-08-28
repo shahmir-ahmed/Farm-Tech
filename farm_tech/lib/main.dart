@@ -5,6 +5,8 @@ import 'package:farm_tech/backend/services/user_auth_services.dart';
 // import 'package:farm_tech/presentation/views/seller/authentication/authentication_view.dart';
 // import 'package:farm_tech/presentation/views/shared/splash_screen/splash_screen_view.dart';
 import 'package:farm_tech/auth_wrapper.dart';
+import 'package:farm_tech/consts.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +15,9 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // stripe publishable key initialization
+  Stripe.publishableKey = stripePublishableKey;
+  // firebase initialzitaion
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

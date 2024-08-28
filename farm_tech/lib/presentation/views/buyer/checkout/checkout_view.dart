@@ -1,9 +1,15 @@
 import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/cart_item.dart';
+import 'package:farm_tech/backend/model/order.dart';
+import 'package:farm_tech/backend/model/product.dart';
 import 'package:farm_tech/backend/services/buyer_services.dart';
 import 'package:farm_tech/backend/services/cart_services.dart';
+import 'package:farm_tech/backend/services/order_services.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
+import 'package:farm_tech/backend/services/stripe_service.dart';
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/buyer/checkout/order_placed_view.dart';
+import 'package:farm_tech/presentation/views/buyer/checkout/payment_method_view.dart';
 import 'package:farm_tech/presentation/views/buyer/profile/change_address_view.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
@@ -133,7 +139,11 @@ class _CheckoutViewState extends State<CheckoutView> {
 
       // payment
       GestureDetector(
-        onTap: () {},
+        onTap: () {
+          // show payment method options screen
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => PaymentMethodView()));
+        },
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Row(
@@ -428,7 +438,210 @@ class _CheckoutViewState extends State<CheckoutView> {
       Padding(
         padding: EdgeInsets.all(20),
         child: CustomButton(
-          onButtonPressed: () {},
+          onButtonPressed: () async {
+            // calculate total
+            final total = widget.cartItems.fold(
+                    0,
+                    (previousValue, cartItemModel) =>
+                        previousValue + int.parse(cartItemModel.total!)) +
+                100;
+
+            // convert total in pkr to usd
+            final totalInUSD = total / 278;
+
+            // make payment using stripe
+            final result =
+                await StripeService.instance.makePayment(totalInUSD.floor());
+
+            if (result == null) {
+              // show error message
+              floatingSnackBar(
+                  message: 'Error processing payment. Please try again later',
+                  context: context);
+            } else {
+              if(widget.cartItems.length==1){
+                // show loading alert
+              Utils.showLoadingAlertDialog(context, 'placing_order');
+              }else{
+
+              // show loading alert
+              Utils.showLoadingAlertDialog(context, 'placing_orders');
+              }
+
+              // results list of orders docs creation
+              List results = [];
+
+              // not placed orders list due to error feteching product seller id
+              List notPlacedOrderNames = [];
+
+              // payment success so
+              // create order doc for each cart item
+              for (var i = 0; i < widget.cartItems.length; i++) {
+                // get product seller id
+                final productModel = await ProductServices().getProductSellerId(
+                    ProductModel(docId: widget.cartItems[i].productId));
+
+                // if error fetching seller id
+                if (productModel != null) {
+                  final result = await OrderServices().createOrder(OrderModel(
+                      quantity: widget.cartItems[i].quantity,
+                      totalAmount: widget.cartItems[i].total,
+                      status: "In Progress",
+                      productId: widget.cartItems[i].productId,
+                      customerId: widget.cartItems[0].buyerId,
+                      sellerId: productModel.sellerId));
+
+                  /*
+                  // If above doc is not created then how will this be created?
+                  // if error creating order doc
+                  if (result == null) {
+                    final result = await OrderServices().createOrder(OrderModel(
+                        quantity: widget.cartItems[i].quantity,
+                        totalAmount: widget.cartItems[i].total,
+                        status: "Not placed",
+                        productId: widget.cartItems[i].productId,
+                        customerId: widget.cartItems[0].buyerId,
+                        sellerId: productModel
+                            .sellerId)); // create order doc with status as not placed
+
+                    // cannot do anything if err in creating doc here
+                  }
+                  */
+
+                  // add result in list
+                  results.add(result);
+                } else {
+                  // order not placed due to error fetching seller id
+                  // add cart item name in not placed orders list to show to user at end that this product name order cannot be placed
+                  final result = await OrderServices().createOrder(OrderModel(
+                      quantity: widget.cartItems[i].quantity,
+                      totalAmount: widget.cartItems[i].total,
+                      status: "Not placed",
+                      productId: widget.cartItems[i].productId,
+                      customerId: widget.cartItems[0].buyerId,
+                      sellerId:
+                          "")); // create order doc with empty seller id and status as not placed
+
+                  // cannot do anything if err in creating order doc here
+
+                  // add result in list
+                  results.add(result);
+
+                  // add cart item product name in list
+                  notPlacedOrderNames.add(cartItemProductNames[i]);
+                }
+              }
+
+              // cart items removing results list
+              List results2 = [];
+
+              // remove all items from cart
+              for (var i = 0; i < widget.cartItems.length; i++) {
+                // not remove item from cart for which order doc creation error occured
+                if (results[i] != null) {
+                  // remove item from cart
+                  final result = await CartServices()
+                      .removeItemFromCart(widget.cartItems[i]);
+
+                  // add result in list
+                  results2.add(result);
+                }
+              }
+
+              // close loading alert dialog
+              Navigator.pop(context);
+
+              // close checkout screen
+              Navigator.pop(context);
+
+              // no error in creating order doc/docs & no orders marked as not placed
+              if (!results.contains(null) && notPlacedOrderNames.isEmpty) {
+                print('All orders placed');
+
+                // close cart screen
+                Navigator.pop(context);
+
+                // show order placed screen
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => OrderPlacedView()));
+
+                // floatingSnackBar(
+                //     message: 'Orders placed successfully', context: context);
+              }
+
+              // orders not placed due to error in creating order doc
+              if (results.contains(null)) {
+                // product names
+                String errPlacingOrderNames = "";
+
+                // create product names string
+                for (var i = 0; i < results.length; i++) {
+                  // err result cart item index
+                  if (results[i] == null) {
+                    errPlacingOrderNames += "$i. ${cartItemProductNames[i]}\n";
+                  }
+                }
+
+                // show error
+                // if null result count is 1
+                if (results.where((result) => result == null).length == 1) {
+                  floatingSnackBar(
+                      message:
+                          'Error placing order for product: $errPlacingOrderNames.Please request a refund.',
+                      context: context,
+                      duration: Duration(seconds: 4));
+                } else {
+                  floatingSnackBar(
+                      message:
+                          'Error placing order for products: $errPlacingOrderNames.Please request a refund.',
+                      context: context,
+                      duration: Duration(seconds: 4));
+                }
+              }
+
+              // orders not placed due to error getting seller id
+              if (notPlacedOrderNames.isNotEmpty) {
+                // product names concatenated string
+                String notPlacedOrderNames = "";
+
+                // concatenate product names
+                for (var i = 0; i < notPlacedOrderNames.length; i++) {
+                  notPlacedOrderNames += i < notPlacedOrderNames.length - 1
+                      ? "${notPlacedOrderNames[i]}, "
+                      : notPlacedOrderNames[i];
+                }
+
+                // show error
+                if (notPlacedOrderNames.length == 1) {
+                  floatingSnackBar(
+                      message:
+                          'Error placing order for product: $notPlacedOrderNames.\nPlease request a refund.',
+                      context: context,
+                      duration: Duration(seconds: 4));
+                } else {
+                  floatingSnackBar(
+                      message:
+                          'Error placing order for products: $notPlacedOrderNames.\nPlease request a refund.',
+                      context: context,
+                      duration: Duration(seconds: 4));
+                }
+              }
+
+              // if error in removing cart items
+              if (results2.where((result) => result == null).length == 1) {
+                floatingSnackBar(
+                    message: 'Error removing item from cart', context: context);
+              } else if (results2.where((result) => result == null).length >
+                  1) {
+                floatingSnackBar(
+                    message: 'Error removing items from cart',
+                    context: context);
+              } else {
+                // items removed from cart
+                print('All items removed from cart');
+              }
+            }
+          },
           buttonText: 'Pay Now',
           primaryButton: true,
           secondaryButton: false,
