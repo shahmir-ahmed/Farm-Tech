@@ -9,9 +9,12 @@ class OptionRow extends StatelessWidget {
       this.textColor,
       this.noRightIcon,
       this.startIcon,
-      this.noTopDivider});
+      this.noTopDivider,
+      this.textStyle
+      });
 
   String text;
+  TextStyle? textStyle;
   Color? textColor;
   bool? noRightIcon;
   dynamic startIcon;
@@ -51,7 +54,7 @@ class OptionRow extends StatelessWidget {
                       // text
                       Text(
                         text,
-                        style: Utils.kAppBody3MediumStyle
+                        style: textStyle ?? Utils.kAppBody3MediumStyle
                             .copyWith(color: textColor ?? Utils.blackColor2),
                       ),
 
@@ -71,7 +74,7 @@ class OptionRow extends StatelessWidget {
                       // text
                       Text(
                         text,
-                        style: Utils.kAppBody3MediumStyle
+                        style: textStyle ?? Utils.kAppBody3MediumStyle
                             .copyWith(color: textColor ?? Utils.blackColor2),
                       ),
 

@@ -13,18 +13,31 @@ class StripeService {
         amount,
         "usd",
       );
+
       if (paymentIntentClientSecret == null) return null;
 
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
-          paymentIntentClientSecret: paymentIntentClientSecret,
-          merchantDisplayName: "Shahmir Ahmed",
-        ),
+            paymentIntentClientSecret: paymentIntentClientSecret,
+            merchantDisplayName: "Shahmir Ahmed",
+            billingDetails: BillingDetails(
+                address: Address(
+                    country: 'US',
+                    city: '',
+                    line1: '',
+                    line2: '',
+                    postalCode: '',
+                    state: ''))),
       );
 
-      final paymentProcessed = await _processPayment();
+      final paymentProcessed =
+          await _processPayment(); // null returned from here means user has cancelled payment
 
-      if (paymentProcessed == null) return null;
+      if (paymentProcessed == null) return 'payment_process_cancelled';
+
+      print('Payment success 3');
+
+      return 'success';
     } catch (e) {
       print('Err in makePayment: $e');
       return null;
@@ -52,6 +65,7 @@ class StripeService {
         ),
       );
       if (response.data != null) {
+        print('Payment success 1');
         return response.data["client_secret"];
       }
       return null;
@@ -63,9 +77,27 @@ class StripeService {
 
   Future _processPayment() async {
     try {
+      // print('Before presenting payment sheet');
       await Stripe.instance.presentPaymentSheet();
-      await Stripe.instance
-          .confirmPaymentSheetPayment(); // if error in payment then this will throw exception
+      // print('After presenting payment sheet');
+
+      // print('Before confirming payment');
+      try {
+        await Stripe.instance
+            .confirmPaymentSheetPayment()
+            .timeout(Duration(seconds: 10), onTimeout: () {
+          throw Exception('Payment confirmation timed out');
+        });
+        print('After confirming payment');
+      } catch (e) {
+        print('Err in confirmPaymentSheetPayment (timeout): $e');
+        // return null;
+      }
+      // print('After confirming payment');
+
+      print('Payment success 2');
+      
+      return 'success';
     } catch (e) {
       print('Err in _processPayment: $e');
       return null;

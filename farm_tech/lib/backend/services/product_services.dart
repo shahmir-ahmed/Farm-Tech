@@ -19,6 +19,35 @@ class ProductServices {
     }
   }
 
+  // reduce product stock quantity
+  reduceProductStockQuanity(ProductModel model, int quantityBought) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(model.docId)
+          .get()
+          .then((doc) async{
+        int currentStockQuantity = doc.get('stockQuantity');
+
+        int newStockQuantity = currentStockQuantity - quantityBought;
+
+        final newProductModel =
+            ProductModel(stockQuantity: newStockQuantity);
+
+        await FirebaseFirestore.instance
+            .collection('products')
+            .doc(model.docId)
+            .update(newProductModel.stockQuantityToJson());
+
+        return 'success';
+      });
+
+    } catch (e) {
+      print("Err in createProductDoc: $e");
+      return null;
+    }
+  }
+
   // upload product image method
   Future? uploadProductImage(String imageName, String imageUrl) async {
     try {

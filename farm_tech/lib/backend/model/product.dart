@@ -67,4 +67,8 @@ class ProductModel {
         "sellerId": sellerId,
         "createdAt": Timestamp.now()
       };
+
+  Map<String, dynamic> stockQuantityToJson() => {
+        "stockQuantity": stockQuantity,
+      };
 }

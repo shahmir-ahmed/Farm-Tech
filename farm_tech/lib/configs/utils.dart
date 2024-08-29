@@ -8,6 +8,7 @@ class Utils {
   static const Color greenColor = Color(0xff339D44);
   static const Color greyColor = Color(0xffB4B4B4);
   static const Color greyColor2 = Color(0xffC4C4C4);
+  static const Color greyColor3 = Color(0xff7C7C7C);
   static const Color blackColor1 = Color(0xff292929);
   static const Color blackColor2 = Colors.black;
   static const Color lightGreyColor1 = Color(0xffB4B4B4);
@@ -21,6 +22,8 @@ class Utils {
       GoogleFonts.raleway(fontSize: 19.2);
   static final TextStyle kAppBody1MediumStyle =
       GoogleFonts.raleway(fontSize: 19.2, fontWeight: FontWeight.w500);
+  static final TextStyle kAppBody1BoldStyle =
+      GoogleFonts.raleway(fontSize: 19.2, fontWeight: FontWeight.bold);
   static final TextStyle kAppBody2RegularStyle =
       GoogleFonts.raleway(fontSize: 16);
   static final TextStyle kAppBody2MediumStyle =
@@ -177,8 +180,13 @@ class Utils {
                                                                 : forScreen ==
                                                                         'placing_orders'
                                                                     ? "Placing orders"
-                                                                    : "",
-            style: kAppHeading6BoldStyle,
+                                                                    : forScreen ==
+                                                                            'payment_processing'
+                                                                        ? "Processing payment"
+                                                                        : "",
+            style: forScreen == 'payment_processing'
+                ? kAppBody1BoldStyle
+                : kAppHeading6BoldStyle,
           ),
           const SizedBox(height: 10),
           Text(
@@ -213,7 +221,10 @@ class Utils {
                                                             : forScreen ==
                                                                     'placing_orders'
                                                                 ? "Please be patient we are placing your orders"
-                                                                : "",
+                                                                : forScreen ==
+                                                                        'payment_processing'
+                                                                    ? "Payment is being processed"
+                                                                    : "",
             style: kAppBody3RegularStyle.copyWith(color: lightGreyColor1),
           ),
         ],

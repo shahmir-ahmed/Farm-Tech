@@ -6,6 +6,7 @@ import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/buyer/cart/cart_view.dart';
 import 'package:farm_tech/presentation/views/buyer/categories/all_categories_view.dart';
+import 'package:farm_tech/presentation/views/buyer/checkout/order_placed_view.dart';
 import 'package:farm_tech/presentation/views/buyer/home/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/buyer/widgets/widgets.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
@@ -17,11 +18,14 @@ class BuyerHomeTabView extends StatefulWidget {
   BuyerHomeTabView(
       {required this.buyerId,
       required this.buyerName,
-      required this.setSearchTabAsActive});
+      required this.setSearchTabAsActive,
+      // required this.setOrderTabAsActive
+      });
 
   String buyerId;
   String buyerName;
   VoidCallback setSearchTabAsActive;
+  // VoidCallback setOrderTabAsActive;
 
   @override
   State<BuyerHomeTabView> createState() => _BuyerHomeTabViewState();
@@ -91,6 +95,11 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                                       BuyerModel(docId: widget.buyerId)),
                                   initialData: null,
                                   child: const CartView())));
+
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => OrderPlacedView()));
                     },
                     /*
                     () async {

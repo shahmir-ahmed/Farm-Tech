@@ -27,13 +27,13 @@ class _PaymentMethodViewState extends State<PaymentMethodView> {
 
         // stripe payment option selected row
         Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Stripe',
-                style: Utils.kAppBody3RegularStyle,
+                style: Utils.kAppBody3MediumStyle,
               ),
               Icon(
                 Icons.check,
@@ -41,7 +41,10 @@ class _PaymentMethodViewState extends State<PaymentMethodView> {
               )
             ],
           ),
-        )
+        ),
+
+        // divider
+        Utils.divider,
       ],
     );
   }
