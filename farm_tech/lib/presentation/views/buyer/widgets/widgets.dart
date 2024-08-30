@@ -127,13 +127,15 @@ class AddToCartBuyNowView extends StatefulWidget {
   AddToCartBuyNowView(
       {required this.title,
       required this.avgRating,
-      required this.productModel});
+      required this.productModel,
+      this.setOrderTabAsActive});
 
   String title;
   // avg rating
   String avgRating;
   // product model with single product image, description, price, minimum order
   ProductModel productModel;
+  VoidCallback? setOrderTabAsActive; // for buy now
 
   @override
   State<AddToCartBuyNowView> createState() => _AddToCartBuyNowViewState();
@@ -479,21 +481,25 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
                                   } else {
                                     // proceed to checkout button
 
-                                    // show checkout view with only this passed to checkout view
+                                    // show checkout view with only this item passed to checkout view
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => CheckoutView(
                                                   cartItems: [
                                                     CartItemModel(
-                                                        quantity:
-                                                            counter.toString(),
-                                                        total: total.toString(),
-                                                        productId: widget
-                                                            .productModel.docId,
-                                                        buyerId: buyerId)
+                                                      quantity:
+                                                          counter.toString(),
+                                                      total: total.toString(),
+                                                      productId: widget
+                                                          .productModel.docId,
+                                                      buyerId: buyerId,
+                                                    )
                                                   ],
                                                   showRemoveItemOption: false,
+                                                  setOrderTabAsActive: widget
+                                                      .setOrderTabAsActive!,
+                                                  fromBuyNowView: true,
                                                 )));
                                   }
                                 }

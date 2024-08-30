@@ -82,8 +82,8 @@ class _ProductTabViewState extends State<ProductTabView> {
               // product card with stream of product reviews data supplied
               return StreamProvider.value(
                   initialData: null,
-                  value: ProductServices()
-                      .getProductAvgRatingStream(productModel),
+                  value:
+                      ProductServices().getProductAvgRatingStream(productModel),
                   child: ProductCard(productModel: productModel));
             }).toList()
                 // ..sort((a, b) =>
@@ -92,11 +92,9 @@ class _ProductTabViewState extends State<ProductTabView> {
   }
 }
 
-// individual product container
+// individual product container/card in grid view
 class ProductCard extends StatelessWidget {
   ProductCard({required this.productModel, this.forBuyer});
-
-  // for seller
 
   // for buyer
   bool? forBuyer;
@@ -129,7 +127,9 @@ class ProductCard extends StatelessWidget {
                         initialData: null,
                         value: ProductServices().getProductStream(productModel),
                         child: ItemDetailsView(
-                            avgRating: productAvgRating, forBuyer: true,))));
+                          avgRating: productAvgRating,
+                          forBuyer: true,
+                        ))));
           } else {
             // show product details screen for seller
             Navigator.push(
@@ -138,8 +138,7 @@ class ProductCard extends StatelessWidget {
                     builder: (context) => StreamProvider.value(
                         initialData: null,
                         value: ProductServices().getProductStream(productModel),
-                        child: ItemDetailsView(
-                            avgRating: productAvgRating))));
+                        child: ItemDetailsView(avgRating: productAvgRating))));
           }
         }
       },

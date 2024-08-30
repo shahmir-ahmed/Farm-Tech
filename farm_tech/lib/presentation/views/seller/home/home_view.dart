@@ -80,6 +80,13 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  // set buyer order tab as active
+  void setBuyerOrderTabAsActive() {
+    setState(() {
+      _selectedIndex = 2;
+    });
+  }
+
   // get seller uid
   _getUserUid() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -160,9 +167,10 @@ class _HomeViewState extends State<HomeView> {
       _widgetOptionsBuyer[0] =
           // home tab with buyer name and set search tab as active function
           BuyerHomeTabView(
-            buyerId: uId,
+        buyerId: uId,
         buyerName: buyerName,
         setSearchTabAsActive: setBuyerSearchTabAsActive,
+        setOrderTabAsActive: setOrderTabAsActive,
       );
     });
   }

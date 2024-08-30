@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class OrderPlacedView extends StatelessWidget {
-  const OrderPlacedView({super.key});
+  OrderPlacedView(
+      {super.key, required this.setOrderTabAsActive, this.fromBuyNowView});
+
+  VoidCallback setOrderTabAsActive;
+  bool? fromBuyNowView;
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +80,20 @@ class OrderPlacedView extends StatelessWidget {
             children: [
               CustomButton(
                 onButtonPressed: () {
-                  // close screen and set orders tab as active in home screen
+                  // close screen
                   Navigator.pop(context);
+
+                  // if from buy now view checked out
+                  if (fromBuyNowView != null) {
+                    // close buy now view
+                    Navigator.pop(context);
+
+                    // close item details view
+                    Navigator.pop(context);
+                  }
+
+                  // set orders tab as active in home screen
+                  setOrderTabAsActive();
                 },
                 buttonText: 'Track Order',
                 primaryButton: true,
@@ -87,15 +103,29 @@ class OrderPlacedView extends StatelessWidget {
               ),
 
               // space
-              SizedBox(height: 28,),
+              SizedBox(
+                height: 28,
+              ),
 
-              // back button
+              // back to home button
               GestureDetector(
-                onTap: (){
-                  // close screen
-                  Navigator.pop(context);
-                },
-                child: Text('Back to home', style: Utils.kAppBody2MediumStyle,)),
+                  onTap: () {
+                    // close screen
+                    Navigator.pop(context);
+
+                    // if from buy now view checked out
+                    if (fromBuyNowView != null) {
+                      // close buy now view
+                      Navigator.pop(context);
+
+                      // close item details view
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text(
+                    'Back to home',
+                    style: Utils.kAppBody2MediumStyle,
+                  )),
             ],
           ),
         )

@@ -13,10 +13,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ItemDetailsView extends StatefulWidget {
-  ItemDetailsView({required this.avgRating, this.forBuyer});
+  ItemDetailsView(
+      {required this.avgRating, this.forBuyer, this.setOrderTabAsActive});
 
   String avgRating;
   bool? forBuyer;
+  VoidCallback?
+      setOrderTabAsActive; // for order placed view after checkout when buy now clicked from here for buyer
 
   @override
   State<ItemDetailsView> createState() => _ItemDetailsViewState();
@@ -421,12 +424,15 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                       onButtonPressed: () {
                         // show buy now view
                         Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddToCartBuyNowView(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddToCartBuyNowView(
                                       title: 'Buy Now',
                                       avgRating: widget.avgRating,
-                                      productModel: productModel!)));
+                                      productModel: productModel!,
+                                      setOrderTabAsActive: widget
+                                          .setOrderTabAsActive, // must provide for buy now option
+                                    )));
                       },
                       widget: productModel == null
                           ? SizedBox(

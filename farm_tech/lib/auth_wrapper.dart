@@ -90,24 +90,24 @@ class _AuthWrapperState extends State<AuthWrapper> {
   _checkLoggedInUserTypeInPref() {
     final type = pref!.getString("userType");
 
-    print('user type in shared pref: $type');
+    // print('user type in shared pref: $type');
 
     if (type == 'seller') {
       setState(() {
         isChecking = false;
         userType = 'seller';
-        print('user type set as seller');
+        // print('user type set as seller');
       });
     } else if (type == 'buyer') {
       setState(() {
         isChecking = false;
         userType = 'buyer';
-        print('user type set as buyer');
+        // print('user type set as buyer');
       });
     }
     // if null
     else {
-      print('user type is null in shared pref');
+      // print('user type is null in shared pref');
       // set as empty because previous user's type is saved here in userType value and when different user logs in again shared pref take time to save and if not saved yet then the same previous user type screen will be displayed
       setState(() {
         userType == '';
@@ -125,7 +125,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
       Future.delayed(const Duration(seconds: 2), () {
         setState(() {
           twoSecondsPassed2 = true;
-          print('second two seconds passed');
+          // print('second two seconds passed');
         });
       });
     }
@@ -133,11 +133,11 @@ class _AuthWrapperState extends State<AuthWrapper> {
 
   // return current user logged in type i.e. buyer/seller
   String? _getLoggedInUserTypeFromPref() {
-    print('returning user type');
+    // print('returning user type');
 
     final type = pref!.getString("userType");
 
-    print('user type in shared pref: $type');
+    // print('user type in shared pref: $type');
 
     return type;
   }
@@ -157,7 +157,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
         }
         */
         twoSecondsPassed1 = true;
-        print('first two seconds passed');
+        // print('first two seconds passed');
       });
     });
   }
@@ -172,7 +172,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     SharedPreferences.getInstance().then((instance) {
       setState(() {
         pref = instance;
-        print('pref instance set');
+        // print('pref instance set');
       });
     });
   }
@@ -186,7 +186,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
 
     // user not logged in
     if (user == null) {
-      print('user is not logged in');
+      // print('user is not logged in');
       // print('user not logged in: $user');
       // normal splash screen
       return twoSecondsPassed1
@@ -212,7 +212,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     }
     // user logged in
     else {
-      print('user is logged in');
+      // print('user is logged in');
       // print('user logged in: ${user.uId}');
 
       // set user type var as empty b/c when user loggs out and then different type user logs in again then this value will not be changed so current saved user type value based home screen will be shown i.e. if seller logs out and buyer logs in again then type is not changed so seller with new uis does not exist in collection so error in showing data in seller home screen, because already it is set so set again. (need to renintizlize somewhere)
@@ -222,20 +222,20 @@ class _AuthWrapperState extends State<AuthWrapper> {
         // if empty then fetch
         if (userType.isEmpty) {
           _checkLoggedInUserTypeInPref();
-          print('checking user type');
+          // print('checking user type');
         }
         // check and get the current value in shared pref that which type user is logged in if it is same as current type then not change userType value and if not same then change the type value
         else {
-          print('checking user type again');
+          // print('checking user type again');
 
           String? loggedInUserType = _getLoggedInUserTypeFromPref();
 
           // same user type of current logged in and previous logged in user
           if (loggedInUserType == userType) {
             // do nothing
-            print('same user type');
+            // print('same user type');
           } else if (loggedInUserType == null) {
-            print('user type not present');
+            // print('user type not present');
 
             // set user type state var as empty again
             setState(() {
@@ -247,7 +247,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
               _checkLoggedInUserTypeInPref();
             });
           } else if (loggedInUserType != userType) {
-            print('different user type');
+            // print('different user type');
 
             // if not same then set the user type value again
             _checkLoggedInUserTypeInPref();
@@ -255,7 +255,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
         }
       }
 
-      print('userType state var: $userType');
+      // print('userType state var: $userType');
 
       // seller//buyer splash screen
       return isChecking

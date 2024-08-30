@@ -19,13 +19,12 @@ class BuyerHomeTabView extends StatefulWidget {
       {required this.buyerId,
       required this.buyerName,
       required this.setSearchTabAsActive,
-      // required this.setOrderTabAsActive
-      });
+      required this.setOrderTabAsActive});
 
   String buyerId;
   String buyerName;
   VoidCallback setSearchTabAsActive;
-  // VoidCallback setOrderTabAsActive;
+  VoidCallback setOrderTabAsActive;
 
   @override
   State<BuyerHomeTabView> createState() => _BuyerHomeTabViewState();
@@ -94,12 +93,18 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                                   value: CartServices().getBuyerCartItemsStream(
                                       BuyerModel(docId: widget.buyerId)),
                                   initialData: null,
-                                  child: const CartView())));
+                                  child: CartView(
+                                    setOrderTabAsActive:
+                                        widget.setOrderTabAsActive,
+                                  ))));
 
                       // Navigator.push(
                       //     context,
                       //     MaterialPageRoute(
-                      //         builder: (context) => OrderPlacedView()));
+                      //         builder: (context) => OrderPlacedView(
+                      //               setOrderTabAsActive:
+                      //                   widget.setOrderTabAsActive,
+                      //             )));
                     },
                     /*
                     () async {
@@ -367,7 +372,9 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
             StreamProvider.value(
                 value: ProductServices().getAllProductsStream(),
                 initialData: null,
-                child: FeaturedSection()),
+                child: FeaturedSection(
+                  setOrderTabAsActive: widget.setOrderTabAsActive,
+                )),
 
             // space
             const SizedBox(
@@ -525,7 +532,9 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
 }
 
 class FeaturedSection extends StatefulWidget {
-  const FeaturedSection({super.key});
+  FeaturedSection({super.key, required this.setOrderTabAsActive});
+
+  VoidCallback setOrderTabAsActive;
 
   @override
   State<FeaturedSection> createState() => _FeaturedSectionState();
@@ -601,8 +610,10 @@ class _FeaturedSectionState extends State<FeaturedSection> {
                       value: ProductServices()
                           .getProductAvgRatingStream(productModel),
                       initialData: null,
-                      child:
-                          HomeFeaturedProductCard(productModel: productModel));
+                      child: HomeFeaturedProductCard(
+                        productModel: productModel,
+                        setOrderTabAsActive: widget.setOrderTabAsActive,
+                      ));
                 }).toList()),
               ),
             ),

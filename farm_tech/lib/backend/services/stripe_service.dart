@@ -35,7 +35,7 @@ class StripeService {
 
       if (paymentProcessed == null) return 'payment_process_cancelled';
 
-      print('Payment success 3');
+      // print('Payment success 3');
 
       return 'success';
     } catch (e) {
@@ -65,7 +65,7 @@ class StripeService {
         ),
       );
       if (response.data != null) {
-        print('Payment success 1');
+        // print('Payment success 1');
         return response.data["client_secret"];
       }
       return null;
@@ -85,7 +85,7 @@ class StripeService {
       try {
         await Stripe.instance
             .confirmPaymentSheetPayment()
-            .timeout(Duration(seconds: 10), onTimeout: () {
+            .timeout(Duration(seconds: 5), onTimeout: () {
           throw Exception('Payment confirmation timed out');
         });
         print('After confirming payment');
@@ -95,8 +95,8 @@ class StripeService {
       }
       // print('After confirming payment');
 
-      print('Payment success 2');
-      
+      // print('Payment success 2');
+
       return 'success';
     } catch (e) {
       print('Err in _processPayment: $e');

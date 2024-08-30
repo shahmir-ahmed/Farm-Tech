@@ -9,7 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CartView extends StatefulWidget {
-  const CartView({super.key});
+  CartView({super.key, required this.setOrderTabAsActive});
+
+  VoidCallback
+      setOrderTabAsActive; // for item details view if buy now clicked from there
 
   @override
   State<CartView> createState() => _CartViewState();
@@ -176,37 +179,39 @@ class _CartViewState extends State<CartView> {
                         Column(
                           children: cartItems.map((cartItemModel) {
                             return CartItemCard(
-                                key: Key(cartItemModel.docId!),
-                                cartItemModel: cartItemModel,
-                                removeClicked: _removeClicked,
-                                checkBoxValue:
-                                    checkedItems.contains(cartItemModel.docId)
-                                        ? true
-                                        : false,
-                                onCheckBoxClicked: () {
-                                  // if not added then add other wise remove
-                                  if (!checkedItems
-                                      .contains(cartItemModel.docId)) {
-                                    // add this cart item doc id in check items list
-                                    setState(() {
-                                      checkedItems.add(cartItemModel.docId!);
-                                    });
-                                  } else {
-                                    // remove this cart item doc id from check items list
-                                    setState(() {
-                                      checkedItems.remove(cartItemModel.docId);
-                                    });
-                                  }
-                                },
-                                onRemoveClicked: () {
+                              key: Key(cartItemModel.docId!),
+                              cartItemModel: cartItemModel,
+                              removeClicked: _removeClicked,
+                              checkBoxValue:
+                                  checkedItems.contains(cartItemModel.docId)
+                                      ? true
+                                      : false,
+                              onCheckBoxClicked: () {
+                                // if not added then add other wise remove
+                                if (!checkedItems
+                                    .contains(cartItemModel.docId)) {
+                                  // add this cart item doc id in check items list
                                   setState(() {
-                                    // set remove clicked as true
-                                    _removeClicked = true;
-
-                                    // add this item doc id in checked items list
                                     checkedItems.add(cartItemModel.docId!);
                                   });
+                                } else {
+                                  // remove this cart item doc id from check items list
+                                  setState(() {
+                                    checkedItems.remove(cartItemModel.docId);
+                                  });
+                                }
+                              },
+                              onRemoveClicked: () {
+                                setState(() {
+                                  // set remove clicked as true
+                                  _removeClicked = true;
+
+                                  // add this item doc id in checked items list
+                                  checkedItems.add(cartItemModel.docId!);
                                 });
+                              },
+                              setOrderTabAsActive: widget.setOrderTabAsActive,
+                            );
                           }).toList(),
                         ),
 
@@ -223,6 +228,8 @@ class _CartViewState extends State<CartView> {
                                       builder: (context) => CheckoutView(
                                             cartItems: cartItems,
                                             showRemoveItemOption: true,
+                                            setOrderTabAsActive:
+                                                widget.setOrderTabAsActive,
                                           )));
                             },
                             buttonText: 'Proceed To Checkout',

@@ -8,9 +8,11 @@ import 'package:provider/provider.dart';
 
 // home featured section product card
 class HomeFeaturedProductCard extends StatelessWidget {
-  HomeFeaturedProductCard({required this.productModel});
+  HomeFeaturedProductCard(
+      {required this.productModel, required this.setOrderTabAsActive});
 
   ProductModel productModel;
+  VoidCallback setOrderTabAsActive;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,7 @@ class HomeFeaturedProductCard extends StatelessWidget {
                       initialData: null,
                       value: ProductServices().getProductStream(productModel),
                       child: ItemDetailsView(
+                        setOrderTabAsActive: setOrderTabAsActive,
                         avgRating: productAvgRating,
                         forBuyer: true,
                       ))));

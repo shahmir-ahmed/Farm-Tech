@@ -15,13 +15,15 @@ class CartItemCard extends StatefulWidget {
       required this.removeClicked,
       required this.checkBoxValue,
       required this.onCheckBoxClicked,
-      required this.onRemoveClicked});
+      required this.onRemoveClicked,
+      required this.setOrderTabAsActive});
 
   CartItemModel cartItemModel;
   bool removeClicked;
   bool checkBoxValue;
   VoidCallback onCheckBoxClicked;
   VoidCallback onRemoveClicked;
+  VoidCallback setOrderTabAsActive;
 
   @override
   State<CartItemCard> createState() => _CartItemCardState();
@@ -108,7 +110,7 @@ class _CartItemCardState extends State<CartItemCard> {
       children: [
         // divider
         Utils.divider,
-        
+
         Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -155,9 +157,12 @@ class _CartItemCardState extends State<CartItemCard> {
                                                         .productId)),
                                         initialData: null,
                                         child: CartItemDetailsViewBridge(
-                                            productModel: ProductModel(
-                                                docId: widget.cartItemModel
-                                                    .productId)))));
+                                          productModel: ProductModel(
+                                              docId: widget
+                                                  .cartItemModel.productId),
+                                          setOrderTabAsActive:
+                                              widget.setOrderTabAsActive,
+                                        ))));
                           },
                           child: Image.network(
                             productImageUrl,
@@ -193,19 +198,24 @@ class _CartItemCardState extends State<CartItemCard> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => StreamProvider.value(
-                                              value: ProductServices()
-                                                  .getProductAvgRatingStream(
-                                                      ProductModel(
-                                                          docId: widget
-                                                              .cartItemModel
-                                                              .productId)),
-                                              initialData: null,
-                                              child: CartItemDetailsViewBridge(
-                                                  productModel: ProductModel(
-                                                      docId: widget
-                                                          .cartItemModel
-                                                          .productId)))));
+                                          builder: (context) =>
+                                              StreamProvider.value(
+                                                  value: ProductServices()
+                                                      .getProductAvgRatingStream(
+                                                          ProductModel(
+                                                              docId: widget
+                                                                  .cartItemModel
+                                                                  .productId)),
+                                                  initialData: null,
+                                                  child:
+                                                      CartItemDetailsViewBridge(
+                                                    productModel: ProductModel(
+                                                        docId: widget
+                                                            .cartItemModel
+                                                            .productId),
+                                                    setOrderTabAsActive: widget
+                                                        .setOrderTabAsActive,
+                                                  ))));
                                 }
                               },
                               child: Text(
@@ -286,9 +296,11 @@ class _CartItemCardState extends State<CartItemCard> {
 
 // cart item and item details view bridge widget for product reviews i.e. avg rating data consumer
 class CartItemDetailsViewBridge extends StatefulWidget {
-  CartItemDetailsViewBridge({required this.productModel});
+  CartItemDetailsViewBridge(
+      {required this.productModel, required this.setOrderTabAsActive});
 
   ProductModel productModel;
+  VoidCallback setOrderTabAsActive;
 
   @override
   State<CartItemDetailsViewBridge> createState() =>
@@ -307,8 +319,10 @@ class _CartItemDetailsViewBridgeState extends State<CartItemDetailsViewBridge> {
       value: ProductServices().getProductStream(widget.productModel),
       initialData: null,
       child: ItemDetailsView(
-          forBuyer: true,
-          avgRating: productAvgRating == null ? "0" : productAvgRating),
+        forBuyer: true,
+        avgRating: productAvgRating == null ? "0" : productAvgRating,
+        setOrderTabAsActive: widget.setOrderTabAsActive,
+      ),
     );
   }
 }

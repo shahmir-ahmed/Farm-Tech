@@ -18,10 +18,16 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class CheckoutView extends StatefulWidget {
-  CheckoutView({required this.cartItems, required this.showRemoveItemOption});
+  CheckoutView(
+      {required this.cartItems,
+      required this.showRemoveItemOption,
+      required this.setOrderTabAsActive,
+      this.fromBuyNowView});
 
   List<CartItemModel> cartItems;
   bool showRemoveItemOption;
+  VoidCallback setOrderTabAsActive;
+  bool? fromBuyNowView;
 
   @override
   State<CheckoutView> createState() => _CheckoutViewState();
@@ -537,21 +543,21 @@ class _CheckoutViewState extends State<CheckoutView> {
                                   sellerId: productModel.sellerId));
 
                           /*
-                  // If above doc is not created then how will this be created?
-                  // if error creating order doc
-                  if (result == null) {
-                    final result = await OrderServices().createOrder(OrderModel(
-                        quantity: widget.cartItems[i].quantity,
-                        totalAmount: widget.cartItems[i].total,
-                        status: "Not placed",
-                        productId: widget.cartItems[i].productId,
-                        customerId: widget.cartItems[0].buyerId,
-                        sellerId: productModel
-                            .sellerId)); // create order doc with status as not placed
+                          // If above doc is not created then how will this be created?
+                          // if error creating order doc
+                          if (result == null) {
+                            final result = await OrderServices().createOrder(OrderModel(
+                                quantity: widget.cartItems[i].quantity,
+                                totalAmount: widget.cartItems[i].total,
+                                status: "Not placed",
+                                productId: widget.cartItems[i].productId,
+                                customerId: widget.cartItems[0].buyerId,
+                                sellerId: productModel
+                                    .sellerId)); // create order doc with status as not placed
 
-                    // cannot do anything if err in creating doc here
-                  }
-                  */
+                            // cannot do anything if err in creating doc here
+                          }
+                          */
 
                           // add result in list
                           results.add(result);
@@ -594,20 +600,24 @@ class _CheckoutViewState extends State<CheckoutView> {
                         results2.add(result);
                       }
 
-                      // REMOVING ITEMS FROM CART
+                      // if not from buy now view checking out then remove from cart
                       // cart items removing results list
                       List results3 = [];
+                      
+                      if (widget.fromBuyNowView == null) {
+                        // REMOVING ITEMS FROM CART
 
-                      // remove all items from cart
-                      for (var i = 0; i < widget.cartItems.length; i++) {
-                        // not remove item from cart for which order doc creation error occured
-                        if (results[i] != null) {
-                          // remove item from cart
-                          final result = await CartServices()
-                              .removeItemFromCart(widget.cartItems[i]);
+                        // remove all items from cart
+                        for (var i = 0; i < widget.cartItems.length; i++) {
+                          // not remove item from cart for which order doc creation error occured
+                          if (results[i] != null) {
+                            // remove item from cart
+                            final result = await CartServices()
+                                .removeItemFromCart(widget.cartItems[i]);
 
-                          // add result in list
-                          results3.add(result);
+                            // add result in list
+                            results3.add(result);
+                          }
                         }
                       }
 
@@ -623,14 +633,30 @@ class _CheckoutViewState extends State<CheckoutView> {
                           notPlacedOrderNames.isEmpty) {
                         print('All orders placed');
 
-                        // close cart screen
-                        Navigator.pop(context);
+                        // if not came from buy now view
+                        if (widget.fromBuyNowView == null) {
+                          // close cart screen
+                          Navigator.pop(context);
 
-                        // show order placed screen
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => OrderPlacedView()));
+                          // show order placed screen
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => OrderPlacedView(
+                                        setOrderTabAsActive:
+                                            widget.setOrderTabAsActive,
+                                      )));
+                        } else {
+                          // show order placed screen for from buy now view
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => OrderPlacedView(
+                                        setOrderTabAsActive:
+                                            widget.setOrderTabAsActive,
+                                        fromBuyNowView: true,
+                                      )));
+                        }
 
                         // floatingSnackBar(
                         //     message: 'Orders placed successfully', context: context);
@@ -710,22 +736,24 @@ class _CheckoutViewState extends State<CheckoutView> {
                         print('All products stock quantity updated');
                       }
 
-                      // if error in removing cart items
-                      if (results3.where((result) => result == null).length ==
-                          1) {
-                        floatingSnackBar(
-                            message: 'Error removing item from cart',
-                            context: context);
-                      } else if (results3
-                              .where((result) => result == null)
-                              .length >
-                          1) {
-                        floatingSnackBar(
-                            message: 'Error removing items from cart',
-                            context: context);
-                      } else {
-                        // items removed from cart
-                        print('All items removed from cart');
+                      if (widget.fromBuyNowView == null) {
+                        // if error in removing cart items
+                        if (results3.where((result) => result == null).length ==
+                            1) {
+                          floatingSnackBar(
+                              message: 'Error removing item from cart',
+                              context: context);
+                        } else if (results3
+                                .where((result) => result == null)
+                                .length >
+                            1) {
+                          floatingSnackBar(
+                              message: 'Error removing items from cart',
+                              context: context);
+                        } else {
+                          // items removed from cart
+                          print('All items removed from cart');
+                        }
                       }
                     }
                   }
