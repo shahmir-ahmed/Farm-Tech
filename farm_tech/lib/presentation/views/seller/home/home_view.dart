@@ -41,7 +41,7 @@ class _HomeViewState extends State<HomeView> {
   // bottom navigation bar widget options buyer
   List<Widget?> _widgetOptionsBuyer = <Widget?>[
     Utils.circularProgressIndicator,
-    const BuyerSearchTabView(),
+    Utils.circularProgressIndicator,
     const BuyerOrderTabView(),
     const BuyerChatTabView(),
     const BuyerProfileTabView(),
@@ -116,6 +116,9 @@ class _HomeViewState extends State<HomeView> {
     } else {
       // get buyer name now
       _getBuyerName();
+
+      // reinitialize buyer search tab
+      _reInitializeBuyerSearchTab();
     }
   }
 
@@ -202,6 +205,18 @@ class _HomeViewState extends State<HomeView> {
       // pass function to profile tab
       _widgetOptionsSeller[4] = ProfileTabView(
         setOrderTabAsActive: setOrderTabAsActive,
+      );
+    });
+  }
+
+  // buyer search tab reintialize
+  _reInitializeBuyerSearchTab() {
+    // reinitialize buyer widgets options
+    setState(() {
+      // pass function and buyer id to buyer search tab
+      _widgetOptionsBuyer[1] = BuyerSearchTabView(
+        setOrderTabAsActive: setOrderTabAsActive,
+        buyerId: uId,
       );
     });
   }

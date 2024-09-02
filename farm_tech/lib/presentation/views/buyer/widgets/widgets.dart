@@ -16,9 +16,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // specific category products view
 class ProductsView extends StatefulWidget {
-  ProductsView({required this.title});
+  ProductsView(
+      {required this.title,
+      required this.setOrderTabAsActive,
+      this.noSearchIcon});
 
   String title;
+  VoidCallback setOrderTabAsActive;
+  bool? noSearchIcon;
 
   @override
   State<ProductsView> createState() => _ProductsViewState();
@@ -66,16 +71,19 @@ class _ProductsViewState extends State<ProductsView> {
     return Scaffold(
       appBar: Utils.getAppBar(
           widget.title,
-          [
-            // search icon
-            SizedBox(
-              width: 25,
-              child: Image.asset('assets/images/icon@search-active.png'),
-            ),
-            const SizedBox(
-              width: 30,
-            ),
-          ],
+          // if no search icon value is present which is true so not show search icon
+          widget.noSearchIcon != null
+              ? []
+              : [
+                  // search icon
+                  SizedBox(
+                    width: 25,
+                    child: Image.asset('assets/images/icon@search-active.png'),
+                  ),
+                  const SizedBox(
+                    width: 30,
+                  ),
+                ],
           context),
       body: _getBody(),
       backgroundColor: Utils.whiteColor,
@@ -83,28 +91,28 @@ class _ProductsViewState extends State<ProductsView> {
   }
 
   _getBody() {
-    // consume category products stream here
-    final categoryProducts = Provider.of<List<ProductModel>?>(context);
+    // consume category products / products stream here
+    final products = Provider.of<List<ProductModel>?>(context);
 
     // print('productsList: ${productsList.first.mainImageUrl}');
 
     // if products are supplied and products list is empty
-    if (categoryProducts != null && productsList.isEmpty) {
+    if (products != null && productsList.isEmpty) {
       // print('first product doc id ${products.first.docId}');
-      productsList = categoryProducts;
+      productsList = products;
       // get product image/first image
       _setProductImages();
     }
 
-    return categoryProducts == null
+    return products == null
         ? SizedBox(
             height: 200,
             child: Utils.circularProgressIndicator,
           )
-        : categoryProducts.isEmpty
+        : products.isEmpty
             ? Center(
                 child: Text(
-                  'No products for this category yet.',
+                  'No products found.',
                   style: Utils.kAppBody2RegularStyle,
                 ),
               )
@@ -117,6 +125,7 @@ class _ProductsViewState extends State<ProductsView> {
                     child: ProductCard(
                       productModel: productModel,
                       forBuyer: true,
+                      setOrderTabAsActive: widget.setOrderTabAsActive,
                     ));
               }).toList());
   }

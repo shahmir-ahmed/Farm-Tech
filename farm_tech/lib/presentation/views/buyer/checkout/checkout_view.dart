@@ -27,7 +27,7 @@ class CheckoutView extends StatefulWidget {
   List<CartItemModel> cartItems;
   bool showRemoveItemOption;
   VoidCallback setOrderTabAsActive;
-  bool? fromBuyNowView;
+  bool? fromBuyNowView; // value provided only when from buy now view
 
   @override
   State<CheckoutView> createState() => _CheckoutViewState();
@@ -603,7 +603,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                       // if not from buy now view checking out then remove from cart
                       // cart items removing results list
                       List results3 = [];
-                      
+
                       if (widget.fromBuyNowView == null) {
                         // REMOVING ITEMS FROM CART
 

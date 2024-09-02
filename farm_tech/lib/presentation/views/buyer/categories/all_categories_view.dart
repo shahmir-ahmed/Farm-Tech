@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AllCategoriesView extends StatelessWidget {
-  AllCategoriesView({super.key});
+  AllCategoriesView({super.key, required this.setOrderTabAsActive});
 
   // categories
   final List<String> categories = [
@@ -19,6 +19,8 @@ class AllCategoriesView extends StatelessWidget {
     "Fruits",
     "Vegetables",
   ];
+
+  VoidCallback setOrderTabAsActive;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,7 @@ class AllCategoriesView extends StatelessWidget {
     return Column(
         children: categories.map((category) {
       return category == 'Crops'
+      // crops category option row with top divider
           ? OptionRow(
               text: category,
               onPressed: () {
@@ -57,9 +60,11 @@ class AllCategoriesView extends StatelessWidget {
                               initialData: null,
                               child: ProductsView(
                                 title: '$category Category Items',
+                                setOrderTabAsActive: setOrderTabAsActive,
                               ),
                             )));
               })
+              // all other categories option rows with no top divider
           : OptionRow(
               text: category,
               onPressed: () {
@@ -72,6 +77,7 @@ class AllCategoriesView extends StatelessWidget {
                               initialData: null,
                               child: ProductsView(
                                 title: '$category Category Items',
+                                setOrderTabAsActive: setOrderTabAsActive,
                               ),
                             )));
               },

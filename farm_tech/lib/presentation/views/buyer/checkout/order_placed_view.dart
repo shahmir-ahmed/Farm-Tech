@@ -90,6 +90,8 @@ class OrderPlacedView extends StatelessWidget {
 
                     // close item details view
                     Navigator.pop(context);
+                    
+                    // if from categories section came here then other screens will be below 
                   }
 
                   // set orders tab as active in home screen
@@ -120,6 +122,8 @@ class OrderPlacedView extends StatelessWidget {
 
                       // close item details view
                       Navigator.pop(context);
+
+                      // if from categories section came here then other screens will be below 
                     }
                   },
                   child: Text(

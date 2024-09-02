@@ -220,7 +220,7 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AllCategoriesView()));
+                              builder: (context) => AllCategoriesView(setOrderTabAsActive: widget.setOrderTabAsActive,)));
                     },
                     child: Text(
                       'See all',
@@ -267,6 +267,7 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                                       initialData: null,
                                       child: ProductsView(
                                         title: '$title Category Items',
+                                        setOrderTabAsActive: widget.setOrderTabAsActive
                                       ),
                                     )));
                         // }
@@ -341,6 +342,7 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                   // text
                   GestureDetector(
                     onTap: () {
+                      // show all featured items in products view screen
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -350,6 +352,7 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                                     initialData: null,
                                     child: ProductsView(
                                       title: 'Featured Items',
+                                      setOrderTabAsActive: widget.setOrderTabAsActive,
                                     ),
                                   )));
                     },

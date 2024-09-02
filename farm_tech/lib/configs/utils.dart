@@ -183,6 +183,9 @@ class Utils {
                                                                     : forScreen ==
                                                                             'payment_processing'
                                                                         ? "Processing payment"
+                                                                    : forScreen ==
+                                                                            'clear_recent_searches'
+                                                                        ? "Deleting"
                                                                         : "",
             style: forScreen == 'payment_processing'
                 ? kAppBody1BoldStyle
@@ -224,6 +227,9 @@ class Utils {
                                                                 : forScreen ==
                                                                         'payment_processing'
                                                                     ? "Payment is being processed"
+                                                                : forScreen ==
+                                                                        'clear_recent_searches'
+                                                                    ? "Deleting all recent searches"
                                                                     : "",
             style: kAppBody3RegularStyle.copyWith(color: lightGreyColor1),
           ),
@@ -325,7 +331,7 @@ class Utils {
             ? 'Logout'
             : forScreen == 'cart_single_item' || forScreen == 'cart'
                 ? 'Yes'
-                : '',
+                : 'Yes',
         onButtonPressed: onConfirmPressed,
         // buttonWidth: MediaQuery.of(context).size.width,
         buttonHeight: 60,
@@ -369,6 +375,8 @@ class Utils {
                 ? 'Remove item?'
                 : forScreen == 'cart'
                     ? 'Remove items?'
+                : forScreen == 'clear_recent_searches'
+                    ? 'Clear recent searches?'
                     : '',
         style: Utils.kAppHeading6BoldStyle,
       ),
@@ -380,6 +388,8 @@ class Utils {
                 ? 'Are your sure you want to remove item from cart?'
                 : forScreen == 'cart'
                     ? 'Are your sure you want to remove items from cart?'
+                : forScreen == 'clear_recent_searches'
+                    ? 'Are your sure you want to clear all your recent searches?'
                     : '',
         style:
             Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),

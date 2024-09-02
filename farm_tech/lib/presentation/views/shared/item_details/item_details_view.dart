@@ -14,11 +14,13 @@ import 'package:provider/provider.dart';
 
 class ItemDetailsView extends StatefulWidget {
   ItemDetailsView(
-      {required this.avgRating, this.forBuyer, this.setOrderTabAsActive});
+      {required this.avgRating,
+      this.forBuyer,
+      required this.setOrderTabAsActive});
 
   String avgRating;
   bool? forBuyer;
-  VoidCallback?
+  VoidCallback
       setOrderTabAsActive; // for order placed view after checkout when buy now clicked from here for buyer
 
   @override

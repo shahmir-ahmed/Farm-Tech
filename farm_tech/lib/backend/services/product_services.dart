@@ -26,13 +26,12 @@ class ProductServices {
           .collection('products')
           .doc(model.docId)
           .get()
-          .then((doc) async{
+          .then((doc) async {
         int currentStockQuantity = doc.get('stockQuantity');
 
         int newStockQuantity = currentStockQuantity - quantityBought;
 
-        final newProductModel =
-            ProductModel(stockQuantity: newStockQuantity);
+        final newProductModel = ProductModel(stockQuantity: newStockQuantity);
 
         await FirebaseFirestore.instance
             .collection('products')
@@ -41,7 +40,6 @@ class ProductServices {
 
         return 'success';
       });
-
     } catch (e) {
       print("Err in createProductDoc: $e");
       return null;
@@ -266,6 +264,30 @@ class ProductServices {
               .toList());
     } catch (e) {
       print('Err in getAllProductsStream: $e');
+      return null;
+    }
+  }
+
+  // return products which contain the text in title
+  Stream<List<ProductModel>?>? getSearchedProductsStream(String searchText){
+    try {
+      return FirebaseFirestore.instance
+          .collection('products')
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) {
+                // If the product title contains the search text, return the ProductModel instance
+                if (doc.get('title').toString().toLowerCase().contains(searchText)) {
+                  return ProductModel.fromJson(doc.data(), doc.id);
+                }
+                return null; // Return null if the product doesn't match the search text
+              })
+              .where((product) => product != null)
+              .cast<
+                  ProductModel>() // Ensure the list is of type List<ProductModel>
+              .toList());
+    } catch (e) {
+      print('Err in getProductsForSearch: $e');
       return null;
     }
   }
