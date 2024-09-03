@@ -46,43 +46,26 @@ class AllCategoriesView extends StatelessWidget {
   _getBody(context) {
     return Column(
         children: categories.map((category) {
-      return category == 'Crops'
-      // crops category option row with top divider
-          ? OptionRow(
-              text: category,
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => StreamProvider.value(
-                              value: ProductServices()
-                                  .getCategoryProductsStream(category),
-                              initialData: null,
-                              child: ProductsView(
-                                title: '$category Category Items',
-                                setOrderTabAsActive: setOrderTabAsActive,
-                              ),
-                            )));
-              })
-              // all other categories option rows with no top divider
-          : OptionRow(
-              text: category,
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => StreamProvider.value(
-                              value: ProductServices()
-                                  .getCategoryProductsStream(category),
-                              initialData: null,
-                              child: ProductsView(
-                                title: '$category Category Items',
-                                setOrderTabAsActive: setOrderTabAsActive,
-                              ),
-                            )));
-              },
-              noTopDivider: true,
-            );
+      return OptionRow(
+        text: category,
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => StreamProvider.value(
+                        value: ProductServices()
+                            .getCategoryProductsStream(category),
+                        initialData: null,
+                        child: ProductsView(
+                          title: '$category Category Items',
+                          setOrderTabAsActive: setOrderTabAsActive,
+                        ),
+                      )));
+        },
+        // crops category option row with top divider
+        // all other categories option rows with no top divider
+        noTopDivider: category == 'Crops' ? false : true,
+      );
     }).toList());
   }
 }

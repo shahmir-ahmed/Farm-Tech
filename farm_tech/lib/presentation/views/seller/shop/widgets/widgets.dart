@@ -84,7 +84,10 @@ class _ProductTabViewState extends State<ProductTabView> {
                   initialData: null,
                   value:
                       ProductServices().getProductAvgRatingStream(productModel),
-                  child: ProductCard(productModel: productModel, setOrderTabAsActive: (){},));
+                  child: ProductCard(
+                    productModel: productModel,
+                    setOrderTabAsActive: () {},
+                  ));
             }).toList()
                 // ..sort((a, b) =>
                 //     b.createdAt.compareTo(a.createdAt))
@@ -94,7 +97,11 @@ class _ProductTabViewState extends State<ProductTabView> {
 
 // individual product container/card in grid view
 class ProductCard extends StatelessWidget {
-  ProductCard({required this.productModel, this.forBuyer, required this.setOrderTabAsActive});
+  ProductCard(
+      {required this.productModel,
+      this.forBuyer,
+      required this.setOrderTabAsActive
+      });
 
   // for buyer
   bool? forBuyer;
@@ -141,7 +148,10 @@ class ProductCard extends StatelessWidget {
                     builder: (context) => StreamProvider.value(
                         initialData: null,
                         value: ProductServices().getProductStream(productModel),
-                        child: ItemDetailsView(avgRating: productAvgRating, setOrderTabAsActive: (){},))));
+                        child: ItemDetailsView(
+                          avgRating: productAvgRating,
+                          setOrderTabAsActive: () {},
+                        ))));
           }
         }
       },

@@ -112,7 +112,9 @@ class _ProductsViewState extends State<ProductsView> {
         : products.isEmpty
             ? Center(
                 child: Text(
-                  'No products found.',
+                  widget.title.contains('Search')
+                      ? 'No products found.'
+                      : 'No products for this category yet.',
                   style: Utils.kAppBody2RegularStyle,
                 ),
               )
@@ -137,14 +139,15 @@ class AddToCartBuyNowView extends StatefulWidget {
       {required this.title,
       required this.avgRating,
       required this.productModel,
-      this.setOrderTabAsActive});
+      required this.setOrderTabAsActive});
 
   String title;
   // avg rating
   String avgRating;
   // product model with single product image, description, price, minimum order
   ProductModel productModel;
-  VoidCallback? setOrderTabAsActive; // for buy now
+  VoidCallback
+      setOrderTabAsActive; // for buy now (must be present because buy now can be clicked from here)
 
   @override
   State<AddToCartBuyNowView> createState() => _AddToCartBuyNowViewState();
@@ -507,7 +510,7 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
                                                   ],
                                                   showRemoveItemOption: false,
                                                   setOrderTabAsActive: widget
-                                                      .setOrderTabAsActive!,
+                                                      .setOrderTabAsActive, // here error coming, when coming from category product buy now becuase its value can be null but now it is required
                                                   fromBuyNowView: true,
                                                 )));
                                   }

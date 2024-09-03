@@ -5,9 +5,29 @@ class RecentSearchServices {
   // create recent search doc for buyer
   addRecentSearch(RecentSearchModel model) async {
     try {
+      // check if doc of this buyer with same search text exists then not create doc for this search text
       await FirebaseFirestore.instance
           .collection('recentSearches')
-          .add(model.toJson());
+          .where('buyerId', isEqualTo: model.buyerId)
+          .get()
+          .then((snapshot) async {
+        final sameTextDoc = snapshot.docs
+            .where(
+                (doc) => doc.get('searchText').toString() == model.searchText);
+
+        if (sameTextDoc.length == 1) {
+          // not create doc for this search text
+          // but update the createdAt of thie doc
+          // await FirebaseFirestore.instance
+          //     .collection('recentSearches')
+          //     .update();
+        } else {
+          // create doc for this search text because no doc with this search text exists
+          await FirebaseFirestore.instance
+              .collection('recentSearches')
+              .add(model.toJson());
+        }
+      });
 
       return 'success';
     } catch (e) {

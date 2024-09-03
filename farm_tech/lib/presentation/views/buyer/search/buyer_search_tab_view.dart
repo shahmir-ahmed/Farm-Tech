@@ -6,7 +6,6 @@ import 'package:farm_tech/presentation/views/buyer/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/seller/profile/widgets/widgets.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class BuyerSearchTabView extends StatefulWidget {
@@ -21,7 +20,7 @@ class BuyerSearchTabView extends StatefulWidget {
 }
 
 class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
-  // add text in recenet searches for buyer
+  // add text in recent searches for buyer
   _addTextInRecentSearches(String text) async {
     final result = await RecentSearchServices().addRecentSearch(
         RecentSearchModel(searchText: text, buyerId: widget.buyerId));
@@ -52,7 +51,7 @@ class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
       Padding(
         padding: const EdgeInsets.all(25.0),
         child: Text(
-          'What products/services are you looking for?',
+          'What products are you looking for?',
           style: Utils.kAppHeading6BoldStyle,
         ),
       ),
@@ -71,7 +70,7 @@ class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
             // if value is not provided then not search
             if (value.trim().isNotEmpty) {
               // add text in recent searches for this buyer
-              _addTextInRecentSearches(value.trim());
+              _addTextInRecentSearches(value.trim().toLowerCase());
 
               // search the product name in products collection and show the product(s) in products view
               // push products view with products found for search list
@@ -83,14 +82,13 @@ class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
                                 value.trim().toLowerCase()),
                             initialData: null,
                             child: ProductsView(
-                              title: 'Search',
+                              title: 'Search "${value.trim()}"',
                               setOrderTabAsActive: widget.setOrderTabAsActive,
                               noSearchIcon: true,
                             ),
                           )));
             }
           },
-          textCapitalization: TextCapitalization.sentences,
           decoration: Utils.inputFieldDecoration.copyWith(
               suffixIcon: Padding(
                 padding: const EdgeInsets.only(right: 20.0),
@@ -114,7 +112,9 @@ class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
       StreamProvider.value(
         value: RecentSearchServices().getBuyerRecentSearches(widget.buyerId),
         initialData: null,
-        child: RecentSearchesSection(buyerId: widget.buyerId),
+        child: RecentSearchesSection(
+            buyerId: widget.buyerId,
+            setOrderTabAsActive: widget.setOrderTabAsActive),
       )
     ]));
   }
@@ -122,9 +122,11 @@ class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
 
 // recent searches widget
 class RecentSearchesSection extends StatefulWidget {
-  RecentSearchesSection({super.key, required this.buyerId});
+  RecentSearchesSection(
+      {super.key, required this.buyerId, required this.setOrderTabAsActive});
 
   String buyerId;
+  VoidCallback setOrderTabAsActive;
 
   @override
   State<RecentSearchesSection> createState() => _RecentSearchesSectionState();
@@ -247,7 +249,29 @@ class _RecentSearchesSectionState extends State<RecentSearchesSection> {
                             // recent search row
                             OptionRow(
                               text: model.searchText!,
-                              onPressed: () {},
+                              onPressed: () {
+                                // remove focus from search text field
+                                FocusScope.of(context).unfocus();
+                                // when clicking on a recent searched text the text will be searched again
+                                // push products view with products found for search list
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            StreamProvider.value(
+                                              value: ProductServices()
+                                                  .getSearchedProductsStream(
+                                                      model.searchText!),
+                                              initialData: null,
+                                              child: ProductsView(
+                                                title:
+                                                    'Search "${model.searchText}"',
+                                                setOrderTabAsActive:
+                                                    widget.setOrderTabAsActive,
+                                                noSearchIcon: true,
+                                              ),
+                                            )));
+                              },
                               noTopDivider: true,
                               textStyle: Utils.kAppBody3RegularStyle,
                             )

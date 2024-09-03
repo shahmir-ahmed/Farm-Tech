@@ -10,8 +10,7 @@ class OptionRow extends StatelessWidget {
       this.noRightIcon,
       this.startIcon,
       this.noTopDivider,
-      this.textStyle
-      });
+      this.textStyle});
 
   String text;
   TextStyle? textStyle;
@@ -27,7 +26,13 @@ class OptionRow extends StatelessWidget {
       children: [
         // divider
         noTopDivider != null
-            ? const SizedBox()
+            ? noTopDivider == true
+                ? const SizedBox()
+                : const Divider(
+                    height: 0.5,
+                    thickness: 0.0,
+                    color: Utils.lightGreyColor3,
+                  )
             : const Divider(
                 height: 0.5,
                 thickness: 0.0,
@@ -54,8 +59,9 @@ class OptionRow extends StatelessWidget {
                       // text
                       Text(
                         text,
-                        style: textStyle ?? Utils.kAppBody3MediumStyle
-                            .copyWith(color: textColor ?? Utils.blackColor2),
+                        style: textStyle ??
+                            Utils.kAppBody3MediumStyle.copyWith(
+                                color: textColor ?? Utils.blackColor2),
                       ),
 
                       // arrow
@@ -74,8 +80,9 @@ class OptionRow extends StatelessWidget {
                       // text
                       Text(
                         text,
-                        style: textStyle ?? Utils.kAppBody3MediumStyle
-                            .copyWith(color: textColor ?? Utils.blackColor2),
+                        style: textStyle ??
+                            Utils.kAppBody3MediumStyle.copyWith(
+                                color: textColor ?? Utils.blackColor2),
                       ),
 
                       // arrow

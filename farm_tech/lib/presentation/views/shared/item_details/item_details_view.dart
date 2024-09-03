@@ -14,14 +14,12 @@ import 'package:provider/provider.dart';
 
 class ItemDetailsView extends StatefulWidget {
   ItemDetailsView(
-      {required this.avgRating,
-      this.forBuyer,
-      required this.setOrderTabAsActive});
+      {required this.avgRating, this.forBuyer, required this.setOrderTabAsActive});
 
   String avgRating;
   bool? forBuyer;
   VoidCallback
-      setOrderTabAsActive; // for order placed view after checkout when buy now clicked from here for buyer
+      setOrderTabAsActive; // for order placed view after checkout when buy now clicked from here for buyer (this must be required beacuse buy now can be clicked from here so this must be present for checkout view)
 
   @override
   State<ItemDetailsView> createState() => _ItemDetailsViewState();
@@ -399,7 +397,9 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                                   builder: (context) => AddToCartBuyNowView(
                                       title: 'Add to Cart',
                                       avgRating: widget.avgRating,
-                                      productModel: productModel!)));
+                                      productModel: productModel!,
+                                      setOrderTabAsActive: (){},
+                                      )));
                         }
                       },
                       widget: productModel == null
