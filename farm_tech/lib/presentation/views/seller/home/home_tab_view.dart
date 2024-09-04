@@ -217,7 +217,7 @@ class _HomeTabViewState extends State<HomeTabView> {
                 ? SizedBox(height: 100, child: Utils.circularProgressIndicator)
                 : StreamProvider.value(
                     initialData: null,
-                    value: OrderServices().getInProgressOrdersStream(
+                    value: OrderServices().getSellerInProgressOrdersStream(
                         SellerModel(docId: sellerId)),
                     child: OrdersInQueue(),
                   )

@@ -20,6 +20,25 @@ class BuyerSearchTabView extends StatefulWidget {
 }
 
 class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
+  final FocusNode _searchFieldfocusNode = FocusNode();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    // print('here'); // printed when first time screen is shown
+
+    // request focus on search field
+    _searchFieldfocusNode.requestFocus();
+  }
+
+  @override
+  void dispose() {
+    _searchFieldfocusNode.dispose();
+    super.dispose();
+  }
+
   // add text in recent searches for buyer
   _addTextInRecentSearches(String text) async {
     final result = await RecentSearchServices().addRecentSearch(
@@ -60,11 +79,13 @@ class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25),
         child: TextFormField(
+          focusNode: _searchFieldfocusNode,
           textInputAction: TextInputAction.search,
           onTapOutside: (event) {
             // new FocusNode().requestFocus();
-            FocusScope.of(context)
-                .unfocus(); // remove focus from search field on tapping outside
+            // FocusScope.of(context)
+            //     .unfocus(); // remove focus from search field on tapping outside
+            _searchFieldfocusNode.unfocus();
           },
           onFieldSubmitted: (value) async {
             // if value is not provided then not search
@@ -74,7 +95,7 @@ class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
 
               // search the product name in products collection and show the product(s) in products view
               // push products view with products found for search list
-              Navigator.push(
+              await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => StreamProvider.value(
@@ -87,6 +108,9 @@ class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
                               noSearchIcon: true,
                             ),
                           )));
+
+              // request focus on search field
+              _searchFieldfocusNode.requestFocus();
             }
           },
           decoration: Utils.inputFieldDecoration.copyWith(
@@ -113,6 +137,7 @@ class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
         value: RecentSearchServices().getBuyerRecentSearches(widget.buyerId),
         initialData: null,
         child: RecentSearchesSection(
+            searchFieldFocusNode: _searchFieldfocusNode,
             buyerId: widget.buyerId,
             setOrderTabAsActive: widget.setOrderTabAsActive),
       )
@@ -123,10 +148,14 @@ class _BuyerSearchTabViewState extends State<BuyerSearchTabView> {
 // recent searches widget
 class RecentSearchesSection extends StatefulWidget {
   RecentSearchesSection(
-      {super.key, required this.buyerId, required this.setOrderTabAsActive});
+      {super.key,
+      required this.buyerId,
+      required this.setOrderTabAsActive,
+      required this.searchFieldFocusNode});
 
   String buyerId;
   VoidCallback setOrderTabAsActive;
+  FocusNode searchFieldFocusNode;
 
   @override
   State<RecentSearchesSection> createState() => _RecentSearchesSectionState();
@@ -166,6 +195,9 @@ class _RecentSearchesSectionState extends State<RecentSearchesSection> {
                       ? SizedBox()
                       : GestureDetector(
                           onTap: () {
+                            // unfocus search text field
+                            widget.searchFieldFocusNode.unfocus();
+
                             // show confirm dialog
                             Utils.showConfirmAlertDialog(context, () async {
                               // close confirm dialog
@@ -251,7 +283,9 @@ class _RecentSearchesSectionState extends State<RecentSearchesSection> {
                               text: model.searchText!,
                               onPressed: () {
                                 // remove focus from search text field
-                                FocusScope.of(context).unfocus();
+                                // FocusScope.of(context).unfocus();
+                                widget.searchFieldFocusNode.unfocus();
+
                                 // when clicking on a recent searched text the text will be searched again
                                 // push products view with products found for search list
                                 Navigator.push(

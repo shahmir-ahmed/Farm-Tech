@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_tech/backend/model/order.dart';
 import 'package:farm_tech/backend/model/user.dart';
 import 'package:farm_tech/backend/services/order_services.dart';
@@ -52,6 +53,19 @@ void main() async {
   //     productId: "b6JvxqwDQSYv6KcfZoLs",
   //     customerId: "dummy",
   //     sellerId: "eT8NhARPTMTccAQZ4BaREc832m83"));
+
+  // create updatedAt field in every order
+  await FirebaseFirestore.instance.collection('orders').get().then((snapshot) async{
+    List<DocumentSnapshot> allDocs = snapshot.docs;
+        for (DocumentSnapshot ds in allDocs) {
+          await ds.reference.update(
+            {
+              'updatedAt': null
+            }
+          );
+        }
+      
+  });
 }
 
 class MyApp extends StatelessWidget {

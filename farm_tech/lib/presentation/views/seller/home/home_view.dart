@@ -42,7 +42,7 @@ class _HomeViewState extends State<HomeView> {
   List<Widget?> _widgetOptionsBuyer = <Widget?>[
     Utils.circularProgressIndicator,
     Utils.circularProgressIndicator,
-    const BuyerOrderTabView(),
+    Utils.circularProgressIndicator,
     const BuyerChatTabView(),
     const BuyerProfileTabView(),
   ];
@@ -119,6 +119,9 @@ class _HomeViewState extends State<HomeView> {
 
       // reinitialize buyer search tab
       _reInitializeBuyerSearchTab();
+
+      // reinitialize buyer order tab
+      _reInitializeBuyerOrderTab();
     }
   }
 
@@ -216,6 +219,17 @@ class _HomeViewState extends State<HomeView> {
       // pass function and buyer id to buyer search tab
       _widgetOptionsBuyer[1] = BuyerSearchTabView(
         setOrderTabAsActive: setOrderTabAsActive,
+        buyerId: uId,
+      );
+    });
+  }
+
+  // buyer order tab reintialize
+  _reInitializeBuyerOrderTab() {
+    // reinitialize buyer widgets options
+    setState(() {
+      // pass buyer id to buyer order tab
+      _widgetOptionsBuyer[2] = OrderTabView.forBuyer(
         buyerId: uId,
       );
     });

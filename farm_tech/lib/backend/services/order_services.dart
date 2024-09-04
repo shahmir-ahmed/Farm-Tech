@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/order.dart';
 import 'package:farm_tech/backend/model/seller.dart';
 
@@ -16,8 +17,8 @@ class OrderServices {
     }
   }
 
-  // get all orders stream
-  Stream<List<OrderModel>?>? getAllOrdersStream(SellerModel sellerModel) {
+  // get all seller orders stream
+  Stream<List<OrderModel>?>? getAllSellerOrdersStream(SellerModel sellerModel) {
     try {
       return FirebaseFirestore.instance
           .collection('orders')
@@ -27,13 +28,29 @@ class OrderServices {
               .map((doc) => OrderModel.fromJson(doc.data(), doc.id))
               .toList());
     } catch (e) {
-      print('Error in getAllOrdersStream: $e');
+      print('Error in getAllSellerOrdersStream: $e');
       return null;
     }
   }
 
-  // get in progress orders stream
-  Stream<List<OrderModel>?>? getInProgressOrdersStream(
+  // get all buyer orders stream
+  Stream<List<OrderModel>?>? getAllBuyerOrdersStream(BuyerModel buyerModel) {
+    try {
+      return FirebaseFirestore.instance
+          .collection('orders')
+          .where('customerId', isEqualTo: buyerModel.docId)
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => OrderModel.fromJson(doc.data(), doc.id))
+              .toList());
+    } catch (e) {
+      print('Error in getAllBuyerOrdersStream: $e');
+      return null;
+    }
+  }
+
+  // get in progress orders stream (for seller home tab view)
+  Stream<List<OrderModel>?>? getSellerInProgressOrdersStream(
       SellerModel sellerModel) {
     try {
       return FirebaseFirestore.instance
@@ -56,7 +73,7 @@ class OrderServices {
       await FirebaseFirestore.instance
           .collection('orders')
           .doc(orderModel.docId)
-          .update({"status": orderModel.status});
+          .update({"status": orderModel.status, "updatedAt" : Timestamp.now()});
 
       return 'success';
     } catch (e) {

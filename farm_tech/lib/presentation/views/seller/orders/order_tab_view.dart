@@ -1,3 +1,4 @@
+import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/seller.dart';
 import 'package:farm_tech/backend/services/order_services.dart';
 import 'package:farm_tech/configs/utils.dart';
@@ -8,8 +9,10 @@ import 'package:provider/provider.dart';
 
 class OrderTabView extends StatefulWidget {
   OrderTabView({required this.sellerId});
+  OrderTabView.forBuyer({required this.buyerId});
 
-  String sellerId;
+  String? sellerId;
+  String? buyerId;
 
   @override
   State<OrderTabView> createState() => _OrderTabViewState();
@@ -200,17 +203,28 @@ class _OrderTabViewState extends State<OrderTabView> {
           // active tab column
           StreamProvider.value(
             initialData: null,
-            value: OrderServices()
-                .getAllOrdersStream(SellerModel(docId: widget.sellerId)),
+            value: widget.sellerId != null
+                ? OrderServices().getAllSellerOrdersStream(
+                    SellerModel(docId: widget.sellerId))
+                : OrderServices()
+                    .getAllBuyerOrdersStream(BuyerModel(docId: widget.buyerId)),
             child: SingleChildScrollView(
                 child: allTabActive
-                    ? const AllOrdersTabView()
+                    ? widget.sellerId != null
+                        ? AllOrdersTabView()
+                        : AllOrdersTabView.forBuyer()
                     : inProgressTabActive
-                        ? const InProgressOrdersTabView()
+                        ? widget.sellerId != null
+                            ? InProgressOrdersTabView()
+                            : InProgressOrdersTabView.forBuyer()
                         : completedTabActive
-                            ? const CompletedOrdersTabView()
+                            ? widget.sellerId != null
+                                ? CompletedOrdersTabView()
+                                : CompletedOrdersTabView.forBuyer()
                             : cancelledTabActive
-                                ? const CancelledOrdersTabView()
+                                ? widget.sellerId != null
+                                    ? CancelledOrdersTabView()
+                                    : CancelledOrdersTabView.forBuyer()
                                 : const SizedBox()),
           ),
         ],

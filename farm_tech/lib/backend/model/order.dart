@@ -20,6 +20,7 @@ class OrderModel {
   String? customerId;
   String? sellerId;
   Timestamp? createdAt;
+  Timestamp? updatedAt;
 
   OrderModel(
       {this.docId,
@@ -29,7 +30,9 @@ class OrderModel {
       this.productId,
       this.customerId,
       this.sellerId,
-      this.createdAt});
+      this.createdAt,
+      this.updatedAt,
+      });
 
   factory OrderModel.fromJson(Map<String, dynamic> json, String docId) =>
       OrderModel(
@@ -41,6 +44,7 @@ class OrderModel {
         customerId: json["customerId"],
         sellerId: json["sellerId"],
         createdAt: json["createdAt"],
+        updatedAt: json["updatedAt"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -52,6 +56,9 @@ class OrderModel {
         "sellerId": sellerId,
         "createdAt": createdAt != null
             ? createdAt!.toString()
+            : Timestamp.now(),
+        "updatedAt": updatedAt != null
+            ? updatedAt!.toString()
             : Timestamp.now(),
       };
 }
