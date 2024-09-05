@@ -3,7 +3,9 @@ import 'package:farm_tech/backend/model/order.dart';
 import 'package:farm_tech/backend/model/product.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/buyer/orders/feedback_view.dart';
 import 'package:farm_tech/presentation/views/seller/orders/order_details_view.dart';
+import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -412,7 +414,7 @@ class _OrderCardState extends State<OrderCard> {
                   SizedBox(
                     height: 30,
                   ),
-                
+
                   // text and cross icon row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -421,7 +423,7 @@ class _OrderCardState extends State<OrderCard> {
                         'Order Details',
                         style: Utils.kAppHeading6BoldStyle,
                       ),
-                
+
                       // cross icon
                       GestureDetector(
                         onTap: () {
@@ -436,34 +438,34 @@ class _OrderCardState extends State<OrderCard> {
                       )
                     ],
                   ),
-                
+
                   // space
                   SizedBox(
                     height: 25,
                   ),
-                
+
                   // order card (with main image, name, category passed)
                   OrderCard.forBuyerBottomSheet(
                     orderModel: widget.orderModel,
                     productModel: _productModel,
                   ),
-                
+
                   // space
                   SizedBox(
                     height: 25,
                   ),
-                
+
                   // history
                   Text(
                     'History',
                     style: Utils.kAppHeading6BoldStyle,
                   ),
-                
+
                   // space
                   SizedBox(
                     height: 20,
                   ),
-                
+
                   // two columns inside one row for status
                   Row(
                     children: [
@@ -480,7 +482,7 @@ class _OrderCardState extends State<OrderCard> {
                             'assets/images/completed-order-milestones-image.png',
                             width: 35,
                           ),
-                
+
                           // if status is in progress then show incompleted icon in front of order delivered status, if completed then show completed, if cancelled then show cancelled
                           Padding(
                             padding: const EdgeInsets.only(left: 2.0),
@@ -495,12 +497,12 @@ class _OrderCardState extends State<OrderCard> {
                           )
                         ],
                       ),
-                
+
                       // space
                       SizedBox(
                         width: 20,
                       ),
-                
+
                       // status texts column
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -509,7 +511,7 @@ class _OrderCardState extends State<OrderCard> {
                           // SizedBox(
                           //   height: 5,
                           // ),
-                
+
                           // order placed
                           Text(
                             'Order Placed',
@@ -521,12 +523,12 @@ class _OrderCardState extends State<OrderCard> {
                             style: Utils.kAppCaptionMediumStyle
                                 .copyWith(color: Utils.greyColor2),
                           ),
-                
+
                           // space
                           SizedBox(
-                            height: 55,
+                            height: 52,
                           ),
-                
+
                           // payment approved
                           Text(
                             'Payment Approved',
@@ -538,16 +540,19 @@ class _OrderCardState extends State<OrderCard> {
                             style: Utils.kAppCaptionMediumStyle
                                 .copyWith(color: Utils.greyColor2),
                           ),
-                
+
                           // space
                           SizedBox(
-                            height: 50,
+                            height: 53,
                           ),
-                
+
                           // order delivered
                           Text(
-                            widget.orderModel.status == 'Cancelled' ? 'Order Not Delivered' :
-                            'Order Delivered',
+                            widget.orderModel.status == 'Cancelled'
+                                ? 'Order Not Delivered' :
+                            widget.orderModel.status == 'In Progress'
+                                ? 'Order Delivery Pending'
+                                : 'Order Delivered',
                             style: Utils.kAppBody3MediumStyle,
                           ),
                           // dont show time if in progress
@@ -562,7 +567,32 @@ class _OrderCardState extends State<OrderCard> {
                         ],
                       )
                     ],
-                  )
+                  ),
+
+                  // space for button
+                  widget.orderModel.status == 'Completed'
+                      ? SizedBox(
+                          height: 40,
+                        )
+                      : SizedBox(),
+
+                  // show give feedback button if order is completed
+                  widget.orderModel.status == 'Completed'
+                      ? CustomButton(
+                          onButtonPressed: () {
+                            // show feedback screen
+                            Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FeedbackView()));
+                          },
+                          buttonText: 'Give feedback',
+                          primaryButton: true,
+                          secondaryButton: false,
+                          buttonHeight: 60,
+                          buttonWidth: MediaQuery.of(context).size.width,
+                        )
+                      : SizedBox()
                 ],
               ),
             ),

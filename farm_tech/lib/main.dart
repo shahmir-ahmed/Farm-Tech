@@ -54,6 +54,7 @@ void main() async {
   //     customerId: "dummy",
   //     sellerId: "eT8NhARPTMTccAQZ4BaREc832m83"));
 
+  /*
   // create updatedAt field in every order
   await FirebaseFirestore.instance.collection('orders').get().then((snapshot) async{
     List<DocumentSnapshot> allDocs = snapshot.docs;
@@ -66,6 +67,7 @@ void main() async {
         }
       
   });
+  */
 }
 
 class MyApp extends StatelessWidget {

@@ -13,12 +13,14 @@ class BuyerModel {
     String? name;
     String? contactNo;
     String? address;
+    String? profileImageUrl;
 
     BuyerModel({
         this.docId,
         this.name,
         this.contactNo,
         this.address,
+        this.profileImageUrl
     });
 
     factory BuyerModel.fromJson(Map<String, dynamic> json, String docId) => BuyerModel(

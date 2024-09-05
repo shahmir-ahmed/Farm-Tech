@@ -44,7 +44,7 @@ class _HomeViewState extends State<HomeView> {
     Utils.circularProgressIndicator,
     Utils.circularProgressIndicator,
     const BuyerChatTabView(),
-    const BuyerProfileTabView(),
+    Utils.circularProgressIndicator,
   ];
 
   // current botom navbar index
@@ -212,6 +212,17 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  // buyer profile tab reintialize
+  _reInitializeBuyerProfileTab() {
+    // reinitialize widgets options
+    setState(() {
+      // pass function to profile tab
+      _widgetOptionsBuyer[4] = ProfileTabView.forBuyer(
+        setOrderTabAsActive: setOrderTabAsActive,
+      );
+    });
+  }
+
   // buyer search tab reintialize
   _reInitializeBuyerSearchTab() {
     // reinitialize buyer widgets options
@@ -255,6 +266,9 @@ class _HomeViewState extends State<HomeView> {
     if (widget.userType == 'seller') {
       // reinitialize profile tab
       _reInitializeProfileTab();
+    } else {
+      // reinitialize profile tab
+      _reInitializeBuyerProfileTab();
     }
     // get seller/buyer uid
     _getUserUid();

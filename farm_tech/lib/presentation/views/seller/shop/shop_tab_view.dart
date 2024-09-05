@@ -1,5 +1,5 @@
 import 'package:farm_tech/backend/model/seller.dart';
-import 'package:farm_tech/backend/model/seller_reviews_model.dart';
+import 'package:farm_tech/backend/model/seller_reviews.dart';
 import 'package:farm_tech/backend/services/order_services.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';

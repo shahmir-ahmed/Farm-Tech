@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart' as carousel;
 import 'package:farm_tech/backend/model/product.dart';
-import 'package:farm_tech/backend/model/product_reviews_model.dart';
+import 'package:farm_tech/backend/model/product_reviews.dart';
 import 'package:farm_tech/backend/model/review.dart';
 import 'package:farm_tech/backend/model/seller.dart';
 import 'package:farm_tech/backend/services/product_services.dart';

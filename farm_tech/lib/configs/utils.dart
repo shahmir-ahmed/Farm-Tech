@@ -107,6 +107,12 @@ class Utils {
     backgroundColor: lightGreenColor1,
   ));
 
+  // circluar progress indicator not centered
+  static const circularProgressIndicatorNotCentered = CircularProgressIndicator(
+      color: greenColor,
+      backgroundColor: lightGreenColor1,
+    );
+
   // opposite color circluar progress indicator
   static const circularProgressIndicatorLightGreen = Center(
       child: CircularProgressIndicator(

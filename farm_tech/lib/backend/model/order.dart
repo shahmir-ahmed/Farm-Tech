@@ -59,6 +59,6 @@ class OrderModel {
             : Timestamp.now(),
         "updatedAt": updatedAt != null
             ? updatedAt!.toString()
-            : Timestamp.now(),
+            : null,
       };
 }

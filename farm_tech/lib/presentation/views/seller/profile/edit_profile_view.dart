@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/seller.dart';
+import 'package:farm_tech/backend/services/buyer_services.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/seller/profile/image_view.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +17,17 @@ class EditProfileView extends StatefulWidget {
       required this.name,
       required this.email,
       required this.profileImageUrl,
-      required this.getSellerName,
+      required this.getName,
       required this.getProfileImage});
+
+  EditProfileView.forBuyer(
+      {required this.docId,
+      required this.name,
+      required this.email,
+      required this.profileImageUrl,
+      required this.getName,
+      required this.getProfileImage,
+      this.forBuyer = true});
 
   String docId;
   String name;
@@ -23,7 +35,10 @@ class EditProfileView extends StatefulWidget {
   String profileImageUrl;
   // profile screen method
   VoidCallback getProfileImage;
-  VoidCallback getSellerName;
+  VoidCallback getName;
+
+  // for buyer check
+  bool? forBuyer;
 
   @override
   State<EditProfileView> createState() => _EditProfileViewState();
@@ -231,15 +246,38 @@ class _EditProfileViewState extends State<EditProfileView> {
                     width: MediaQuery.of(context).size.width - 300,
                     child: Stack(
                       children: [
-                        CircleAvatar(
-                          radius: 60,
-                          backgroundImage: pickedImage != null
-                              ? FileImage(
-                                  pickedImage!,
-                                )
-                              : NetworkImage(
-                                  widget.profileImageUrl,
-                                ),
+                        GestureDetector(
+                          onTap: widget.profileImageUrl ==
+                                  'assets/images/buyer-icon.png'
+                              ? () {}
+                              : () {
+                                  // show image view
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ImageView(
+                                                assetName: pickedImage != null
+                                                    ? ''
+                                                    : widget.profileImageUrl,
+                                                file: pickedImage,
+                                              )));
+                                },
+                          child: CircleAvatar(
+                            radius: 60,
+                            backgroundImage: pickedImage != null
+                                ? FileImage(
+                                    pickedImage!,
+                                  )
+                                :
+                                // no image of user initailly
+                                widget.profileImageUrl ==
+                                        'assets/images/buyer-icon.png'
+                                    ? AssetImage(widget.profileImageUrl)
+                                    : NetworkImage(
+                                        widget.profileImageUrl,
+                                      ),
+                            backgroundColor: Utils.whiteColor,
+                          ),
                         ),
 
                         // edit button
@@ -335,28 +373,55 @@ class _EditProfileViewState extends State<EditProfileView> {
                   if (newName.isNotEmpty) {
                     // if new name is not same as current name then update name
                     if (name != newName) {
-                      final result = await SellerServices().updateSellerName(
-                          SellerModel(docId: widget.docId, name: newName));
+                      // if not for buyer
+                      if (widget.forBuyer == null) {
+                        final result = await SellerServices().updateSellerName(
+                            SellerModel(docId: widget.docId, name: newName));
 
-                      if (result == "success") {
-                        print('name updated');
-                        // cal previous screen get seller name method
-                        widget.getSellerName();
+                        if (result == "success") {
+                          print('name updated');
+                          // cal previous screen get seller name method
+                          widget.getName();
+                        }
+                      } else {
+                        // for buyer
+                        final result = await BuyerServices().updateName(
+                            BuyerModel(docId: widget.docId, name: newName));
+
+                        if (result == "success") {
+                          print('name updated');
+                          // cal previous screen get seller name method
+                          widget.getName();
+                        }
                       }
                     }
                   }
 
                   // if picked image is present then update profile image
                   if (pickedImage != null) {
-                    final result2 = await SellerServices().updateProfileImage(
-                        SellerModel(
-                            docId: widget.docId,
-                            profileImageUrl: pickedImage!.path));
+                    // if not for buyer
+                    if (widget.forBuyer == null) {
+                      final result2 = await SellerServices().updateProfileImage(
+                          SellerModel(
+                              docId: widget.docId,
+                              profileImageUrl: pickedImage!.path));
 
-                    if (result2 == 'success') {
-                      print('image updated');
-                      // call previous screen get profile image method
-                      widget.getProfileImage();
+                      if (result2 == 'success') {
+                        print('image updated');
+                        // call previous screen get profile image method
+                        widget.getProfileImage();
+                      }
+                    } else {
+                      final result2 = await BuyerServices().updateProfileImage(
+                          BuyerModel(
+                              docId: widget.docId,
+                              profileImageUrl: pickedImage!.path));
+
+                      if (result2 == 'success') {
+                        print('image updated');
+                        // call previous screen get profile image method
+                        widget.getProfileImage();
+                      }
                     }
                   }
 
@@ -368,7 +433,7 @@ class _EditProfileViewState extends State<EditProfileView> {
 
                   // show success message
                   floatingSnackBar(
-                      message: 'Profile updated!', context: context);
+                      message: 'Profile updated', context: context);
                 }
               },
               primaryButton: true,

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_tech/backend/model/product.dart';
-import 'package:farm_tech/backend/model/product_reviews_model.dart';
+import 'package:farm_tech/backend/model/product_reviews.dart';
 import 'package:farm_tech/backend/model/seller.dart';
 import 'package:firebase_storage/firebase_storage.dart' as storage;
 

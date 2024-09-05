@@ -106,19 +106,21 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                       //                   widget.setOrderTabAsActive,
                       //             )));
                     },
+
                     /*
-                    () async {
+                    onTap: () async {
                       // logout user
                       await UserAuthServices().signOut();
                       await _logoutUser();
                       floatingSnackBar(
                           message: 'Logged out successfully', context: context);
                       print('user logged out');
-                      // floatingSnackBar(
-                      //     message: 'Logged out successfully',
-                      //     context: context);
+                      floatingSnackBar(
+                          message: 'Logged out successfully',
+                          context: context);
                     },
                     */
+
                     child: Container(
                       padding: EdgeInsets.all(15),
                       decoration: BoxDecoration(
@@ -220,7 +222,10 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AllCategoriesView(setOrderTabAsActive: widget.setOrderTabAsActive,)));
+                              builder: (context) => AllCategoriesView(
+                                    setOrderTabAsActive:
+                                        widget.setOrderTabAsActive,
+                                  )));
                     },
                     child: Text(
                       'See all',
@@ -266,9 +271,9 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                                           .getCategoryProductsStream(title),
                                       initialData: null,
                                       child: ProductsView(
-                                        title: '$title Category Items',
-                                        setOrderTabAsActive: widget.setOrderTabAsActive
-                                      ),
+                                          title: '$title Category Items',
+                                          setOrderTabAsActive:
+                                              widget.setOrderTabAsActive),
                                     )));
                         // }
                       },
@@ -352,7 +357,8 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                                     initialData: null,
                                     child: ProductsView(
                                       title: 'Featured Items',
-                                      setOrderTabAsActive: widget.setOrderTabAsActive,
+                                      setOrderTabAsActive:
+                                          widget.setOrderTabAsActive,
                                     ),
                                   )));
                     },

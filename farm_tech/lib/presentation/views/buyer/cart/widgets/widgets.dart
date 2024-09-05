@@ -1,6 +1,6 @@
 import 'package:farm_tech/backend/model/cart_item.dart';
 import 'package:farm_tech/backend/model/product.dart';
-import 'package:farm_tech/backend/model/product_reviews_model.dart';
+import 'package:farm_tech/backend/model/product_reviews.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/shared/item_details/item_details_view.dart';

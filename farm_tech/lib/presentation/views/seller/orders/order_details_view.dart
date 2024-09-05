@@ -1,10 +1,14 @@
+import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/order.dart';
 import 'package:farm_tech/backend/model/product.dart';
+import 'package:farm_tech/backend/services/buyer_services.dart';
 import 'package:farm_tech/backend/services/order_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderDetailsView extends StatelessWidget {
   OrderDetailsView({
@@ -282,7 +286,7 @@ class OrderDetailsView extends StatelessWidget {
                           .copyWith(color: Utils.greyColor2),
                     ),
                     Text(
-                      "${orderModel.quantity!} Kg",
+                      "${orderModel.quantity!}",
                       style: Utils.kAppBody3MediumStyle,
                     )
                   ],
@@ -339,117 +343,52 @@ class OrderDetailsView extends StatelessWidget {
           Utils.divider,
 
           // customer details
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Customer Details',
-                  style: Utils.kAppBody2MediumStyle,
-                ),
-
-                // space
-                const SizedBox(
-                  height: 20,
-                ),
-
-                // name
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Name',
-                      style: Utils.kAppBody3MediumStyle
-                          .copyWith(color: Utils.greyColor2),
-                    ),
-                    Text(
-                      'Mr John Doe',
-                      style: Utils.kAppBody3MediumStyle,
-                    )
-                  ],
-                ),
-
-                // space
-                const SizedBox(
-                  height: 10,
-                ),
-
-                // contact
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Contact',
-                      style: Utils.kAppBody3MediumStyle
-                          .copyWith(color: Utils.greyColor2),
-                    ),
-                    Text(
-                      '0333 0000000',
-                      style: Utils.kAppBody3MediumStyle,
-                    )
-                  ],
-                ),
-
-                // space
-                const SizedBox(
-                  height: 10,
-                ),
-
-                // email
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Email',
-                      style: Utils.kAppBody3MediumStyle
-                          .copyWith(color: Utils.greyColor2),
-                    ),
-                    Text(
-                      'johndoe@gmail.com',
-                      style: Utils.kAppBody3MediumStyle,
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
+          StreamProvider.value(
+              initialData: null,
+              value: BuyerServices().getNameContactStream(
+                  BuyerModel(docId: orderModel.customerId)),
+              child: CustomerDetailsSection()),
 
           // divider
           Utils.divider,
 
           // shipment details
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Shipment Details',
-                  style: Utils.kAppBody2MediumStyle,
-                ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Shipment Details',
+                    style: Utils.kAppBody2MediumStyle,
+                  ),
 
-                // space
-                const SizedBox(
-                  height: 20,
-                ),
+                  // space
+                  const SizedBox(
+                    height: 20,
+                  ),
 
-                Text(
-                  'Address',
-                  style: Utils.kAppBody3MediumStyle
-                      .copyWith(color: Utils.greyColor2),
-                ),
+                  Text(
+                    'Address',
+                    style: Utils.kAppBody3MediumStyle
+                        .copyWith(color: Utils.greyColor2),
+                  ),
 
-                // space
-                const SizedBox(
-                  height: 10,
-                ),
+                  // space
+                  const SizedBox(
+                    height: 10,
+                  ),
 
-                Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Libero, et sapien.',
-                  style: Utils.kAppBody3MediumStyle,
-                ),
-              ],
+                  StreamProvider.value(
+                    value: BuyerServices().getAddressStream(
+                        BuyerModel(docId: orderModel.customerId)),
+                    initialData: null,
+                    child: BuyerAddressText(),
+                  )
+                ],
+              ),
             ),
           ),
 
@@ -579,5 +518,161 @@ class OrderDetailsView extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class CustomerDetailsSection extends StatefulWidget {
+  CustomerDetailsSection({super.key});
+
+  @override
+  State<CustomerDetailsSection> createState() => _CustomerDetailsSectionState();
+}
+
+class _CustomerDetailsSectionState extends State<CustomerDetailsSection> {
+  String buyerEmail = '';
+
+  // get email from shared pref.
+  _getBuyerEmailFromSharedPref() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final email = pref.getString("email");
+
+    if (email != null) {
+      setState(() {
+        buyerEmail = email;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    // get buyer email from shared pref
+    _getBuyerEmailFromSharedPref();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // consume buyer data stream
+    final buyerModel = Provider.of<BuyerModel?>(context);
+    
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: buyerModel == null
+            ? [
+                Text(
+                  'Customer Details',
+                  style: Utils.kAppBody2MediumStyle,
+                ),
+
+                // space
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // progress indicator
+                Utils.circularProgressIndicator
+              ]
+            : [
+                Text(
+                  'Customer Details',
+                  style: Utils.kAppBody2MediumStyle,
+                ),
+
+                // space
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // name
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Name',
+                      style: Utils.kAppBody3MediumStyle
+                          .copyWith(color: Utils.greyColor2),
+                    ),
+                    Text(
+                      buyerModel.name!,
+                      style: Utils.kAppBody3MediumStyle,
+                    )
+                  ],
+                ),
+
+                // space
+                const SizedBox(
+                  height: 10,
+                ),
+
+                // contact
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Contact',
+                      style: Utils.kAppBody3MediumStyle
+                          .copyWith(color: Utils.greyColor2),
+                    ),
+                    Text(
+                      buyerModel.contactNo!,
+                      style: Utils.kAppBody3MediumStyle,
+                    )
+                  ],
+                ),
+
+                // space
+                const SizedBox(
+                  height: 10,
+                ),
+
+                // email
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Email',
+                      style: Utils.kAppBody3MediumStyle
+                          .copyWith(color: Utils.greyColor2),
+                    ),
+                    Text(
+                      buyerEmail.isEmpty ? '' : buyerEmail,
+                      style: Utils.kAppBody3MediumStyle,
+                    )
+                  ],
+                ),
+              ],
+      ),
+    );
+  }
+}
+
+class BuyerAddressText extends StatefulWidget {
+  const BuyerAddressText({super.key});
+
+  @override
+  State<BuyerAddressText> createState() => _BuyerAddressTextState();
+}
+
+class _BuyerAddressTextState extends State<BuyerAddressText> {
+  @override
+  Widget build(BuildContext context) {
+    final buyerModel = Provider.of<BuyerModel?>(context);
+
+    return buyerModel == null
+        ? Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: SizedBox(
+                width: 25,
+                height: 25,
+                child: Utils.circularProgressIndicatorNotCentered),
+          )
+        : Text(
+            buyerModel.address!,
+            style: Utils.kAppBody3MediumStyle,
+          );
   }
 }

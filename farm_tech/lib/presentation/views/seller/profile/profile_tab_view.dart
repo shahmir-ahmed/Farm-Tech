@@ -1,7 +1,10 @@
+import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/seller.dart';
+import 'package:farm_tech/backend/services/buyer_services.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/seller/profile/edit_profile_view.dart';
+import 'package:farm_tech/presentation/views/seller/profile/image_view.dart';
 import 'package:farm_tech/presentation/views/seller/profile/settings_view.dart';
 import 'package:farm_tech/presentation/views/seller/profile/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
@@ -11,8 +14,11 @@ import 'package:shimmer/shimmer.dart';
 
 class ProfileTabView extends StatefulWidget {
   ProfileTabView({required this.setOrderTabAsActive});
+  ProfileTabView.forBuyer(
+      {required this.setOrderTabAsActive, this.forBuyer = true});
 
   VoidCallback setOrderTabAsActive;
+  bool? forBuyer;
 
   @override
   State<ProfileTabView> createState() => _ProfileTabViewState();
@@ -70,15 +76,79 @@ class _ProfileTabViewState extends State<ProfileTabView> {
     }
   }
 
+  // get buyer name (using doc id from shared pref)
+  _getBuyerName() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    setState(() {
+      docId = pref.getString("uId") as String;
+    });
+
+    // now get profile image also
+    _getBuyerProfileImage();
+
+    // get name
+    final result = await BuyerServices().getName(BuyerModel(docId: docId));
+
+    // if no error
+    if (result != null) {
+      setState(() {
+        name = result;
+      });
+    }
+  }
+
+  // get buyer email (from shared pref)
+  _getBuyerEmail() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    setState(() {
+      email = pref.getString("email") as String;
+    });
+  }
+
+  // get buyer profile image (using doc id from shared pref)
+  _getBuyerProfileImage() async {
+    // get image url
+    final result =
+        await BuyerServices().getProfileImage(BuyerModel(docId: docId));
+
+    if (result != null) {
+      setState(() {
+        profileImageUrl = result;
+      });
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // get seller name
-    _getSellerName();
+    // if not for buyer
+    if (widget.forBuyer == null) {
+      // get seller name
+      _getSellerName();
 
-    // get email
-    _getSellerEmail();
+      // get email
+      _getSellerEmail();
+    } else {
+      // get buyer name
+      _getBuyerName();
+
+      // after 10 secs check if image is still empty then assign buyer dummy image to var
+      Future.delayed(Duration(seconds: 10), () {
+        print('checking profile image url');
+        if (profileImageUrl.isEmpty) {
+          print('profile image url still empty');
+          setState(() {
+            profileImageUrl = 'assets/images/buyer-icon.png';
+          });
+        }
+      });
+
+      // get buyer email
+      _getBuyerEmail();
+    }
   }
 
   @override
@@ -94,11 +164,19 @@ class _ProfileTabViewState extends State<ProfileTabView> {
                     elevation: WidgetStatePropertyAll(0),
                     overlayColor: WidgetStatePropertyAll(Utils.whiteColor)),
                 onPressed: () {
-                  // show settings screen
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SettingsView()));
+                  if (widget.forBuyer == null) {
+                    // show settings screen
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SettingsView()));
+                  } else {
+                    // show settings screen
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SettingsView.forBuyer()));
+                  }
                 },
                 child:
                     Image.asset('assets/images/settings-icon.png', width: 25)),
@@ -124,11 +202,29 @@ class _ProfileTabViewState extends State<ProfileTabView> {
             //     enabled: true,
             //     child: CircleSkeleton())
             const SizedBox(height: 100, child: Utils.circularProgressIndicator)
-            : CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(
-                  profileImageUrl,
-                  // width: 120,
+            : GestureDetector(
+                onTap: profileImageUrl.isEmpty ||
+                        profileImageUrl == 'assets/images/buyer-icon.png'
+                    ? () {}
+                    : () {
+                        // show image view
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ImageView(
+                                      assetName: profileImageUrl,
+                                    )));
+                      },
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage:
+                      profileImageUrl == 'assets/images/buyer-icon.png'
+                          ? AssetImage(profileImageUrl)
+                          : NetworkImage(
+                              profileImageUrl,
+                              // width: 120,
+                            ),
+                  backgroundColor: Utils.whiteColor,
                 ),
               ),
 
@@ -187,14 +283,22 @@ class _ProfileTabViewState extends State<ProfileTabView> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => EditProfileView(
-                              docId: docId,
-                              name: name,
-                              email: email,
-                              profileImageUrl: profileImageUrl,
-                              getProfileImage: _getSellerProfileImage,
-                              getSellerName: _getSellerName,
-                            )));
+                        builder: (context) => widget.forBuyer == null
+                            ? EditProfileView(
+                                docId: docId,
+                                name: name,
+                                email: email,
+                                profileImageUrl: profileImageUrl,
+                                getProfileImage: _getSellerProfileImage,
+                                getName: _getSellerName)
+                            : EditProfileView.forBuyer(
+                                docId: docId,
+                                name: name,
+                                email: email,
+                                profileImageUrl: profileImageUrl,
+                                getProfileImage: _getBuyerProfileImage,
+                                getName: _getBuyerName,
+                              )));
               }
             },
             icon: Image.asset('assets/images/edit-icon.png', width: 30),

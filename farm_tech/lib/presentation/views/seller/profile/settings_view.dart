@@ -8,13 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsView extends StatefulWidget {
-  const SettingsView({super.key});
+  SettingsView({super.key});
+  SettingsView.forBuyer({super.key, this.forBuyer = true});
+
+  bool? forBuyer;
 
   @override
   State<SettingsView> createState() => _SettingsViewState();
 }
 
 class _SettingsViewState extends State<SettingsView> {
+  List optionsList = [];
   // logout function
   Future<void> _logoutUser() async {
     // clear shared pref data for app
@@ -22,6 +26,22 @@ class _SettingsViewState extends State<SettingsView> {
     final cleared = await pref.clear();
 
     print('cleared: $cleared');
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.forBuyer == null) {
+      optionsList = [
+        /*'Account',*/
+        'Earnings',
+        /*'Notifications', 'Cache',*/
+        'Logout'
+      ];
+    } else {
+      optionsList = ['Logout'];
+    }
   }
 
   @override
@@ -37,10 +57,7 @@ class _SettingsViewState extends State<SettingsView> {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
       child: Column(
-        children: [
-          /*'Account',*/ 'Earnings',
-          /*'Notifications', 'Cache',*/ 'Logout'
-        ].map((text) {
+        children: optionsList.map((text) {
           // single option widget
           return
               // text == "Earnings" ||
@@ -57,7 +74,7 @@ class _SettingsViewState extends State<SettingsView> {
                         'assets/images/logout-icon.png',
                         width: 25,
                       ),
-                      noTopDivider: true,
+                      // noTopDivider: true,
                       onPressed: () async {
                         // show confirm alert dialog
                         // showConfirmAlertDialog(context);
@@ -92,7 +109,7 @@ class _SettingsViewState extends State<SettingsView> {
                   // other than logout other options
                   : OptionRow(
                       text: text,
-                      noTopDivider: true,
+                      // noTopDivider: true,
                       onPressed: () {
                         // show earnings screen
                         Navigator.push(
