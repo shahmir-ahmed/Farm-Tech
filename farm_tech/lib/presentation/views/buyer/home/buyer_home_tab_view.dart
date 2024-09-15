@@ -649,19 +649,24 @@ class _CartIconState extends State<CartIcon> {
             'assets/images/cart-icon.png',
             width: 25,
           )
-        : Badge(
-            label: Text(
-              int.parse(itemsCount.toString()) > 99
-                  ? '99+'
-                  : itemsCount.toString(),
-              style: TextStyle(fontSize: 8),
-            ),
-            backgroundColor: Utils.greenColor,
-            alignment: AlignmentDirectional.topEnd,
-            child: Image.asset(
-              'assets/images/cart-icon.png',
-              width: 25,
-            ),
-          );
+        : itemsCount == 0
+            ? Image.asset(
+                'assets/images/cart-icon.png',
+                width: 25,
+              )
+            : Badge(
+                label: Text(
+                  int.parse(itemsCount.toString()) > 99
+                      ? '99+'
+                      : itemsCount.toString(),
+                  style: TextStyle(fontSize: 8),
+                ),
+                backgroundColor: Utils.greenColor,
+                alignment: AlignmentDirectional.topEnd,
+                child: Image.asset(
+                  'assets/images/cart-icon.png',
+                  width: 25,
+                ),
+              );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:farm_tech/backend/model/user.dart';
+import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/select_user_type/select_user_type_view.dart';
 import 'package:farm_tech/presentation/views/seller/home/home_view.dart';
 import 'package:farm_tech/presentation/views/shared/on_boarding/on_boarding_view.dart';
@@ -177,6 +178,12 @@ class _AuthWrapperState extends State<AuthWrapper> {
     });
   }
 
+    // on back pressed function call
+  Future<bool> _onWillPop() async {
+    bool shouldExit = await Utils.showExitAppConfirmAlertDialog(context);
+    return shouldExit; // return the result of the dialog
+  }
+
   @override
   Widget build(BuildContext context) {
     // consume stream of auth here if user is present then seller splash screen otherwise show auth view
@@ -264,9 +271,12 @@ class _AuthWrapperState extends State<AuthWrapper> {
           : twoSecondsPassed2
               // now know user type
               ? userType.isNotEmpty
-                  ? HomeView(
-                      userType: userType,
-                    )
+                  ? WillPopScope(
+                    onWillPop: _onWillPop,
+                    child: HomeView(
+                        userType: userType,
+                      ),
+                  )
                   // still not know which user type
                   : SplashScreenView()
               // if logged in user type is not set yet then means a new user has logged in just now so wait and then verify the user type and then show relevant splash screen

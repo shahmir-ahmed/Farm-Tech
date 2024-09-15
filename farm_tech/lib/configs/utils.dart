@@ -109,9 +109,9 @@ class Utils {
 
   // circluar progress indicator not centered
   static const circularProgressIndicatorNotCentered = CircularProgressIndicator(
-      color: greenColor,
-      backgroundColor: lightGreenColor1,
-    );
+    color: greenColor,
+    backgroundColor: lightGreenColor1,
+  );
 
   // opposite color circluar progress indicator
   static const circularProgressIndicatorLightGreen = Center(
@@ -189,13 +189,12 @@ class Utils {
                                                                     : forScreen ==
                                                                             'payment_processing'
                                                                         ? "Processing payment"
-                                                                    : forScreen ==
-                                                                            'clear_recent_searches'
-                                                                        ? "Deleting"
-                                                                    : forScreen ==
-                                                                            'post_feedback'
-                                                                        ? "Posting feedback"
-                                                                        : "",
+                                                                        : forScreen ==
+                                                                                'clear_recent_searches'
+                                                                            ? "Deleting"
+                                                                            : forScreen == 'post_feedback'
+                                                                                ? "Posting feedback"
+                                                                                : "",
             style: forScreen == 'payment_processing'
                 ? kAppBody1BoldStyle
                 : kAppHeading6BoldStyle,
@@ -236,13 +235,13 @@ class Utils {
                                                                 : forScreen ==
                                                                         'payment_processing'
                                                                     ? "Payment is being processed"
-                                                                : forScreen ==
-                                                                        'clear_recent_searches'
-                                                                    ? "Deleting all recent searches"
-                                                                : forScreen ==
-                                                                        'post_feedback'
-                                                                    ? "Your feedback is being posted"
-                                                                    : "",
+                                                                    : forScreen ==
+                                                                            'clear_recent_searches'
+                                                                        ? "Deleting all recent searches"
+                                                                        : forScreen ==
+                                                                                'post_feedback'
+                                                                            ? "Your feedback is being posted"
+                                                                            : "",
             style: kAppBody3RegularStyle.copyWith(color: lightGreyColor1),
           ),
         ],
@@ -356,8 +355,13 @@ class Utils {
         primaryButton: false,
         buttonText: 'No',
         onButtonPressed: () async {
-          // close alert dialog
-          Navigator.pop(context);
+          if (forScreen == 'exit_app') {
+            // close alert dialog with false passed i.e. not allow back pressed
+            Navigator.of(context).pop(true);
+          } else {
+            // close alert dialog
+            Navigator.pop(context);
+          }
         },
         // buttonWidth: MediaQuery.of(context).size.width,
         buttonHeight: 60,
@@ -370,7 +374,7 @@ class Utils {
           const EdgeInsets.symmetric(horizontal: 50.0, vertical: 65.0),
       icon: forScreen == 'logout'
           ? Icon(
-              forScreen == 'logout' ? Icons.logout_outlined : Icons.abc,
+              Icons.logout_outlined,
               size: 60,
               color: Utils.greenColor,
             )
@@ -387,9 +391,11 @@ class Utils {
                 ? 'Remove item?'
                 : forScreen == 'cart'
                     ? 'Remove items?'
-                : forScreen == 'clear_recent_searches'
-                    ? 'Clear recent searches?'
-                    : '',
+                    : forScreen == 'clear_recent_searches'
+                        ? 'Clear recent searches?'
+                        : forScreen == 'exit_app'
+                            ? 'Exit App?'
+                            : '',
         style: Utils.kAppHeading6BoldStyle,
       ),
       content: Text(
@@ -400,9 +406,11 @@ class Utils {
                 ? 'Are your sure you want to remove item from cart?'
                 : forScreen == 'cart'
                     ? 'Are your sure you want to remove items from cart?'
-                : forScreen == 'clear_recent_searches'
-                    ? 'Are your sure you want to clear all your recent searches?'
-                    : '',
+                    : forScreen == 'clear_recent_searches'
+                        ? 'Are your sure you want to clear all your recent searches?'
+                        : forScreen == 'exit_app'
+                            ? 'Press yes to exit the app'
+                            : '',
         style:
             Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
       ),
@@ -428,6 +436,80 @@ class Utils {
       },
     );
   }
+
+  // show confirm alert dialog
+static Future<bool> showExitAppConfirmAlertDialog(
+    BuildContext context) async {
+  // set up the confirm button
+  bool shouldExit = false;
+
+  // confirm button
+  Widget confirmButton = Expanded(
+    child: CustomButton(
+      secondaryButton: false,
+      primaryButton: true,
+      buttonText: 'Yes',
+      onButtonPressed: () {
+        shouldExit = true;  // Set true when confirmed
+        Navigator.of(context).pop();  // Close the dialog
+      },
+      buttonHeight: 60,
+    ),
+  );
+
+  // cancel button
+  Widget cancelButton = Expanded(
+    child: CustomButton(
+      secondaryButton: true,
+      primaryButton: false,
+      buttonText: 'No',
+      onButtonPressed: () {
+        shouldExit = false;  // Set false when canceled
+        Navigator.of(context).pop();  // Close the dialog
+      },
+      buttonHeight: 60,
+    ),
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    insetPadding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 65.0),
+    backgroundColor: Utils.whiteColor,
+    actionsAlignment: MainAxisAlignment.spaceBetween,
+    title: Text(
+      textAlign: TextAlign.center,
+      'Exit App?',
+      style: Utils.kAppHeading6BoldStyle,
+    ),
+    content: Text(
+      textAlign: TextAlign.center,
+      'Press yes to exit the app',
+      style: Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
+    ),
+    actions: [
+      Row(
+        children: [
+          cancelButton,
+          const SizedBox(width: 15),
+          confirmButton,
+        ],
+      ),
+    ],
+  );
+
+  // show the dialog and wait for result
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+
+  print('Dialog result: $shouldExit');
+
+  // return the result (true if confirmed, false if canceled)
+  return shouldExit;
+}
 
   // appbar for screen
   static getAppBar(String title, List<Widget> actions, context) {

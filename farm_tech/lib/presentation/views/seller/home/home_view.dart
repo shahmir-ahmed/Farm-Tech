@@ -256,6 +256,12 @@ class _HomeViewState extends State<HomeView> {
     // floatingSnackBar(message: 'Welcome back!', context: context);
   }
 
+  // on back pressed function call
+  Future<bool> _onWillPop() async {
+    bool shouldExit = await Utils.showExitAppConfirmAlertDialog(context);
+    return shouldExit; // return the result of the dialog
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -274,7 +280,7 @@ class _HomeViewState extends State<HomeView> {
     _getUserUid();
   }
 
-  // buil method
+  // build method
   @override
   Widget build(BuildContext context) {
     // print('user type: ${widget.userType}'); -/

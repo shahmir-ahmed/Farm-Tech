@@ -6,13 +6,22 @@ class SelectUserTypeView extends StatelessWidget {
   // SelectUserTypeView({required this.showSellerAuth, required this.showBuyerAuth});
   SelectUserTypeView({super.key});
 
+  // on back pressed function call
+  Future<bool> _onWillPop(context) async {
+    print('inside onWillPop');
+    bool shouldExit = await Utils.showExitAppConfirmAlertDialog(context);
+    return shouldExit; // return the result of the dialog
+  }
+
   @override
   Widget build(BuildContext context) {
+      // onWillPop: () async => await _onWillPop(context),
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Farm Tech',
-          style: Utils.kAppBody1RegularStyle.copyWith(color: Utils.whiteColor),
+          style:
+              Utils.kAppBody1RegularStyle.copyWith(color: Utils.whiteColor),
         ),
         centerTitle: true,
         backgroundColor: Utils.greenColor,
