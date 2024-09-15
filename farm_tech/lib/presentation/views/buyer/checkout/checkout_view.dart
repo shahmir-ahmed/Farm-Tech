@@ -16,6 +16,7 @@ import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CheckoutView extends StatefulWidget {
   CheckoutView(
@@ -35,6 +36,7 @@ class CheckoutView extends StatefulWidget {
 
 class _CheckoutViewState extends State<CheckoutView> {
   List<String> cartItemProductNames = [];
+  String customerEmail= '';
 
   _getItemProductNames() async {
     // for every item get product name and add in the list
@@ -49,6 +51,18 @@ class _CheckoutViewState extends State<CheckoutView> {
     }
   }
 
+  // get email from shared pref.
+  _getBuyerEmailFromSharedPref() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final email = pref.getString("email");
+
+    if (email != null) {
+      setState(() {
+        customerEmail = email;
+      });
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -56,6 +70,9 @@ class _CheckoutViewState extends State<CheckoutView> {
 
     // get cart items products name
     _getItemProductNames();
+
+    // get customer/buyer email from shared pref.
+    _getBuyerEmailFromSharedPref();
   }
 
   @override
@@ -531,7 +548,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                             .getProductSellerId(ProductModel(
                                 docId: widget.cartItems[i].productId));
 
-                        // if error fetching seller id
+                        // if no error fetching seller id
                         if (productModel != null) {
                           final result = await OrderServices().createOrder(
                               OrderModel(
@@ -540,7 +557,9 @@ class _CheckoutViewState extends State<CheckoutView> {
                                   status: "In Progress",
                                   productId: widget.cartItems[i].productId,
                                   customerId: widget.cartItems[0].buyerId,
-                                  sellerId: productModel.sellerId));
+                                  sellerId: productModel.sellerId,
+                                  customerEmail: customerEmail
+                                  ));
 
                           /*
                           // If above doc is not created then how will this be created?
@@ -571,6 +590,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                                   status: "Not placed",
                                   productId: widget.cartItems[i].productId,
                                   customerId: widget.cartItems[0].buyerId,
+                                  customerEmail: customerEmail,
                                   sellerId:
                                       "")); // create order doc with empty seller id and status as not placed
 

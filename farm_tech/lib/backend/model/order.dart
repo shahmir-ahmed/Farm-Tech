@@ -18,6 +18,7 @@ class OrderModel {
   String? status;
   String? productId;
   String? customerId;
+  String? customerEmail;
   String? sellerId;
   Timestamp? createdAt;
   Timestamp? updatedAt;
@@ -29,6 +30,7 @@ class OrderModel {
       this.status,
       this.productId,
       this.customerId,
+      this.customerEmail,
       this.sellerId,
       this.createdAt,
       this.updatedAt,
@@ -42,6 +44,7 @@ class OrderModel {
         status: json["status"],
         productId: json["productId"],
         customerId: json["customerId"],
+        customerEmail: json["customerEmail"],
         sellerId: json["sellerId"],
         createdAt: json["createdAt"],
         updatedAt: json["updatedAt"],
@@ -53,6 +56,7 @@ class OrderModel {
         "status": status,
         "productId": productId,
         "customerId": customerId,
+        "customerEmail": customerEmail,
         "sellerId": sellerId,
         "createdAt": createdAt != null
             ? createdAt!.toString()

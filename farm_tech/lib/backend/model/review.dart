@@ -15,18 +15,20 @@ class ReviewModel {
   String? docId;
   String? review;
   String? starsCount;
-  String? reviewById;
+  String? buyerId;
   String? productId; //HGusmi3IPJ7eWjOdCdFj, b6JvxqwDQSYv6KcfZoLs
   String? sellerId;
+  String? orderId; // to uniquely identify a buyer's review for an order
   Timestamp? createdAt;
 
   ReviewModel({
     this.docId,
     this.review,
     this.starsCount,
-    this.reviewById,
+    this.buyerId,
     this.productId,
     this.sellerId,
+    this.orderId,
     this.createdAt,
   });
 
@@ -35,18 +37,20 @@ class ReviewModel {
         docId: docId,
         review: json["review"],
         starsCount: json["starsCount"],
-        reviewById: json["reviewById"],
+        buyerId: json["buyerId"],
         productId: json["productId"],
         sellerId: json["sellerId"],
+        orderId: json["orderId"],
         createdAt: json["createdAt"],
       );
 
   Map<String, dynamic> toJson() => {
         "review": review,
         "starsCount": starsCount,
-        "reviewById": reviewById,
+        "buyerId": buyerId,
         "productId": productId,
         "sellerId": sellerId,
-        "createdAt": createdAt,
+        "orderId": orderId,
+        "createdAt": createdAt ?? Timestamp.now(),
       };
 }

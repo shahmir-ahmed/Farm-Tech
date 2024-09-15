@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
     return AnnotatedRegion(
       value: const SystemUiOverlayStyle(
         // statusBarColor: Color(0xffffdabe),
-        // statusBarIconBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.dark,
       ),
       child: MaterialApp(
         // home: AuthenticationView()

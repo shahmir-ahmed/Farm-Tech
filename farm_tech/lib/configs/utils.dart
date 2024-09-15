@@ -192,6 +192,9 @@ class Utils {
                                                                     : forScreen ==
                                                                             'clear_recent_searches'
                                                                         ? "Deleting"
+                                                                    : forScreen ==
+                                                                            'post_feedback'
+                                                                        ? "Posting feedback"
                                                                         : "",
             style: forScreen == 'payment_processing'
                 ? kAppBody1BoldStyle
@@ -236,6 +239,9 @@ class Utils {
                                                                 : forScreen ==
                                                                         'clear_recent_searches'
                                                                     ? "Deleting all recent searches"
+                                                                : forScreen ==
+                                                                        'post_feedback'
+                                                                    ? "Your feedback is being posted"
                                                                     : "",
             style: kAppBody3RegularStyle.copyWith(color: lightGreyColor1),
           ),

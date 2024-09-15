@@ -62,7 +62,7 @@ class SellerServices {
   Stream<SellerReviewsModel>? getSellerReviewsDataStream(SellerModel model) {
     try {
       return FirebaseFirestore.instance
-          .collection('productReviews')
+          .collection('reviews')
           .where('sellerId', isEqualTo: model.docId)
           .snapshots()
           .map((snapshot) {
@@ -104,7 +104,7 @@ class SellerServices {
   Stream<String?>? getTotalReviewsCountStream(SellerModel model) {
     try {
       return FirebaseFirestore.instance
-          .collection('productReviews')
+          .collection('reviews')
           .where('sellerId', isEqualTo: model.docId)
           .snapshots()
           .map((snapshot) => snapshot.docs.length.toString());

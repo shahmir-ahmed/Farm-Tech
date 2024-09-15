@@ -1,14 +1,17 @@
 import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/seller.dart';
 import 'package:farm_tech/backend/services/buyer_services.dart';
+import 'package:farm_tech/backend/services/review_services.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/seller/profile/edit_profile_view.dart';
 import 'package:farm_tech/presentation/views/seller/profile/image_view.dart';
 import 'package:farm_tech/presentation/views/seller/profile/settings_view.dart';
 import 'package:farm_tech/presentation/views/seller/profile/widgets/widgets.dart';
+import 'package:farm_tech/presentation/views/seller/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -311,10 +314,22 @@ class _ProfileTabViewState extends State<ProfileTabView> {
           height: 35,
         ),
 
+        // orders option
         OptionRow(
           text: 'Orders',
           onPressed: widget.setOrderTabAsActive,
-        )
+        ),
+
+        docId.isNotEmpty
+            ?
+            // seller reviews section with stream
+            StreamProvider.value(
+                value: ReviewServices()
+                    .getAllSellerReviews(SellerModel(docId: docId)),
+                initialData: null,
+                child: RatingsReviewsSection.forSellerProfileTab(),
+              )
+            : SizedBox(),
       ],
     );
   }

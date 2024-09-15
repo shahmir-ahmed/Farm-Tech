@@ -41,7 +41,7 @@ class ProductServices {
         return 'success';
       });
     } catch (e) {
-      print("Err in createProductDoc: $e");
+      print("Err in reduceProductStockQuanity: $e");
       return null;
     }
   }
@@ -58,7 +58,7 @@ class ProductServices {
       await ref.putFile(File(imageUrl)); // put image at the ref
       return 'success';
     } catch (e) {
-      print("Err in createProductDoc: $e");
+      print("Err in uploadProductImage: $e");
       return null;
     }
   }
@@ -194,7 +194,7 @@ class ProductServices {
   Stream<String?>? getProductAvgRatingStream(ProductModel model) {
     try {
       return FirebaseFirestore.instance
-          .collection('productReviews')
+          .collection('reviews')
           .where('productId', isEqualTo: model.docId)
           .snapshots()
           .map((snapshot) {
@@ -234,7 +234,7 @@ class ProductServices {
         }
       });
     } catch (e) {
-      print('Err in getProductReviewsDataStream: $e');
+      print('Err in getProductAvgRatingStream: $e');
       return null;
     }
   }
@@ -287,7 +287,7 @@ class ProductServices {
                   ProductModel>() // Ensure the list is of type List<ProductModel>
               .toList());
     } catch (e) {
-      print('Err in getProductsForSearch: $e');
+      print('Err in getSearchedProductsStream: $e');
       return null;
     }
   }

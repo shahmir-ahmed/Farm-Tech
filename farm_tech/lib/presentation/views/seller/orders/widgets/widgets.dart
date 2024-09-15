@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_tech/backend/model/order.dart';
 import 'package:farm_tech/backend/model/product.dart';
+import 'package:farm_tech/backend/model/review.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
+import 'package:farm_tech/backend/services/review_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/buyer/orders/feedback_view.dart';
 import 'package:farm_tech/presentation/views/seller/orders/order_details_view.dart';
+import 'package:farm_tech/presentation/views/seller/shop/widgets/widgets.dart';
+import 'package:farm_tech/presentation/views/seller/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -272,7 +276,8 @@ class OrderCard extends StatefulWidget {
   bool? forHomeTab;
   bool? forBuyer;
   bool? forOrderDetailsBottomSheet;
-  ProductModel? productModel;
+  ProductModel?
+      productModel; // for order details bottom sheet because need name, image, category of product already in bottom sheet
 
   @override
   State<OrderCard> createState() => _OrderCardState();
@@ -284,6 +289,12 @@ class _OrderCardState extends State<OrderCard> {
   // String productCategory = '';
   ProductModel _productModel = ProductModel(
       title: "", category: "", mainImageUrl: ""); // order product model
+
+  bool?
+      orderReviewExists; // for buyer order card to check that order review exists or not then on tap show post feedback option in bottom sheet
+
+  // order review model for buyer order details bottom sheet if order review exists
+  ReviewModel? orderReviewModel;
 
   String convertStringToNumber(String input) {
     return input.codeUnits.map((unit) => unit.toString()).join();
@@ -394,7 +405,9 @@ class _OrderCardState extends State<OrderCard> {
 
   // buyer order details bottom sheet
   _showBuyerOrderDetailsBottomSheet() {
-    showModalBottomSheet(
+    // print('orderReviewExists in bottom sheet: $orderReviewExists');
+    showModalBottomSheet<void>(
+      // isScrollControlled: true,
       context: context,
       builder: (context) => ClipRRect(
         borderRadius: const BorderRadius.only(
@@ -412,7 +425,7 @@ class _OrderCardState extends State<OrderCard> {
                 children: [
                   // space
                   SizedBox(
-                    height: 30,
+                    height: 20,
                   ),
 
                   // text and cross icon row
@@ -549,10 +562,10 @@ class _OrderCardState extends State<OrderCard> {
                           // order delivered
                           Text(
                             widget.orderModel.status == 'Cancelled'
-                                ? 'Order Not Delivered' :
-                            widget.orderModel.status == 'In Progress'
-                                ? 'Order Delivery Pending'
-                                : 'Order Delivered',
+                                ? 'Order Not Delivered'
+                                : widget.orderModel.status == 'In Progress'
+                                    ? 'Order Delivery Pending'
+                                    : 'Order Delivered',
                             style: Utils.kAppBody3MediumStyle,
                           ),
                           // dont show time if in progress
@@ -576,15 +589,25 @@ class _OrderCardState extends State<OrderCard> {
                         )
                       : SizedBox(),
 
-                  // show give feedback button if order is completed
-                  widget.orderModel.status == 'Completed'
+                  // show give feedback button if order is completed and order review does not exists
+                  widget.orderModel.status == 'Completed' && !orderReviewExists!
                       ? CustomButton(
                           onButtonPressed: () {
                             // show feedback screen
                             Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => FeedbackView()));
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => FeedbackView(
+                                        // review order model having buyer, product, seller id and order id
+                                        reviewModel: ReviewModel(
+                                          buyerId: widget.orderModel.customerId,
+                                          productId:
+                                              widget.orderModel.productId,
+                                          sellerId: widget.orderModel.sellerId,
+                                          orderId: widget.orderModel.docId,
+                                        ),
+                                        checkOrderReviewExists:
+                                            _checkOrderReviewExists)));
                           },
                           buttonText: 'Give feedback',
                           primaryButton: true,
@@ -592,7 +615,32 @@ class _OrderCardState extends State<OrderCard> {
                           buttonHeight: 60,
                           buttonWidth: MediaQuery.of(context).size.width,
                         )
-                      : SizedBox()
+                      // if order review exists then
+                      // show customer review card
+                      : widget.orderModel.status == 'Completed' &&
+                              orderReviewExists!
+                          ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // text
+                              Text('Your Review', style: Utils.kAppBody1BoldStyle,),
+
+                              // space
+                              SizedBox(height: 10,),
+
+                              // single user rating/review card
+                              Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: SingleUserRatingCard(
+                                    reviewModel: orderReviewModel!,
+                                    timeAgo: timeAgo(orderReviewModel!.createdAt!),
+                                    noPadding: true,
+                                    noBottomDivider: true,
+                                    ),
+                              ),
+                            ],
+                          )
+                          : SizedBox() // for cancelled/ in progress orders
                 ],
               ),
             ),
@@ -600,6 +648,53 @@ class _OrderCardState extends State<OrderCard> {
         ),
       ),
     );
+  }
+
+  // time ago function to calculate and return how much time has passed since the review posted
+  String timeAgo(Timestamp timestamp) {
+    DateTime dateTime = timestamp.toDate(); // Convert Timestamp to DateTime
+
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds}s';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d';
+    } else if (difference.inDays < 30) {
+      return '${(difference.inDays / 7).floor()}w';
+    } else if (difference.inDays < 365) {
+      return '${(difference.inDays / 30).floor()}mo';
+    } else {
+      return '${(difference.inDays / 365).floor()}y';
+    }
+  }
+
+  _checkOrderReviewExists() async {
+    final result = await ReviewServices()
+        .checkOrderReviewExists(ReviewModel(orderId: widget.orderModel.docId));
+
+    // print('result from checkOrderReviewExists: $result');
+
+    if (result != null) {
+      // if order review exists then review data in model is recieved
+      if (result != false) {
+        setState(() {
+          orderReviewExists = true;
+          orderReviewModel = result;
+        });
+      } else {
+        setState(() {
+          orderReviewExists = false;
+        });
+      }
+    }
+
+    // print('orderReviewExists updated to: $orderReviewExists');
   }
 
   @override
@@ -614,6 +709,15 @@ class _OrderCardState extends State<OrderCard> {
       getProductName(widget.orderModel.productId!);
       // get order product category
       getProductCategory(widget.orderModel.productId!);
+    }
+
+    // if order card for buyer
+    if (widget.forBuyer != null) {
+      // not check for static card inside bottom sheet
+      if (widget.forOrderDetailsBottomSheet == null) {
+        // if order card is for buyer then for order details bottom sheet check product review already exists or not
+        _checkOrderReviewExists();
+      }
     }
   }
 
@@ -631,13 +735,17 @@ class _OrderCardState extends State<OrderCard> {
                   if (_productModel.title!.isEmpty ||
                       _productModel.category!.isEmpty ||
                       _productModel.mainImageUrl!.isEmpty) {
-                    // not show details screen
+                    // not show details screen / details bottom sheet
                   } else {
-                    //  if for buyer order card then show bottom sheet
+                    //  if for buyer order card
                     if (widget.forBuyer != null) {
-                      _showBuyerOrderDetailsBottomSheet();
+                      // print('orderReviewExists: $orderReviewExists');
+                      // order review exists variable is not null then show details bottom sheet
+                      if (orderReviewExists != null) {
+                        _showBuyerOrderDetailsBottomSheet();
+                      }
                     } else {
-                      // show order details screen
+                      // show order details screen for seller
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -652,6 +760,7 @@ class _OrderCardState extends State<OrderCard> {
                     }
                   }
                 },
+      // main body column
       child: Column(
         children: [
           Padding(
@@ -660,6 +769,7 @@ class _OrderCardState extends State<OrderCard> {
                 : const EdgeInsets.all(20),
             child: Column(
               children: [
+                // if order card if or home tab
                 widget.forHomeTab != null
                     ? const SizedBox()
                     : Row(
@@ -726,7 +836,7 @@ class _OrderCardState extends State<OrderCard> {
                 Row(
                   children: [
                     // image
-                    // use widget's product model for order details bottom sheet
+                    // use widget's product model for order details bottom sheet (means not use state vars but already got data in widget product model)
                     widget.forOrderDetailsBottomSheet != null
                         ? Image.network(
                             widget.productModel!.mainImageUrl!,
@@ -822,6 +932,7 @@ class _OrderCardState extends State<OrderCard> {
             ),
           ),
           // divider
+          // no divider for order card in buyer order details bottom sheet
           widget.forOrderDetailsBottomSheet != null
               ? SizedBox()
               : Utils.divider,

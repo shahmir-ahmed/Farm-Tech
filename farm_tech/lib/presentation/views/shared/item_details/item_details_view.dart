@@ -8,6 +8,7 @@ import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/buyer/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/seller/shop/widgets/widgets.dart';
+import 'package:farm_tech/presentation/views/seller/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -357,7 +358,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                 StreamProvider.value(
                   value: ReviewServices().getAllProductReviews(productModel!),
                   initialData: null,
-                  child: const ReviewsView(),
+                  child: RatingsReviewsSection(),
                 )
               ],
             ),

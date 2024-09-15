@@ -1,8 +1,10 @@
 import 'package:farm_tech/backend/model/review.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/seller/shop/widgets/widgets.dart';
+import 'package:farm_tech/presentation/views/seller/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
+// ratings and review screen/view
 class RatingsReviewsView extends StatelessWidget {
   RatingsReviewsView({required this.reviews});
 

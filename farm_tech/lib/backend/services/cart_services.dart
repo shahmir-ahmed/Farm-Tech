@@ -85,4 +85,18 @@ class CartServices {
       return null;
     }
   }
+
+  // return cart items stream of a buyer
+  Stream<int?>? getBuyerCartItemsCountStream(BuyerModel buyerModel) {
+    try {
+      return FirebaseFirestore.instance
+          .collection('carts')
+          .where('buyerId', isEqualTo: buyerModel.docId)
+          .snapshots()
+          .map((snapshot) => snapshot.docs.length);
+    } catch (e) {
+      print('Error in getBuyerCartItemsCountStream: $e');
+      return null;
+    }
+  }
 }

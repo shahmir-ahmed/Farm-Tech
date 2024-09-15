@@ -347,7 +347,7 @@ class OrderDetailsView extends StatelessWidget {
               initialData: null,
               value: BuyerServices().getNameContactStream(
                   BuyerModel(docId: orderModel.customerId)),
-              child: CustomerDetailsSection()),
+              child: CustomerDetailsSection(customerEmail: orderModel.customerEmail!,)),
 
           // divider
           Utils.divider,
@@ -522,34 +522,20 @@ class OrderDetailsView extends StatelessWidget {
 }
 
 class CustomerDetailsSection extends StatefulWidget {
-  CustomerDetailsSection({super.key});
+  CustomerDetailsSection({required this.customerEmail});
+  
+  String customerEmail;
 
   @override
   State<CustomerDetailsSection> createState() => _CustomerDetailsSectionState();
 }
 
 class _CustomerDetailsSectionState extends State<CustomerDetailsSection> {
-  String buyerEmail = '';
-
-  // get email from shared pref.
-  _getBuyerEmailFromSharedPref() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    final email = pref.getString("email");
-
-    if (email != null) {
-      setState(() {
-        buyerEmail = email;
-      });
-    }
-  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    // get buyer email from shared pref
-    _getBuyerEmailFromSharedPref();
   }
 
   @override
@@ -639,7 +625,7 @@ class _CustomerDetailsSectionState extends State<CustomerDetailsSection> {
                           .copyWith(color: Utils.greyColor2),
                     ),
                     Text(
-                      buyerEmail.isEmpty ? '' : buyerEmail,
+                      widget.customerEmail,
                       style: Utils.kAppBody3MediumStyle,
                     )
                   ],

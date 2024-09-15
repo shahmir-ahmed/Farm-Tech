@@ -1,12 +1,15 @@
 import 'package:carousel_slider/carousel_slider.dart' as carousel;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/product.dart';
 import 'package:farm_tech/backend/model/product_reviews.dart';
 import 'package:farm_tech/backend/model/review.dart';
 import 'package:farm_tech/backend/model/seller.dart';
+import 'package:farm_tech/backend/services/buyer_services.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/shared/item_details/item_details_view.dart';
-import 'package:farm_tech/presentation/views/seller/shop/ratings_reviews_view.dart';
+import 'package:farm_tech/presentation/views/seller/widgets/ratings_reviews_view.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -100,8 +103,7 @@ class ProductCard extends StatelessWidget {
   ProductCard(
       {required this.productModel,
       this.forBuyer,
-      required this.setOrderTabAsActive
-      });
+      required this.setOrderTabAsActive});
 
   // for buyer
   bool? forBuyer;
@@ -494,194 +496,4 @@ class ProductImagesCarousel extends StatelessWidget {
   }
 }
 
-// reviews view inside item details view
-class ReviewsView extends StatefulWidget {
-  const ReviewsView({super.key});
 
-  @override
-  State<ReviewsView> createState() => _ReviewsViewState();
-}
-
-class _ReviewsViewState extends State<ReviewsView> {
-  // time ago function to calculate and return how much time has passed since the review posted
-  String timeAgo(DateTime timestamp) {
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
-
-    if (difference.inSeconds < 60) {
-      return '${difference.inSeconds}s';
-    } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours}h';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays}d';
-    } else if (difference.inDays < 30) {
-      return '${(difference.inDays / 7).floor()}w';
-    } else if (difference.inDays < 365) {
-      return '${(difference.inDays / 30).floor()}mo';
-    } else {
-      return '${(difference.inDays / 365).floor()}y';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // consume reviews stream here
-    final reviews = Provider.of<List<ReviewModel>?>(context);
-
-    return reviews == null
-        ? const SizedBox(height: 100, child: Utils.circularProgressIndicator)
-        : reviews.isEmpty
-            ? Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: Text(
-                  'No ratings & reviews for the product.',
-                  style: Utils.kAppBody2MediumStyle,
-                ),
-              )
-            // ratings and reviews
-            : Column(
-                children: [
-                  // label
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Ratings & Reviews',
-                            style: Utils.kAppBody3MediumStyle,
-                          ),
-
-                          // see all
-                          GestureDetector(
-                              onTap: () {
-                                // show all ratings and reviews of product screen
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            RatingsReviewsView(
-                                              reviews: reviews,
-                                            )));
-                              },
-                              child: Text(
-                                'See all',
-                                style: Utils.kAppCaptionRegularStyle
-                                    .copyWith(color: Utils.greenColor),
-                              )),
-                        ],
-                      )),
-
-                  // user reviews section
-                  Column(
-                    children: reviews.map((reviewModel) {
-                      return SingleUserRatingCard(
-                        reviewModel: reviewModel,
-                        timeAgo: timeAgo(reviewModel.createdAt!.toDate()),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              );
-  }
-}
-
-// single user rating card
-class SingleUserRatingCard extends StatelessWidget {
-  SingleUserRatingCard({required this.reviewModel, required this.timeAgo});
-
-  ReviewModel reviewModel;
-  String timeAgo;
-
-  @override
-  Widget build(BuildContext context) {
-    // individual user rating column
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // user image
-              Image.asset(
-                'assets/images/user-image.png',
-                width: 35,
-              ),
-
-              // space
-              const SizedBox(
-                width: 8,
-              ),
-
-              // column
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // user name
-                        Text(
-                          'Fareeha Sadaqat',
-                          style: Utils.kAppBody3MediumStyle,
-                        ),
-
-                        // stars
-                        Row(
-                          children: List.generate(
-                              int.parse(reviewModel.starsCount!), (index) {
-                            return const Icon(
-                              Icons.star,
-                              color: Utils.greenColor,
-                              size: 19,
-                            );
-                          }),
-                          // children: [1, 2, 3, 4, 5].map((index) {
-                          //   return const Icon(
-                          //     Icons.star,
-                          //     color: Utils.greenColor,
-                          //     size: 19,
-                          //   );
-                          // }).toList(),
-                        ),
-                      ],
-                    ),
-
-                    // time
-                    Text(
-                      '$timeAgo ago',
-                      style: Utils.kAppCaptionRegularStyle
-                          .copyWith(color: Utils.greyColor),
-                    ),
-
-                    // space
-                    const SizedBox(
-                      height: 10,
-                    ),
-
-                    // review
-                    Text(
-                      reviewModel.review as String,
-                      style: Utils.kAppBody3RegularStyle,
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-
-        // divider
-        // not show divider for last review
-        // index == 4
-        //     ? const SizedBox()
-        //     :
-        Utils.divider
-      ],
-    );
-  }
-}
