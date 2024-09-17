@@ -32,6 +32,7 @@ migrate_working_dir/
 /build/
 /lib/firebase_options.dart
 /lib/consts.dart
+/lib/backend/services/server_key_service.dart
 
 # Symbolication related
 app.*.symbols

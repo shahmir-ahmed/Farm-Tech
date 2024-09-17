@@ -19,7 +19,9 @@ class ShopRegisterView extends StatefulWidget {
       {required this.sellerName,
       required this.sellerContactNo,
       required this.email,
-      required this.password});
+      required this.password,
+      required this.deviceToken
+      });
 
   // seller/owner name
   String sellerName;
@@ -29,6 +31,8 @@ class ShopRegisterView extends StatefulWidget {
   String email;
   // password
   String password;
+  // device token
+  String deviceToken;
 
   @override
   State<ShopRegisterView> createState() => _ShopRegisterViewState();
@@ -516,7 +520,9 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                           cnicNo: ownerCNICNo,
                                           shopName: shopName,
                                           shopLocation: shopLocation,
-                                          shopDescription: shopDescription),
+                                          shopDescription: shopDescription,
+                                          deviceToken: widget.deviceToken
+                                          ),
                                       user.uId as String);
       
                               // doc created

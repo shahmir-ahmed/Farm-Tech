@@ -1,6 +1,7 @@
 import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/user.dart';
 import 'package:farm_tech/backend/services/buyer_services.dart';
+import 'package:farm_tech/backend/services/notification_service.dart';
 import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/seller/authentication/shop_register/shop_register_view.dart';
@@ -515,7 +516,7 @@ class _LoginRegisterForgotResetPasswordViewState
                           }
                         } else if (widget.forBuyer) {
                           // login for buyer
-                          
+
                           // show loading alert dialog
                           Utils.showLoadingAlertDialog(context, 'login');
 
@@ -560,7 +561,6 @@ class _LoginRegisterForgotResetPasswordViewState
 
                             print("pref set: $set $set2 $set3");
                           }
-                            
                         }
                       }
                       // for signup screen
@@ -588,6 +588,16 @@ class _LoginRegisterForgotResetPasswordViewState
                           } else {
                             // valid user
                             */
+                          // show loading alert dialog
+                          Utils.showLoadingAlertDialog(context, 'signup');
+
+                          // get device token and pass it to the register view also
+                          String deviceToken =
+                              await NotificationService().getDeviceToken();
+
+                          // close loading alert dialog
+                          Navigator.pop(context);
+
                           // push shop register screen
                           Navigator.push(
                               context,
@@ -597,6 +607,7 @@ class _LoginRegisterForgotResetPasswordViewState
                                         sellerContactNo: contactNo,
                                         email: email,
                                         password: password,
+                                        deviceToken: deviceToken,
                                       )));
                           // }
                         } else if (widget.forBuyer) {
@@ -622,25 +633,24 @@ class _LoginRegisterForgotResetPasswordViewState
                             UserModel user = result; // logged in user object
 
                             // save user uid, email in shared pref.
-                              SharedPreferences pref =
-                                  await SharedPreferences.getInstance();
-                              final set = await pref.setString(
-                                  'uId', result.uId); // set user uid
-                              final set2 = await pref.setString(
-                                  'email', email); // set user email
-                              final set3 = await pref.setString(
-                                  'userType', "buyer"); // set user uid
+                            SharedPreferences pref =
+                                await SharedPreferences.getInstance();
+                            final set = await pref.setString(
+                                'uId', result.uId); // set user uid
+                            final set2 = await pref.setString(
+                                'email', email); // set user email
+                            final set3 = await pref.setString(
+                                'userType', "buyer"); // set user uid
 
-                              print("pref set: $set $set2 $set3");
+                            print("pref set: $set $set2 $set3");
 
                             // create user uid with buyer document which contains buyer details
-                            final result2 =
-                                await BuyerServices().createDoc(
-                                    BuyerModel(
-                                      name: name,
-                                      contactNo: contactNo,
-                                    ),
-                                    user.uId!);
+                            final result2 = await BuyerServices().createDoc(
+                                BuyerModel(
+                                  name: name,
+                                  contactNo: contactNo,
+                                ),
+                                user.uId!);
 
                             // doc created
                             if (result2 == 'success') {

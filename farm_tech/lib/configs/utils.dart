@@ -438,78 +438,80 @@ class Utils {
   }
 
   // show confirm alert dialog
-static Future<bool> showExitAppConfirmAlertDialog(
-    BuildContext context) async {
-  // set up the confirm button
-  bool shouldExit = false;
+  static Future<bool> showExitAppConfirmAlertDialog(
+      BuildContext context) async {
+    // set up the confirm button
+    bool shouldExit = false;
 
-  // confirm button
-  Widget confirmButton = Expanded(
-    child: CustomButton(
-      secondaryButton: false,
-      primaryButton: true,
-      buttonText: 'Yes',
-      onButtonPressed: () {
-        shouldExit = true;  // Set true when confirmed
-        Navigator.of(context).pop();  // Close the dialog
-      },
-      buttonHeight: 60,
-    ),
-  );
-
-  // cancel button
-  Widget cancelButton = Expanded(
-    child: CustomButton(
-      secondaryButton: true,
-      primaryButton: false,
-      buttonText: 'No',
-      onButtonPressed: () {
-        shouldExit = false;  // Set false when canceled
-        Navigator.of(context).pop();  // Close the dialog
-      },
-      buttonHeight: 60,
-    ),
-  );
-
-  // set up the AlertDialog
-  AlertDialog alert = AlertDialog(
-    insetPadding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 65.0),
-    backgroundColor: Utils.whiteColor,
-    actionsAlignment: MainAxisAlignment.spaceBetween,
-    title: Text(
-      textAlign: TextAlign.center,
-      'Exit App?',
-      style: Utils.kAppHeading6BoldStyle,
-    ),
-    content: Text(
-      textAlign: TextAlign.center,
-      'Press yes to exit the app',
-      style: Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
-    ),
-    actions: [
-      Row(
-        children: [
-          cancelButton,
-          const SizedBox(width: 15),
-          confirmButton,
-        ],
+    // confirm button
+    Widget confirmButton = Expanded(
+      child: CustomButton(
+        secondaryButton: false,
+        primaryButton: true,
+        buttonText: 'Yes',
+        onButtonPressed: () {
+          shouldExit = true; // Set true when confirmed
+          Navigator.of(context).pop(); // Close the dialog
+        },
+        buttonHeight: 60,
       ),
-    ],
-  );
+    );
 
-  // show the dialog and wait for result
-  await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
+    // cancel button
+    Widget cancelButton = Expanded(
+      child: CustomButton(
+        secondaryButton: true,
+        primaryButton: false,
+        buttonText: 'No',
+        onButtonPressed: () {
+          shouldExit = false; // Set false when canceled
+          Navigator.of(context).pop(); // Close the dialog
+        },
+        buttonHeight: 60,
+      ),
+    );
 
-  print('Dialog result: $shouldExit');
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      insetPadding:
+          const EdgeInsets.symmetric(horizontal: 50.0, vertical: 65.0),
+      backgroundColor: Utils.whiteColor,
+      actionsAlignment: MainAxisAlignment.spaceBetween,
+      title: Text(
+        textAlign: TextAlign.center,
+        'Exit App?',
+        style: Utils.kAppHeading6BoldStyle,
+      ),
+      content: Text(
+        textAlign: TextAlign.center,
+        'Do you want to exit the app?',
+        style:
+            Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
+      ),
+      actions: [
+        Row(
+          children: [
+            cancelButton,
+            const SizedBox(width: 15),
+            confirmButton,
+          ],
+        ),
+      ],
+    );
 
-  // return the result (true if confirmed, false if canceled)
-  return shouldExit;
-}
+    // show the dialog and wait for result
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+
+    print('Dialog result: $shouldExit');
+
+    // return the result (true if confirmed, false if canceled)
+    return shouldExit;
+  }
 
   // appbar for screen
   static getAppBar(String title, List<Widget> actions, context) {

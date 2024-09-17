@@ -48,7 +48,7 @@ class UserAuthServices {
 
       return firebaseUser == null
           ? firebaseUser
-          : UserModel(uId: firebaseUser.uid);
+          : UserModel(uId: firebaseUser.uid, email: firebaseUser.email);
 
       // create a brew document with the user uid
       // create a new document for the user with uid
@@ -76,7 +76,7 @@ class UserAuthServices {
     try {
       return await _firebaseAuth?.signOut();
     } catch (e) {
-      print(e.toString());
+      print('Err in signOut: ${e.toString()}');
       return null;
     }
   }

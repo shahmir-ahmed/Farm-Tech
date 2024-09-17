@@ -1,6 +1,7 @@
 import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/seller.dart';
 import 'package:farm_tech/backend/services/buyer_services.dart';
+import 'package:farm_tech/backend/services/notification_service.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/buyer/chat/buyer_chat_tab_view.dart';
@@ -15,13 +16,15 @@ import 'package:farm_tech/presentation/views/buyer/profile/buyer_profile_tab_vie
 import 'package:farm_tech/presentation/views/buyer/search/buyer_search_tab_view.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends StatefulWidget {
-  HomeView({required this.userType});
+  HomeView({required this.userType, this.setOrderTabAsActive});
 
   String userType;
+  bool? setOrderTabAsActive;
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -47,7 +50,7 @@ class _HomeViewState extends State<HomeView> {
     Utils.circularProgressIndicator,
   ];
 
-  // current botom navbar index
+  // current bottom navbar index
   int _selectedIndex = 0;
 
   // seller uid
@@ -58,6 +61,8 @@ class _HomeViewState extends State<HomeView> {
 
   // buyer name
   String buyerName = '';
+
+  NotificationService notificationService = NotificationService();
 
   // on bottom option tab clicked
   void _onItemTapped(int index) {
@@ -257,10 +262,33 @@ class _HomeViewState extends State<HomeView> {
   }
 
   // on back pressed function call
-  Future<bool> _onWillPop() async {
-    bool shouldExit = await Utils.showExitAppConfirmAlertDialog(context);
-    return shouldExit; // return the result of the dialog
-  }
+  // Future<bool> _onWillPop() async {
+  //   bool shouldExit = await Utils.showExitAppConfirmAlertDialog(context);
+  //   return shouldExit; // return the result of the dialog
+  // }
+
+  // Future<bool> _onWillPop() async {
+  //   final shouldExit = await (await showDialog(
+  //         context: context,
+  //         builder: (context) => new AlertDialog(
+  //           title: new Text('Are you sure?'),
+  //           content: new Text('Do you want to exit the app?'),
+  //           actions: <Widget>[
+  //             TextButton(
+  //               onPressed: () => Navigator.of(context).pop(false),
+  //               child: new Text('No'),
+  //             ),
+  //             TextButton(
+  //               onPressed: () => Navigator.of(context).pop(true),
+  //               child: new Text('Yes'),
+  //             ),
+  //           ],
+  //         ),
+  //       )) ??
+  //       false;
+
+  //   return shouldExit ?? false;
+  // }
 
   @override
   void initState() {
@@ -270,11 +298,27 @@ class _HomeViewState extends State<HomeView> {
     // print('user type: ${widget.userType}'); -/
 
     if (widget.userType == 'seller') {
+      // request notification permssion
+      notificationService.requestNotificationPermission();
+
+      // notificationService.getDeviceToken();
+
+      // initialize firebase notifications so can recieve them
+      notificationService.firebaseInit(context);
+
+      notificationService.setupInteractMessage(context);
+
+      // for when click on notification this will be not null and true so set selected index as 1 to show orders tab as active
+      if (widget.setOrderTabAsActive != null) {
+        _selectedIndex = 2;
+      }
+
       // reinitialize profile tab
       _reInitializeProfileTab();
     } else {
       // reinitialize profile tab
       _reInitializeBuyerProfileTab();
+      // notificationService.getDeviceToken();
     }
     // get seller/buyer uid
     _getUserUid();
@@ -284,12 +328,29 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     // print('user type: ${widget.userType}'); -/
-    return Scaffold(
-      backgroundColor: Utils.whiteColor,
-      body: widget.userType == 'seller'
-          ? _widgetOptionsSeller.elementAt(_selectedIndex)
-          : _widgetOptionsBuyer.elementAt(_selectedIndex),
-      bottomNavigationBar: _getBottomNavigationBar(),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        // print('didPop: $didPop');
+        // if (didPop) {
+        //   return;
+        // } else {
+        if (!didPop) {
+          final shouldExit = await Utils.showExitAppConfirmAlertDialog(context);
+
+          if (shouldExit) {
+            // Navigator.pop(context);
+            SystemNavigator.pop();
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Utils.whiteColor,
+        body: widget.userType == 'seller'
+            ? _widgetOptionsSeller.elementAt(_selectedIndex)
+            : _widgetOptionsBuyer.elementAt(_selectedIndex),
+        bottomNavigationBar: _getBottomNavigationBar(),
+      ),
     );
   }
 

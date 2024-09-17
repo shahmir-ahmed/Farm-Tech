@@ -67,6 +67,7 @@ class _SettingsViewState extends State<SettingsView> {
               //     ?
               text == "Logout"
                   ? OptionRow(
+                      noTopDivider: widget.forBuyer == null ? true : null,
                       text: text,
                       textColor: Colors.red,
                       noRightIcon: true,
@@ -85,6 +86,9 @@ class _SettingsViewState extends State<SettingsView> {
                           // show loading alert dialog
                           Utils.showLoadingAlertDialog(context, 'logout');
 
+                          // clear shared pref
+                          await _logoutUser();
+
                           // logout user
                           await UserAuthServices().signOut();
 
@@ -94,11 +98,11 @@ class _SettingsViewState extends State<SettingsView> {
                           // close screen
                           Navigator.pop(context);
 
-                          // clear shared pref
-                          await _logoutUser();
-
                           // show message
                           floatingSnackBar(
+                              duration: Duration(
+                                seconds: 2,
+                              ),
                               message: 'Logged out successfully',
                               context: context);
 

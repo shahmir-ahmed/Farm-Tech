@@ -178,12 +178,6 @@ class _AuthWrapperState extends State<AuthWrapper> {
     });
   }
 
-    // on back pressed function call
-  Future<bool> _onWillPop() async {
-    bool shouldExit = await Utils.showExitAppConfirmAlertDialog(context);
-    return shouldExit; // return the result of the dialog
-  }
-
   @override
   Widget build(BuildContext context) {
     // consume stream of auth here if user is present then seller splash screen otherwise show auth view
@@ -271,12 +265,9 @@ class _AuthWrapperState extends State<AuthWrapper> {
           : twoSecondsPassed2
               // now know user type
               ? userType.isNotEmpty
-                  ? WillPopScope(
-                    onWillPop: _onWillPop,
-                    child: HomeView(
-                        userType: userType,
-                      ),
-                  )
+                  ? HomeView(
+                      userType: userType,
+                    )
                   // still not know which user type
                   : SplashScreenView()
               // if logged in user type is not set yet then means a new user has logged in just now so wait and then verify the user type and then show relevant splash screen

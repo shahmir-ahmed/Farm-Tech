@@ -22,6 +22,7 @@ class SellerModel {
   String? profileImageUrl;
   String? avgRating;
   String? totalReviews;
+  String? deviceToken;
   Timestamp? createdAt;
 
   SellerModel({
@@ -35,11 +36,13 @@ class SellerModel {
     this.profileImageUrl,
     this.totalReviews,
     this.avgRating,
+    this.deviceToken,
     this.createdAt,
   });
 
   // when recieving data from firestore so converting json data to model
-  factory SellerModel.fromJson(Map<String, dynamic> json, String docId) => SellerModel(
+  factory SellerModel.fromJson(Map<String, dynamic> json, String docId) =>
+      SellerModel(
         docId: docId,
         name: json["name"],
         contactNo: json["contactNo"],
@@ -48,6 +51,7 @@ class SellerModel {
         shopLocation: json["shopLocation"],
         shopDescription: json["shopDescription"],
         profileImageUrl: "",
+        deviceToken: json["deviceToken"],
         createdAt: json["createdAt"],
       );
 
@@ -60,6 +64,7 @@ class SellerModel {
         "shopName": shopName,
         "shopLocation": shopLocation,
         "shopDescription": shopDescription,
+        "deviceToken": deviceToken,
         "createdAt": DateTime.now(),
       };
 }

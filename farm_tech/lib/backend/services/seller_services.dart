@@ -232,4 +232,17 @@ class SellerServices {
       return null;
     }
   }
+
+  Future getSellerDeviceToken(String sellerId) async {
+    try {
+      return await FirebaseFirestore.instance
+          .collection('sellers')
+          .doc(sellerId)
+          .get()
+          .then((snapshot) => snapshot.get('deviceToken'));
+    } catch (e) {
+      print('Err in getSellerDeviceToken: $e');
+      return null;
+    }
+  }
 }

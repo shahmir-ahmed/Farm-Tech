@@ -1,33 +1,39 @@
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/shared/authentication/authentication_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SelectUserTypeView extends StatelessWidget {
   // SelectUserTypeView({required this.showSellerAuth, required this.showBuyerAuth});
   SelectUserTypeView({super.key});
 
-  // on back pressed function call
-  Future<bool> _onWillPop(context) async {
-    print('inside onWillPop');
-    bool shouldExit = await Utils.showExitAppConfirmAlertDialog(context);
-    return shouldExit; // return the result of the dialog
-  }
-
   @override
   Widget build(BuildContext context) {
-      // onWillPop: () async => await _onWillPop(context),
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Farm Tech',
-          style:
-              Utils.kAppBody1RegularStyle.copyWith(color: Utils.whiteColor),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        // print('didPop: $didPop');
+        if (!didPop) {
+          final shouldExit = await Utils.showExitAppConfirmAlertDialog(context);
+
+          if (shouldExit) {
+            SystemNavigator.pop();
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Farm Tech',
+            style:
+                Utils.kAppBody1RegularStyle.copyWith(color: Utils.whiteColor),
+          ),
+          centerTitle: true,
+          backgroundColor: Utils.greenColor,
         ),
-        centerTitle: true,
-        backgroundColor: Utils.greenColor,
+        backgroundColor: Utils.whiteColor,
+        body: _getBody(context),
       ),
-      backgroundColor: Utils.whiteColor,
-      body: _getBody(context),
     );
   }
 

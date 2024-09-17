@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/cart_item.dart';
 import 'package:farm_tech/backend/model/order.dart';
 import 'package:farm_tech/backend/model/product.dart';
 import 'package:farm_tech/backend/services/buyer_services.dart';
 import 'package:farm_tech/backend/services/cart_services.dart';
+import 'package:farm_tech/backend/services/notification_service.dart';
 import 'package:farm_tech/backend/services/order_services.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
+import 'package:farm_tech/backend/services/seller_services.dart';
+import 'package:farm_tech/backend/services/server_key_service.dart';
 import 'package:farm_tech/backend/services/stripe_service.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/buyer/checkout/order_placed_view.dart';
@@ -17,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class CheckoutView extends StatefulWidget {
   CheckoutView(
@@ -36,7 +42,7 @@ class CheckoutView extends StatefulWidget {
 
 class _CheckoutViewState extends State<CheckoutView> {
   List<String> cartItemProductNames = [];
-  String customerEmail= '';
+  String customerEmail = '';
 
   _getItemProductNames() async {
     // for every item get product name and add in the list
@@ -558,8 +564,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                                   productId: widget.cartItems[i].productId,
                                   customerId: widget.cartItems[0].buyerId,
                                   sellerId: productModel.sellerId,
-                                  customerEmail: customerEmail
-                                  ));
+                                  customerEmail: customerEmail));
 
                           /*
                           // If above doc is not created then how will this be created?
@@ -577,6 +582,21 @@ class _CheckoutViewState extends State<CheckoutView> {
                             // cannot do anything if err in creating doc here
                           }
                           */
+
+                          // if no error creating order doc then send notification to seller of new order using seller id
+                          if (result != null) {
+                            // get seller device token using id
+                            String sellerDeviceToken = await SellerServices()
+                                .getSellerDeviceToken(productModel.sellerId!);
+
+                            // print('sellerDeviceToken: $sellerDeviceToken');
+                            NotificationService().sendNotificationUsingApi(
+                                token: sellerDeviceToken,
+                                title: 'New Order on Farm Tech',
+                                body:
+                                    "You've received a new order for ${cartItemProductNames[i]}. Tap to view the order details.",
+                                data: {});
+                          }
 
                           // add result in list
                           results.add(result);
