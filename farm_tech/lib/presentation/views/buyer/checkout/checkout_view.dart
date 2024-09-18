@@ -589,6 +589,8 @@ class _CheckoutViewState extends State<CheckoutView> {
                             String sellerDeviceToken = await SellerServices()
                                 .getSellerDeviceToken(productModel.sellerId!);
 
+                                // print("You've received a new order for ${cartItemProductNames[i]}. Tap to view the order details.");
+
                             // print('sellerDeviceToken: $sellerDeviceToken');
                             NotificationService().sendNotificationUsingApi(
                                 token: sellerDeviceToken,

@@ -301,7 +301,7 @@ class _HomeViewState extends State<HomeView> {
       // request notification permssion
       notificationService.requestNotificationPermission();
 
-      // notificationService.getDeviceToken();
+      // notificationService.getDeviceToken(); // same token
 
       // initialize firebase notifications so can recieve them
       notificationService.firebaseInit(context);
@@ -318,7 +318,7 @@ class _HomeViewState extends State<HomeView> {
     } else {
       // reinitialize profile tab
       _reInitializeBuyerProfileTab();
-      // notificationService.getDeviceToken();
+      // notificationService.getDeviceToken(); // same token
     }
     // get seller/buyer uid
     _getUserUid();

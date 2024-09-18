@@ -86,11 +86,11 @@ class _SettingsViewState extends State<SettingsView> {
                           // show loading alert dialog
                           Utils.showLoadingAlertDialog(context, 'logout');
 
-                          // clear shared pref
-                          await _logoutUser();
-
                           // logout user
                           await UserAuthServices().signOut();
+                          
+                          // clear shared pref
+                          await _logoutUser();
 
                           // close loading alert dialog
                           Navigator.pop(context);

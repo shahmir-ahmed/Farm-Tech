@@ -591,7 +591,7 @@ class _LoginRegisterForgotResetPasswordViewState
                           // show loading alert dialog
                           Utils.showLoadingAlertDialog(context, 'signup');
 
-                          // get device token and pass it to the register view also
+                          // get seller device token and pass it to the register view also
                           String deviceToken =
                               await NotificationService().getDeviceToken();
 

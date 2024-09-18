@@ -101,7 +101,7 @@ class NotificationService {
 
       if (Platform.isAndroid) {
         // check from shared pref. if logged in user is seller then show notification otheriwse not beacuse on same device buyer can also be logged in when noti. recieved
-        /*
+        
         SharedPreferences.getInstance().then((value) {
           final userType = value.getString('userType');
 
@@ -113,16 +113,21 @@ class NotificationService {
             if (userType == 'seller') {
               print('seller is logged in');
 
-              // initLocalNotifications(context, message);
-              // showNotification(message);
+              initLocalNotifications(context, message);
+              showNotification(message);
+            }else{
+              print('buyer is logged in');
             }
+          }else{
+            print('no user is logged in');
           }
         });
-        */
+        
         // before noti was recieved but nothing happens on clicking
         // same device token on when buyer side sending noti not recievied but on seller side recieved and clicking
-        initLocalNotifications(context, message);
-        showNotification(message);
+        // issue in logging out beacuse of home screen shown when clicking on noti
+        // initLocalNotifications(context, message);
+        // showNotification(message);
       }
     });
   }
@@ -213,15 +218,15 @@ class NotificationService {
     print(
         "Navigating to seller home screen's orders tab. Hit here to handle the message. Message data: ${message.data}");
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomeView(
-          userType: 'seller',
-          setOrderTabAsActive: true,
-        ),
-      ),
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => HomeView(
+    //       userType: 'seller',
+    //       setOrderTabAsActive: true,
+    //     ),
+    //   ),
+    // );
 
     // if (message.data['screen'] == 'cart') {
     //   Navigator.push(
