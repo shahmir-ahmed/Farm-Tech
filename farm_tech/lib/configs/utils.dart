@@ -241,6 +241,9 @@ class Utils {
                                                                         : forScreen ==
                                                                                 'post_feedback'
                                                                             ? "Your feedback is being posted"
+                                                                        : forScreen ==
+                                                                                'logout'
+                                                                            ? "Please be patient"
                                                                             : "",
             style: kAppBody3RegularStyle.copyWith(color: lightGreyColor1),
           ),

@@ -297,6 +297,9 @@ class _HomeViewState extends State<HomeView> {
 
     // print('user type: ${widget.userType}'); -/
 
+    // initialize firebase notifications so can recieve them
+      // notificationService.firebaseInit(context);
+
     if (widget.userType == 'seller') {
       // request notification permssion
       notificationService.requestNotificationPermission();

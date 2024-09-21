@@ -226,6 +226,8 @@ class _SellerReviewsDataState extends State<SellerReviewsData> {
     // consume seller reviews data stream here
     final sellerReviewsData = Provider.of<SellerReviewsModel?>(context);
 
+    // print(sellerReviewsData?.avgRating);
+
     // reviews row
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

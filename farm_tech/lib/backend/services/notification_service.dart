@@ -2,6 +2,7 @@
 // ignore_for_file: avoid_print, unused_local_variable
 
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/backend/services/server_key_service.dart';
 import 'package:farm_tech/presentation/views/seller/home/home_view.dart';
@@ -13,6 +14,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+// 1. notification is recieved when app is in background ore terminated when no user is logged in, means not checking shared pref.
+// 2. notification in foreground is correctly displayed i.e. only when seller is logged in
 class NotificationService {
   //initialising firebase message plugin
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -66,8 +69,7 @@ class NotificationService {
   }
 
   //function to initialise flutter local notification plugin to show notifications for android when app is active
-  void initLocalNotifications(
-      BuildContext context, RemoteMessage message) async {
+  void initLocalNotifications(RemoteMessage message) async {
     var androidInitializationSettings =
         const AndroidInitializationSettings('@mipmap/launcher_icon');
     var iosInitializationSettings = const DarwinInitializationSettings();
@@ -78,20 +80,21 @@ class NotificationService {
     await _flutterLocalNotificationsPlugin.initialize(initializationSetting,
         onDidReceiveNotificationResponse: (payload) {
       // handle interaction when app is active for android
-      handleMessage(context, message);
+      // handleMessage(context, message);
     });
   }
 
 //
   void firebaseInit(BuildContext context) {
+    print('inside firebase init');
     FirebaseMessaging.onMessage.listen((message) {
       RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification!.android;
+      // AndroidNotification? android = message.notification!.android;
 
       if (kDebugMode) {
-        print("notifications title:${notification!.title}");
-        print("notifications body:${notification.body}");
-        print('count:${android!.count}');
+        // print("notifications title:${notification!.title}");
+        // print("notifications body:${notification.body}");
+        // print('count:${android!.count}');
         print('data:${message.data.toString()}');
       }
 
@@ -101,8 +104,9 @@ class NotificationService {
 
       if (Platform.isAndroid) {
         // check from shared pref. if logged in user is seller then show notification otheriwse not beacuse on same device buyer can also be logged in when noti. recieved
-        
+
         SharedPreferences.getInstance().then((value) {
+          print('value: $value');
           final userType = value.getString('userType');
 
           print('userType: $userType'); // not printing
@@ -113,16 +117,17 @@ class NotificationService {
             if (userType == 'seller') {
               print('seller is logged in');
 
-              initLocalNotifications(context, message);
+              // initLocalNotifications(context, message);
+              initLocalNotifications(message);
               showNotification(message);
-            }else{
+            } else {
               print('buyer is logged in');
             }
-          }else{
+          } else {
             print('no user is logged in');
           }
         });
-        
+        // Working fine now on foreground
         // before noti was recieved but nothing happens on clicking
         // same device token on when buyer side sending noti not recievied but on seller side recieved and clicking
         // issue in logging out beacuse of home screen shown when clicking on noti
@@ -157,11 +162,15 @@ class NotificationService {
     });
   }
 
-  // function to show visible notification when app is active
+  /*
+   // function to show visible notification when app is active
   Future<void> showNotification(RemoteMessage message) async {
+    try{
     AndroidNotificationChannel channel = AndroidNotificationChannel(
-      message.notification!.android!.channelId.toString(),
-      message.notification!.android!.channelId.toString(),
+      // message.notification!.android!.channelId.toString(),
+      // message.notification!.android!.channelId.toString(),
+      "id",
+      "name",
       importance: Importance.max,
       showBadge: true,
       playSound: true,
@@ -170,7 +179,8 @@ class NotificationService {
 
     AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
-            channel.id.toString(), channel.name.toString(),
+            // channel.id.toString(), channel.name.toString(),
+            "id", "name",
             channelDescription: 'your channel description',
             importance: Importance.high,
             priority: Priority.high,
@@ -194,12 +204,96 @@ class NotificationService {
     Future.delayed(Duration.zero, () {
       _flutterLocalNotificationsPlugin.show(
         0,
-        message.notification!.title.toString(),
-        message.notification!.body.toString(),
+        // message.notification!.title.toString(),
+        // message.notification!.body.toString(),
+        message.data['title'].toString(),
+        message.data['body'].toString(),
         notificationDetails,
         payload: 'my_data',
       );
     });
+    }catch(e){
+      print('Err in showNotification: $e');
+    }
+  }
+  */
+
+  Future<void> showNotification(RemoteMessage message) async {
+    try {
+      const String groupKey = 'com.example.notification.GROUP';
+      const String groupChannelId = 'grouped_channel';
+
+      // Create a notification channel for grouped notifications
+      AndroidNotificationChannel channel = AndroidNotificationChannel(
+        groupChannelId,
+        "Grouped Notifications",
+        description: "Notifications grouped under a single app name",
+        importance: Importance.max,
+        showBadge: true,
+        playSound: true,
+      );
+
+      // Individual notification details
+      AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(groupChannelId, "Grouped Notifications",
+              channelDescription: 'your channel description',
+              importance: Importance.high,
+              priority: Priority.high,
+              playSound: true,
+              ticker: 'ticker',
+              groupKey: groupKey); // This will group notifications
+
+      // Summary notification details with InboxStyle
+      AndroidNotificationDetails summaryNotificationDetails =
+          AndroidNotificationDetails(groupChannelId, "Grouped Notifications",
+              channelDescription: 'your channel description',
+              importance: Importance.high,
+              priority: Priority.high,
+              groupKey: groupKey,
+              setAsGroupSummary: true,
+              styleInformation: InboxStyleInformation(
+                [], // Empty list for now
+                contentTitle: 'You have new notifications',
+                // summaryText: 'Total notifications: X', // Update dynamically
+              ));
+
+      const DarwinNotificationDetails darwinNotificationDetails =
+          DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      );
+
+      NotificationDetails notificationDetails = NotificationDetails(
+          android: androidNotificationDetails, iOS: darwinNotificationDetails);
+
+      // Generate a unique ID for each notification
+      int notificationId = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+      // Show individual notifications
+      _flutterLocalNotificationsPlugin.show(
+        notificationId, // Use unique ID for each notification
+        message.data['title'].toString(),
+        message.data['body'].toString(),
+        notificationDetails,
+        payload: 'my_data',
+      );
+
+      // Delay showing the summary notification slightly to allow grouping to happen
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _flutterLocalNotificationsPlugin.show(
+          0, // Use constant ID for the summary notification
+          'Grouped Notifications',
+          'You have new notifications',
+          NotificationDetails(
+            android: summaryNotificationDetails,
+            iOS: darwinNotificationDetails,
+          ),
+        );
+      });
+    } catch (e) {
+      print('Error in showNotification: $e');
+    }
   }
 
   Future forgroundMessage() async {
@@ -266,8 +360,9 @@ class NotificationService {
     Map<String, dynamic> message = {
       "message": {
         "token": token,
-        "notification": {"body": body, "title": title},
-        "data": data,
+        // "notification": {"body": body, "title": title},
+        // "data": data,
+        "data": {"body": body, "title": title, "token": token}
       }
     };
 
@@ -282,6 +377,24 @@ class NotificationService {
       print("Notification Sent Successfully!");
     } else {
       print("Notification not send!");
+    }
+  }
+
+  // save device user type logged in with token as id (for background/terminated state app notitifcation showing)
+  updateDeviceUserTypeLoggedIn(String userType) async{
+    try{
+      
+    String deviceToken = await getDeviceToken();
+
+    final result = await FirebaseFirestore.instance.collection('deviceUserTypes').doc(deviceToken).set({
+      'userTypeLoggedIn': userType
+    });
+
+    print('device user type set as $userType');
+    }
+    catch(e){
+      print('Err setting device user type: $e');
+      return;
     }
   }
 }

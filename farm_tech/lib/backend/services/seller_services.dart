@@ -66,33 +66,40 @@ class SellerServices {
           .where('sellerId', isEqualTo: model.docId)
           .snapshots()
           .map((snapshot) {
-        // print('doc.data(): ${doc.data()}');
+        // if no seller reviews yet
+        if (snapshot.docs.isEmpty) {
+          return SellerReviewsModel(
+              totalReviewsCount: snapshot.docs.length.toString(),
+              avgRating: "0");
+        } else {
+          // print('doc.data(): ${doc.data()}');
 
-        // calculating avg rating
-        // taking the stars count of each review doc as int into list
-        final starsList = snapshot.docs.map((doc) {
-          return int.parse(doc.get('starsCount'));
-        }).toList();
+          // calculating avg rating
+          // taking the stars count of each review doc as int into list
+          final starsList = snapshot.docs.map((doc) {
+            return int.parse(doc.get('starsCount'));
+          }).toList();
 
-        // print('starsList $starsList');
+          // print('starsList $starsList');
 
-        // adding all stars count
-        // adding each value into previous value with initial value set to 0
-        final totalStarsCount = starsList.fold(
-            0, (previousValue, element) => previousValue + element);
-        // print('totalStarsCount $totalStarsCount');
+          // adding all stars count
+          // adding each value into previous value with initial value set to 0
+          final totalStarsCount = starsList.fold(
+              0, (previousValue, element) => previousValue + element);
+          // print('totalStarsCount $totalStarsCount');
 
-        // dividing total by length of doc to calculate avg rating for the seller
-        final avgRating =
-            (totalStarsCount / snapshot.docs.length).floorToDouble();
-        // final avgRating = double.parse((totalStarsCount / snapshot.docs.length).toStringAsFixed(1));
-        // final avgRating = ((totalStarsCount / snapshot.docs.length)* 10).truncateToDouble() / 10;
-        // print('avgRating $avgRating');
+          // dividing total by length of doc to calculate avg rating for the seller
+          final avgRating =
+              (totalStarsCount / snapshot.docs.length).floorToDouble();
+          // final avgRating = double.parse((totalStarsCount / snapshot.docs.length).toStringAsFixed(1));
+          // final avgRating = ((totalStarsCount / snapshot.docs.length)* 10).truncateToDouble() / 10;
+          // print('avgRating $avgRating');
 
-        // returning seller model having total reviews count and average rating
-        return SellerReviewsModel(
-            totalReviewsCount: snapshot.docs.length.toString(),
-            avgRating: avgRating.toString());
+          // returning seller model having total reviews count and average rating
+          return SellerReviewsModel(
+              totalReviewsCount: snapshot.docs.length.toString(),
+              avgRating: avgRating.toString());
+        }
       });
     } catch (e) {
       print('Err in getSellerReviewsDataStream: $e');

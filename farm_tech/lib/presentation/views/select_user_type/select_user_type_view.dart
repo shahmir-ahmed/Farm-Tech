@@ -1,3 +1,4 @@
+import 'package:farm_tech/backend/services/notification_service.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/shared/authentication/authentication_view.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +63,7 @@ class SelectUserTypeView extends StatelessWidget {
                                 forSeller: false,
                                 forBuyer: true,
                               )));
+                  // NotificationService().sendNotificationUsingApi(token: "c6s6zeioQV25WdazY-Vc7E:APA91bE2G_bwkZxR3H9guyloVNqonbuFmmrIcbIgsYdi3rGN_DW8ZChbO7EFmU2i2lUgCmoUfKpbbBkoTM4ZHjx-kCCKxVQ6Ft15xOtUnoN7kv0J9ivwph6lY5lpupd68vD6pzs64kct", title: 'New order', body: 'Lets go', data: {});
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -99,12 +101,12 @@ class SelectUserTypeView extends StatelessWidget {
 
               // divider
               const SizedBox(
-                height: 200,
-                child: VerticalDivider(
-                  thickness: 1.0,
-                  color: Utils.lightGreyColor1,
+                  height: 200,
+                  child: VerticalDivider(
+                    thickness: 1.0,
+                    color: Utils.lightGreyColor1,
+                  ),
                 ),
-              ),
 
               // // gap
               // SizedBox(

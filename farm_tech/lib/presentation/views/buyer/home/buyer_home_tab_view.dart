@@ -1,6 +1,7 @@
 import 'package:farm_tech/backend/model/buyer.dart';
 import 'package:farm_tech/backend/model/product.dart';
 import 'package:farm_tech/backend/services/cart_services.dart';
+import 'package:farm_tech/backend/services/notification_service.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
@@ -86,6 +87,9 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                   ),
                   GestureDetector(
                     onTap: () {
+                      /*
+                        NotificationService().sendNotificationUsingApi(token: "c6s6zeioQV25WdazY-Vc7E:APA91bE2G_bwkZxR3H9guyloVNqonbuFmmrIcbIgsYdi3rGN_DW8ZChbO7EFmU2i2lUgCmoUfKpbbBkoTM4ZHjx-kCCKxVQ6Ft15xOtUnoN7kv0J9ivwph6lY5lpupd68vD6pzs64kct", title: 'New order', body: 'Lets go', data: {});
+                                  */
                       Navigator.push(
                           context,
                           MaterialPageRoute(

@@ -497,6 +497,10 @@ class _LoginRegisterForgotResetPasswordViewState
 
                             print("pref set: $set $set2 $set3");
 
+                            // sets this device user type logged in as seller
+                            NotificationService()
+                                .updateDeviceUserTypeLoggedIn('seller');
+
                             // // after 3 secs show welcome message
                             // Future.delayed(Duration(seconds: 3), () {
                             //   // show snackbar
@@ -560,6 +564,10 @@ class _LoginRegisterForgotResetPasswordViewState
                                 'userType', "buyer"); // set user type
 
                             print("pref set: $set $set2 $set3");
+
+                            // sets this device user type logged in as buyer
+                            NotificationService()
+                                .updateDeviceUserTypeLoggedIn('buyer');
                           }
                         }
                       }
@@ -654,8 +662,13 @@ class _LoginRegisterForgotResetPasswordViewState
 
                             // doc created
                             if (result2 == 'success') {
+                              // sets this device user type logged in as buyer
+                              await NotificationService()
+                                  .updateDeviceUserTypeLoggedIn('buyer');
+
                               // close creating account dialog
                               Navigator.pop(context);
+
 
                               Utils.showAccountCreatedAlertDialog(
                                   context, "buyer");

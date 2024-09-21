@@ -1,3 +1,4 @@
+import 'package:farm_tech/backend/services/notification_service.dart';
 import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/seller/earnings/earnings_view.dart';
@@ -35,7 +36,7 @@ class _SettingsViewState extends State<SettingsView> {
     if (widget.forBuyer == null) {
       optionsList = [
         /*'Account',*/
-        'Earnings',
+        // 'Earnings',
         /*'Notifications', 'Cache',*/
         'Logout'
       ];
@@ -86,9 +87,13 @@ class _SettingsViewState extends State<SettingsView> {
                           // show loading alert dialog
                           Utils.showLoadingAlertDialog(context, 'logout');
 
+                          // sets this device user type logged in as empty
+                          await NotificationService()
+                              .updateDeviceUserTypeLoggedIn('');
+
                           // logout user
                           await UserAuthServices().signOut();
-                          
+
                           // clear shared pref
                           await _logoutUser();
 

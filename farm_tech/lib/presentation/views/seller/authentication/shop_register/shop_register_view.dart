@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:farm_tech/backend/model/seller.dart';
 import 'package:farm_tech/backend/model/user.dart';
+import 'package:farm_tech/backend/services/notification_service.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
@@ -20,8 +21,7 @@ class ShopRegisterView extends StatefulWidget {
       required this.sellerContactNo,
       required this.email,
       required this.password,
-      required this.deviceToken
-      });
+      required this.deviceToken});
 
   // seller/owner name
   String sellerName;
@@ -234,12 +234,12 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                 'Shop Details',
                 style: Utils.kAppHeading6BoldStyle,
               ),
-      
+
               // space
               const SizedBox(
                 height: 10.0,
               ),
-      
+
               // instructions
               // text
               Text(
@@ -247,12 +247,12 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                 style: Utils.kAppBody3RegularStyle
                     .copyWith(color: Utils.lightGreyColor1),
               ),
-      
+
               // space
               const SizedBox(
                 height: 30.0,
               ),
-      
+
               // form
               Form(
                   key: _formKey,
@@ -278,12 +278,12 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                         },
                         style: Utils.kAppBody3MediumStyle,
                       ),
-      
+
                       // space
                       const SizedBox(
                         height: 30.0,
                       ),
-      
+
                       // shop location/address field
                       TextFormField(
                         textCapitalization: TextCapitalization.sentences,
@@ -304,12 +304,12 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                         },
                         style: Utils.kAppBody3MediumStyle,
                       ),
-      
+
                       // space
                       const SizedBox(
                         height: 30.0,
                       ),
-      
+
                       // seller name/owner name field (from previous screen)
                       TextFormField(
                         initialValue: ownerName,
@@ -317,12 +317,12 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                         decoration: Utils.inputFieldDecoration,
                         style: Utils.kAppBody3MediumStyle,
                       ),
-      
+
                       // space
                       const SizedBox(
                         height: 30.0,
                       ),
-      
+
                       // owner cnic field
                       TextFormField(
                         maxLength: 13,
@@ -345,12 +345,12 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                         },
                         style: Utils.kAppBody3MediumStyle,
                       ),
-      
+
                       // space
                       const SizedBox(
                         height: 30.0,
                       ),
-      
+
                       // seller contact no/owner contact no field (from previous screen)
                       TextFormField(
                         initialValue: ownerContactNo,
@@ -358,11 +358,11 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                         decoration: Utils.inputFieldDecoration,
                         style: Utils.kAppBody3MediumStyle,
                       ),
-      
+
                       const SizedBox(
                         height: 30.0,
                       ),
-      
+
                       // owner profile image container
                       DottedBorder(
                         // strokeWidth: 2,
@@ -375,8 +375,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                         child: GestureDetector(
                           onTap: () {
                             // remove focus from last text field filled
-                            FocusScope.of(context)
-                                .unfocus();
+                            FocusScope.of(context).unfocus();
                             mediaPickerOptions(context);
                           },
                           child: Container(
@@ -393,7 +392,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                           'Owner Profile Image',
                                           style: Utils.kAppBody3RegularStyle,
                                         ),
-      
+
                                         // upload icon
                                         Image.asset(
                                           'assets/images/upload-icon.png',
@@ -408,13 +407,13 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                     )),
                         ),
                       ),
-      
+
                       fileError.isNotEmpty
                           ? const SizedBox(
                               height: 5.0,
                             )
                           : const SizedBox(),
-      
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -428,11 +427,11 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                           ),
                         ],
                       ),
-      
+
                       const SizedBox(
                         height: 30.0,
                       ),
-      
+
                       // shop description field
                       TextFormField(
                         textCapitalization: TextCapitalization.sentences,
@@ -455,20 +454,19 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                         },
                         style: Utils.kAppBody3MediumStyle,
                       ),
-      
+
                       // space
                       const SizedBox(
                         height: 30.0,
                       ),
-      
+
                       // next button
                       CustomButton(
                         primaryButton: true,
                         secondaryButton: false,
                         onButtonPressed: () async {
                           // remove focus from last text field filled
-                          FocusScope.of(context)
-                              .unfocus();
+                          FocusScope.of(context).unfocus();
                           // check image
                           if (pickedImage == null) {
                             setState(() {
@@ -480,9 +478,8 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                               pickedImage != null) {
                             // if form is valid
                             // show creating account alert dialog
-                            Utils.showLoadingAlertDialog(
-                                context, "signup");
-      
+                            Utils.showLoadingAlertDialog(context, "signup");
+
                             // print('shopName $shopName');
                             // print('shopLocation $shopLocation');
                             // print('ownerName $ownerName');
@@ -490,17 +487,17 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                             // print('ownerContactNo $ownerContactNo');
                             // print('pickedImage!.path ${pickedImage!.path}');
                             // print('shopDescription $shopDescription');
-      
+
                             // signup seller account shop details, add profile image in storage
                             final result = await _userAuthServices.signUpUser(
                                 UserModel(
                                     email: widget.email,
                                     password: widget.password));
-      
+
                             if (result == null) {
                               // close creating account dialog
                               Navigator.pop(context);
-      
+
                               // user with email already exists
                               floatingSnackBar(
                                   message:
@@ -508,9 +505,8 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                   context: context);
                             } else {
                               // valid user
-                              UserModel user =
-                                  result; // logged in user object
-      
+                              UserModel user = result; // logged in user object
+
                               // create user uid with seller document which contains shop details and user details
                               final result2 = await SellerServices()
                                   .createSellerDoc(
@@ -521,10 +517,9 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                           shopName: shopName,
                                           shopLocation: shopLocation,
                                           shopDescription: shopDescription,
-                                          deviceToken: widget.deviceToken
-                                          ),
+                                          deviceToken: widget.deviceToken),
                                       user.uId as String);
-      
+
                               // doc created
                               if (result2 == 'success') {
                                 // then
@@ -533,10 +528,14 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                     .uploadProfileImage(SellerModel(
                                         docId: user.uId,
                                         profileImageUrl: pickedImage!.path));
-      
+
+                                  // sets this device user type logged in as seller
+                                  await NotificationService()
+                                      .updateDeviceUserTypeLoggedIn('seller');
+                                      
                                 // close creating account dialog
                                 Navigator.pop(context);
-      
+
                                 // profile image uploaded
                                 if (result3 == 'success') {
                                   // save user uid in shared pref.
@@ -546,10 +545,12 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                       user.uId as String); // set user uid
                                   pref.setString('email',
                                       user.email as String); // set user email
-                                  pref.setString('userType',
-                                      'seller'); // set user type
+                                  pref.setString(
+                                      'userType', 'seller'); // set user type
+
                                   // show account created alert dialog
-                                  Utils.showAccountCreatedAlertDialog(context, "seller");
+                                  Utils.showAccountCreatedAlertDialog(
+                                      context, "seller");
                                 } else {
                                   // show error
                                   floatingSnackBar(
@@ -565,7 +566,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                     context: context);
                               }
                             }
-      
+
                             // after 3 secs
                             // Future.delayed(const Duration(seconds: 3), () {
                             //   // close previous dialog
@@ -579,12 +580,12 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                         buttonWidth: MediaQuery.of(context).size.width,
                         buttonHeight: 60,
                       ),
-      
+
                       // space
                       const SizedBox(
                         height: 30.0,
                       ),
-      
+
                       // text
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
