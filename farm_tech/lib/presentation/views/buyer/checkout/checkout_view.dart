@@ -321,13 +321,13 @@ class _CheckoutViewState extends State<CheckoutView> {
                                             floatingSnackBar(
                                                 message:
                                                     'Item removed from cart successfully',
-                                                context: context);
+                                                context: context, duration: Duration(seconds: 2));
                                           } else {
                                             // show error message
                                             floatingSnackBar(
                                                 message:
                                                     'Error removing item. Please try again later',
-                                                context: context);
+                                                context: context, duration: Duration(seconds: 2));
                                           }
 
                                           // close loading alert dialog
@@ -502,7 +502,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                     floatingSnackBar(
                         message:
                             'Total is less than 1\$ which cannot be processed for payment.',
-                        context: context);
+                        context: context,);
                   } else {
                     // show processing payment alert dialog
                     Utils.showLoadingAlertDialog(context, 'payment_processing');
@@ -522,12 +522,12 @@ class _CheckoutViewState extends State<CheckoutView> {
                       floatingSnackBar(
                           message:
                               'Error processing payment. Please try again later',
-                          context: context);
+                          context: context, duration: Duration(seconds: 2));
                     } else if (result == 'payment_process_cancelled') {
                       // show error message
                       floatingSnackBar(
                           message: 'Payment process cancelled',
-                          context: context);
+                          context: context, duration: Duration(seconds: 2));
                     } else {
                       print('Payment done');
 
@@ -592,11 +592,12 @@ class _CheckoutViewState extends State<CheckoutView> {
                             // print("You've received a new order for ${cartItemProductNames[i]}. Tap to view the order details.");
 
                             // print('sellerDeviceToken: $sellerDeviceToken');
-                            NotificationService().sendNotificationUsingApi(
+                            await NotificationService().sendNotificationUsingApi(
                                 token: sellerDeviceToken,
                                 title: 'New Order on Farm Tech',
                                 body:
                                     "You've received a new order for ${cartItemProductNames[i]}. Tap to view the order details.",
+                                sellerId: productModel.sellerId,
                                 data: {});
                           }
 

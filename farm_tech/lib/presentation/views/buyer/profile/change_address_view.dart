@@ -110,13 +110,13 @@ class _ChangeAddressViewState extends State<ChangeAddressView> {
                               // show snackbar
                               floatingSnackBar(
                                   message: 'Address updated successfully',
-                                  context: context);
+                                  context: context, duration: Duration(seconds: 2));
                             } else {
                               // show snackbar
                               floatingSnackBar(
                                   message:
                                       'Error updating address. Please try again later.',
-                                  context: context);
+                                  context: context, duration: Duration(seconds: 2));
                             }
                           }
                         },

@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farm_tech/backend/model/order.dart';
 import 'package:farm_tech/backend/model/user.dart';
+import 'package:farm_tech/backend/services/connectivity_service.dart';
 import 'package:farm_tech/backend/services/notification_service.dart';
 import 'package:farm_tech/backend/services/order_services.dart';
+import 'package:farm_tech/backend/services/server_key_service.dart';
 import 'package:farm_tech/backend/services/user_auth_services.dart';
 // import 'package:farm_tech/presentation/views/seller/authentication/authentication_view.dart';
 // import 'package:farm_tech/presentation/views/shared/splash_screen/splash_screen_view.dart';
 import 'package:farm_tech/auth_wrapper.dart';
 import 'package:farm_tech/consts.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -54,31 +57,45 @@ Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
   //     .collection('deviceUserTypes')
   //     .add({'dummy_field': "dummy"});
   // Fetch user type from a remote source
-  String? userType = await fetchUserTypeFromServer(message.data['token']);
+  List? userDetailsList =
+      await fetchDeviceUserDetailsFromServer(message.data['token']);
 
-  if (userType == 'seller') {
-    // Show the notification
-    // NotificationService().initLocalNotifications(message);
-    NotificationService().showNotification(message);
+  if (userDetailsList != null) {
+    // if seller is logged in on device
+    if (userDetailsList[0] == 'seller') {
+      // if for same seller who is logged in
+      if (userDetailsList[1] == message.data['sellerId']) {
+        // Show the notification
+        // NotificationService().initLocalNotifications(message);
+        NotificationService().showNotification(message);
+      }
+    }
   }
 }
 
-Future<String?> fetchUserTypeFromServer(String deviceToken) async {
-  // Implement a network call or use Firestore to fetch the user type
-  // This example assumes you fetch data from an API
-  return await FirebaseFirestore.instance
-      .collection('deviceUserTypes')
-      .doc(deviceToken)
-      .get()
-      .then((snapshot) {
-    if (snapshot.exists) {
-      // return logged in user type on this device
-      return snapshot.get('userType');
-    } else {
-      // no doc with id exists
-      return null;
-    }
-  });
+// fetch logged in user details on this device
+Future<List?> fetchDeviceUserDetailsFromServer(String deviceToken) async {
+  try {
+    // Implement a network call or use Firestore to fetch the user type and id
+    return await FirebaseFirestore.instance
+        .collection('deviceDetails')
+        .doc(deviceToken)
+        .get()
+        .then((snapshot) {
+      if (snapshot.exists) {
+        List userDetailsList = [];
+        userDetailsList.add(snapshot.get('userTypeLoggedIn'));
+        userDetailsList.add(snapshot.get('userIdLoggedIn'));
+        // return logged in user type and id on this device
+        return userDetailsList;
+      } else {
+        // no doc with id exists
+        return null;
+      }
+    });
+  } catch (e) {
+    return null;
+  }
 }
 
 void main() async {
@@ -90,6 +107,13 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
+  // print(await ServerKeyService().getServerKeyToken());
+  // Initialize local notifications
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  
+  // Cancel all active notifications when the app is opened
+  flutterLocalNotificationsPlugin.cancelAll();
+  
   runApp(const MyApp());
 
   // creating dummy orders
@@ -138,9 +162,35 @@ void main() async {
   */
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Cancel all notifications when the app comes to the foreground
+      flutterLocalNotificationsPlugin.cancelAll();
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion(

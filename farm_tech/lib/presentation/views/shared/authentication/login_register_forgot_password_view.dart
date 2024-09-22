@@ -1,7 +1,9 @@
 import 'package:farm_tech/backend/model/buyer.dart';
+import 'package:farm_tech/backend/model/seller.dart';
 import 'package:farm_tech/backend/model/user.dart';
 import 'package:farm_tech/backend/services/buyer_services.dart';
 import 'package:farm_tech/backend/services/notification_service.dart';
+import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/seller/authentication/shop_register/shop_register_view.dart';
@@ -497,9 +499,30 @@ class _LoginRegisterForgotResetPasswordViewState
 
                             print("pref set: $set $set2 $set3");
 
-                            // sets this device user type logged in as seller
+                            // sets this device user type logged in as seller and id as seller id (id needed beacuse on same device token maybe two seller logged in so check from fs that noti is for same seller using id from noti and fs in background/terminated)
                             NotificationService()
-                                .updateDeviceUserTypeLoggedIn('seller');
+                                .updateDeviceLoggedInUserDetails(
+                                    'seller', result.uId);
+
+                            // check if seller device token in firestore is same as this device
+                            // if not same then update token to this device token
+                            // get seller device token from fs
+                            final sellerDeviceToken = await SellerServices()
+                                .getSellerDeviceToken(result.uId);
+
+                            // get this device token
+                            final deviceToken =
+                                await NotificationService().getDeviceToken();
+
+                            // if not same
+                            if (sellerDeviceToken != deviceToken) {
+                              print('device token is not same');
+                              // update device token in fs
+                              SellerServices().updateDeviceToken(SellerModel(
+                                  docId: result.uId, deviceToken: deviceToken));
+                            } else {
+                              print('device token is same');
+                            }
 
                             // // after 3 secs show welcome message
                             // Future.delayed(Duration(seconds: 3), () {
@@ -565,9 +588,9 @@ class _LoginRegisterForgotResetPasswordViewState
 
                             print("pref set: $set $set2 $set3");
 
-                            // sets this device user type logged in as buyer
+                            // sets this device user type logged in as buyer and id as empty beacuse dont need buyer id for noti recieivng checking
                             NotificationService()
-                                .updateDeviceUserTypeLoggedIn('buyer');
+                                .updateDeviceLoggedInUserDetails('buyer', '');
                           }
                         }
                       }
@@ -662,13 +685,12 @@ class _LoginRegisterForgotResetPasswordViewState
 
                             // doc created
                             if (result2 == 'success') {
-                              // sets this device user type logged in as buyer
-                              await NotificationService()
-                                  .updateDeviceUserTypeLoggedIn('buyer');
+                              // sets this device user type logged in as buyer and id as empty beacuse dont need buyer id for noti recieivng checking
+                              NotificationService()
+                                  .updateDeviceLoggedInUserDetails('buyer', '');
 
                               // close creating account dialog
                               Navigator.pop(context);
-
 
                               Utils.showAccountCreatedAlertDialog(
                                   context, "buyer");

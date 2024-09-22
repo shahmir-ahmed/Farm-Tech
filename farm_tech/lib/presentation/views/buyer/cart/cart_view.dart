@@ -78,12 +78,14 @@ class _CartViewState extends State<CartView> {
                                 floatingSnackBar(
                                     message:
                                         'Error removing item. Please try again later',
-                                    context: context);
+                                    context: context,
+                                    duration: Duration(seconds: 2)
+                                    );
                               } else {
                                 floatingSnackBar(
                                     message:
                                         'Error removing items. Please try again later',
-                                    context: context);
+                                    context: context, duration: Duration(seconds: 2));
                               }
                             } else {
                               if (checkedItems.length == 1) {
@@ -91,13 +93,13 @@ class _CartViewState extends State<CartView> {
                                 floatingSnackBar(
                                     message:
                                         'Item removed from cart successfully',
-                                    context: context);
+                                    context: context, duration: Duration(seconds: 2));
                               } else {
                                 // show success message
                                 floatingSnackBar(
                                     message:
                                         'Items removed from cart successfully',
-                                    context: context);
+                                    context: context, duration: Duration(seconds: 2));
                               }
                             }
                           },

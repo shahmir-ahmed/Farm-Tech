@@ -1,4 +1,5 @@
 import 'package:farm_tech/backend/model/user.dart';
+import 'package:farm_tech/backend/services/connectivity_service.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/select_user_type/select_user_type_view.dart';
 import 'package:farm_tech/presentation/views/seller/home/home_view.dart';
@@ -26,6 +27,8 @@ class _AuthWrapperState extends State<AuthWrapper> {
   String userType = '';
 
   SharedPreferences? pref;
+
+  late ConnectivityService _connectivityService;
 
   // String? loggedInUserType;
 
@@ -164,9 +167,17 @@ class _AuthWrapperState extends State<AuthWrapper> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    _connectivityService.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _connectivityService = ConnectivityService(context);
     _startInitialSplashTimer(); // runs when firrt time app starts
 
     // initialize shared pref instance for the app

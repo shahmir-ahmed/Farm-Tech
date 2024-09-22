@@ -77,9 +77,9 @@ class _BuyerHomeTabViewState extends State<BuyerHomeTabView> {
                           ),
                           Text(
                               widget.buyerName.contains(' ')
-                                  ? widget.buyerName
-                                  : widget.buyerName.substring(
-                                      0, widget.buyerName.indexOf(' ')),
+                                  ? widget.buyerName.substring(
+                                      0, widget.buyerName.indexOf(' '))
+                                  : widget.buyerName,
                               style: Utils.kAppCaptionRegularStyle),
                         ],
                       ),

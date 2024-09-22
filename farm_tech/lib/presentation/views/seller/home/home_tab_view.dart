@@ -46,7 +46,7 @@ class _HomeTabViewState extends State<HomeTabView> {
     // initialize stats list
     statsList = [
       {
-        "icon": "assets/images/icon-question-mark.png",
+        "icon": "assets/images/total-products-icon.png", //icon-question-mark
         "title": "Total Products",
       },
       {
@@ -55,7 +55,8 @@ class _HomeTabViewState extends State<HomeTabView> {
         "title": "Total Orders"
       },
       {
-        "icon": "assets/images/icon-earned.png", // Icons.paid_outlined
+        "icon":
+            "assets/images/icon-pakistan-rupee-currency.png", // "assets/images/icon-earned.png", // Icons.paid_outlined
         "title": "Total Earned"
       },
       {
@@ -186,41 +187,19 @@ class _HomeTabViewState extends State<HomeTabView> {
                     const SizedBox(
                       height: 20,
                     ),
-
-                    // orders section
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Orders in Queue',
-                          style: Utils.kAppBody3MediumStyle,
-                        ),
-                        // text
-                        GestureDetector(
-                          onTap: () {
-                            widget.setOrderTabAsActive();
-                          },
-                          child: Text(
-                            'See all',
-                            style: Utils.kAppCaptionRegularStyle
-                                .copyWith(color: Utils.greenColor),
-                          ),
-                        ),
-                      ],
-                    ),
                   ]),
             ),
 
-            // divider
-            Utils.divider,
-
+            // orders in queue section
             sellerId.isEmpty
                 ? SizedBox(height: 100, child: Utils.circularProgressIndicator)
                 : StreamProvider.value(
                     initialData: null,
                     value: OrderServices().getSellerInProgressOrdersStream(
                         SellerModel(docId: sellerId)),
-                    child: OrdersInQueue(),
+                    child: OrdersInQueue(
+                      setOrderTabAsActive: widget.setOrderTabAsActive,
+                    ),
                   )
           ],
         ),
@@ -443,7 +422,9 @@ class _TotalReviewsCountState extends State<TotalReviewsCount> {
 
 // orders in queue widget
 class OrdersInQueue extends StatefulWidget {
-  const OrdersInQueue({super.key});
+  OrdersInQueue({super.key, required this.setOrderTabAsActive});
+
+  VoidCallback setOrderTabAsActive;
 
   @override
   State<OrdersInQueue> createState() => _OrdersInQueueState();
@@ -454,15 +435,66 @@ class _OrdersInQueueState extends State<OrdersInQueue> {
   Widget build(BuildContext context) {
     final inProgressOrders = Provider.of<List<OrderModel>?>(context);
 
-    return inProgressOrders == null
-        ? const SizedBox(
-          height: 200,
-          child: Utils.circularProgressIndicator)
-        : Column(
-            children: inProgressOrders
-                .map((inProgressOrder) =>
-                    OrderCard.forHomeTab(orderModel: inProgressOrder))
-                .toList(),
-          );
+    if (inProgressOrders != null) {
+      inProgressOrders.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+    }
+
+    return Column(
+      children: [
+        // orders section
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15.0, left: 25, right: 25),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Orders in Queue',
+                style: Utils.kAppBody3MediumStyle,
+              ),
+              // text
+              inProgressOrders == null
+                  ? SizedBox()
+                  : inProgressOrders.isEmpty
+                      ? SizedBox()
+                      : GestureDetector(
+                          onTap: () {
+                            widget.setOrderTabAsActive();
+                          },
+                          child: Text(
+                            'See all',
+                            style: Utils.kAppCaptionRegularStyle
+                                .copyWith(color: Utils.greenColor),
+                          ),
+                        ),
+            ],
+          ),
+        ),
+
+        // divider
+        Utils.divider,
+
+        // orders
+        inProgressOrders == null
+            ? const SizedBox(
+                height: 200, child: Utils.circularProgressIndicator)
+            : inProgressOrders.isEmpty
+                ? SizedBox(
+                    height: 100,
+                    child: Center(
+                      child: Text(
+                        'No in progress orders.',
+                        style: Utils.kAppBody3MediumStyle,
+                      ),
+                    ),
+                  )
+                : Column(
+                    children: inProgressOrders
+                        .map((inProgressOrder) => OrderCard.forHomeTab(
+                            key: Key(inProgressOrder.docId!),
+                            orderModel: inProgressOrder))
+                        .toList(),
+                  )
+      ],
+    );
   }
 }

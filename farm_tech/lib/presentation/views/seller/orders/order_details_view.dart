@@ -53,14 +53,14 @@ class OrderDetailsView extends StatelessWidget {
               Navigator.pop(context);
 
               // floating snackbar
-              floatingSnackBar(message: 'Order cancelled', context: context);
+              floatingSnackBar(message: 'Order cancelled', context: context, duration: Duration(seconds: 2));
             } else {
               // close loading alert dialog
               Navigator.pop(context);
 
               // floating snackbar
               floatingSnackBar(
-                  message: 'Error cancelling order.', context: context);
+                  message: 'Error cancelling order.', context: context, duration: Duration(seconds: 2));
             }
           } else if (forOption == 'mark_as_delivered') {
             // show loading alert dialog
@@ -79,14 +79,14 @@ class OrderDetailsView extends StatelessWidget {
 
               // floating snackbar
               floatingSnackBar(
-                  message: 'Order marked as delivered', context: context);
+                  message: 'Order marked as delivered', context: context, duration: Duration(seconds: 2));
             } else {
               // close loading alert dialog
               Navigator.pop(context);
 
               // floating snackbar
               floatingSnackBar(
-                  message: 'Error changing order status.', context: context);
+                  message: 'Error changing order status.', context: context, duration: Duration(seconds: 2));
             }
           }
         },

@@ -3,15 +3,20 @@
 
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:farm_tech/auth_wrapper.dart';
+import 'package:farm_tech/backend/model/user.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/backend/services/server_key_service.dart';
+import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/presentation/views/seller/home/home_view.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // 1. notification is recieved when app is in background ore terminated when no user is logged in, means not checking shared pref.
@@ -86,7 +91,7 @@ class NotificationService {
 
 //
   void firebaseInit(BuildContext context) {
-    print('inside firebase init');
+    // print('inside firebase init');
     FirebaseMessaging.onMessage.listen((message) {
       RemoteNotification? notification = message.notification;
       // AndroidNotification? android = message.notification!.android;
@@ -106,10 +111,11 @@ class NotificationService {
         // check from shared pref. if logged in user is seller then show notification otheriwse not beacuse on same device buyer can also be logged in when noti. recieved
 
         SharedPreferences.getInstance().then((value) {
-          print('value: $value');
+          // print('value: $value');
           final userType = value.getString('userType');
+          final userId = value.getString('uId');
 
-          print('userType: $userType'); // not printing
+          // print('userType: $userType'); // not printing
 
           // a user is logged in
           if (userType != null) {
@@ -117,9 +123,12 @@ class NotificationService {
             if (userType == 'seller') {
               print('seller is logged in');
 
-              // initLocalNotifications(context, message);
-              initLocalNotifications(message);
-              showNotification(message);
+              // if for same seller who is logged in currently
+              if (message.data['sellerId'] == userId) {
+                // initLocalNotifications(context, message);
+                initLocalNotifications(message);
+                showNotification(message);
+              }
             } else {
               print('buyer is logged in');
             }
@@ -322,6 +331,22 @@ class NotificationService {
     //   ),
     // );
 
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //       builder: (context) => AnnotatedRegion(
+    //             value: const SystemUiOverlayStyle(
+    //               statusBarIconBrightness: Brightness.dark,
+    //             ),
+    //             child: MaterialApp(
+    //               home: StreamProvider<UserModel?>.value(
+    //                   initialData: null,
+    //                   value: UserAuthServices().authStream,
+    //                   child: const AuthWrapper()),
+    //             ),
+    //           )),
+    // );
+
     // if (message.data['screen'] == 'cart') {
     //   Navigator.push(
     //     context,
@@ -344,6 +369,7 @@ class NotificationService {
     required String? token,
     required String? title,
     required String? body,
+    required String? sellerId,
     required Map<String, dynamic>? data,
   }) async {
     String serverKey = await ServerKeyService().getServerKeyToken();
@@ -362,7 +388,12 @@ class NotificationService {
         "token": token,
         // "notification": {"body": body, "title": title},
         // "data": data,
-        "data": {"body": body, "title": title, "token": token}
+        "data": {
+          "body": body,
+          "title": title,
+          "token": token,
+          "sellerId": sellerId
+        }
       }
     };
 
@@ -380,20 +411,20 @@ class NotificationService {
     }
   }
 
-  // save device user type logged in with token as id (for background/terminated state app notitifcation showing)
-  updateDeviceUserTypeLoggedIn(String userType) async{
-    try{
-      
-    String deviceToken = await getDeviceToken();
+  // save device user logged in type and id with token as id (for background/terminated state app notitifcation showing)
+  updateDeviceLoggedInUserDetails(String userType, String userId) async {
+    try {
+      String deviceToken = await getDeviceToken();
 
-    final result = await FirebaseFirestore.instance.collection('deviceUserTypes').doc(deviceToken).set({
-      'userTypeLoggedIn': userType
-    });
+      final result = await FirebaseFirestore.instance
+          .collection('deviceDetails')
+          .doc(deviceToken)
+          .set({'userTypeLoggedIn': userType, 'userIdLoggedIn': userId});
 
-    print('device user type set as $userType');
-    }
-    catch(e){
-      print('Err setting device user type: $e');
+      print('device user type set as $userType');
+      print('device user id set as $userId');
+    } catch (e) {
+      print('Err in updateDeviceLoggedInUserDetails: $e');
       return;
     }
   }

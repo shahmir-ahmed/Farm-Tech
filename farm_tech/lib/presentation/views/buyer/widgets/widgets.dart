@@ -480,12 +480,12 @@ class _AddToCartBuyNowViewState extends State<AddToCartBuyNowView> {
                                       // show success message
                                       floatingSnackBar(
                                           message: 'Item added to cart',
-                                          context: context);
+                                          context: context, duration: Duration(seconds: 1));
                                     } else {
                                       floatingSnackBar(
                                           message:
                                               'Error adding item to cart. Please try again later.',
-                                          context: context);
+                                          context: context, duration: Duration(seconds: 2));
                                     }
 
                                     // close loading alert dialog

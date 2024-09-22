@@ -529,9 +529,9 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                         docId: user.uId,
                                         profileImageUrl: pickedImage!.path));
 
-                                  // sets this device user type logged in as seller
+                                  // sets this device user type logged in as seller and id as seller id
                                   await NotificationService()
-                                      .updateDeviceUserTypeLoggedIn('seller');
+                                      .updateDeviceLoggedInUserDetails('seller', user.uId!);
                                       
                                 // close creating account dialog
                                 Navigator.pop(context);

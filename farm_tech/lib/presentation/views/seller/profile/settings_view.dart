@@ -68,7 +68,7 @@ class _SettingsViewState extends State<SettingsView> {
               //     ?
               text == "Logout"
                   ? OptionRow(
-                      noTopDivider: widget.forBuyer == null ? true : null,
+                      // noTopDivider: widget.forBuyer == null ? true : null,
                       text: text,
                       textColor: Colors.red,
                       noRightIcon: true,
@@ -87,9 +87,9 @@ class _SettingsViewState extends State<SettingsView> {
                           // show loading alert dialog
                           Utils.showLoadingAlertDialog(context, 'logout');
 
-                          // sets this device user type logged in as empty
+                          // sets this device user type logged in and id as empty
                           await NotificationService()
-                              .updateDeviceUserTypeLoggedIn('');
+                              .updateDeviceLoggedInUserDetails('', '');
 
                           // logout user
                           await UserAuthServices().signOut();

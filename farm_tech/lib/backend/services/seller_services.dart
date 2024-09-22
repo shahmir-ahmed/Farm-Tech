@@ -252,4 +252,18 @@ class SellerServices {
       return null;
     }
   }
+
+  Future updateDeviceToken(SellerModel model) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('sellers')
+          .doc(model.docId)
+          .update({'deviceToken': model.deviceToken});
+      
+      print('device token updated');
+    } catch (e) {
+      print('Err in updateDeviceToken: $e');
+      return null;
+    }
+  }
 }

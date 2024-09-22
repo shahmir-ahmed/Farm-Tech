@@ -217,7 +217,7 @@ class _RecentSearchesSectionState extends State<RecentSearchesSection> {
                               if (result == 'success') {
                                 floatingSnackBar(
                                     message: 'Recent search history cleared',
-                                    context: context);
+                                    context: context, duration: Duration(seconds: 2));
                               } else {
                                 floatingSnackBar(
                                     message:

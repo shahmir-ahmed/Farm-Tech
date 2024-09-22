@@ -65,6 +65,8 @@ dependencies:
   googleapis_auth: ^1.6.0
   firebase_messaging: ^15.1.2
   flutter_local_notifications: ^17.2.2
+  connectivity_plus: ^6.0.5
+  internet_connection_checker: ^2.0.0
 
 dev_dependencies:
   flutter_test:

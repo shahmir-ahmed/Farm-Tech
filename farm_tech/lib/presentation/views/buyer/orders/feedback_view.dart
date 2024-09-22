@@ -186,11 +186,11 @@ class _FeedbackViewState extends State<FeedbackView> {
                           floatingSnackBar(
                               message:
                                   'Error posting feedback. Please try again later.',
-                              context: context);
+                              context: context, duration: Duration(seconds: 2));
                         } else {
                           floatingSnackBar(
                               message: 'Feedback posted successfully',
-                              context: context);
+                              context: context, duration: Duration(seconds: 2));
                         }
 
                         // close loading alert
