@@ -9,13 +9,16 @@ class ChatTabView extends StatefulWidget {
 }
 
 class _ChatTabViewState extends State<ChatTabView> {
-  @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Text(
-        'Chat Tab',
-        style: Utils.kAppBody2BoldStyle,
-      ),
+    return Scaffold(
+      body: _getBody(),
+      backgroundColor: Utils.whiteColor,
+    );
+  }
+
+  _getBody() {
+    return Center(
+      child: Text('Chat tab'),
     );
   }
 }

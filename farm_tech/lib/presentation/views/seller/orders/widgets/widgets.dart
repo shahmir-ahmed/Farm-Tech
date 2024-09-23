@@ -17,9 +17,13 @@ import 'package:provider/provider.dart';
 // all orders tab view
 class AllOrdersTabView extends StatelessWidget {
   AllOrdersTabView({super.key});
+  AllOrdersTabView.forSellerSearch({super.key, required this.searchQuery});
   AllOrdersTabView.forBuyer({super.key, this.forBuyer = true});
+  AllOrdersTabView.forBuyerSearch(
+      {super.key, this.forBuyer = true, required this.searchQuery});
 
   bool? forBuyer;
+  String? searchQuery;
 
   @override
   Widget build(BuildContext context) {
@@ -61,19 +65,40 @@ class AllOrdersTabView extends StatelessWidget {
                         ),
                       ),
                     )
-                  :
-                  // column of order cards
-                  Column(
-                      children: orders.map((orderModel) {
-                      // single order card
-                      return forBuyer != null
-                          ? OrderCard.forBuyer(
-                              key: Key(orderModel.docId!),
-                              orderModel: orderModel)
-                          : OrderCard(
-                              key: Key(orderModel.docId!),
-                              orderModel: orderModel);
-                    }).toList())
+                  // column of searched order cards
+                  : searchQuery != null
+                      ? Column(
+                          children: orders.map((orderModel) {
+                          // single order card
+                          return forBuyer != null
+                              ? searchQuery != null
+                                  ? OrderCard.forBuyerSearch(
+                                      orderModel: orderModel,
+                                      searchQuery: searchQuery)
+                                  : OrderCard.forBuyer(
+                                      key: Key(orderModel.docId!),
+                                      orderModel: orderModel)
+                              : searchQuery != null
+                                  ? OrderCard.forSellerSearch(
+                                      orderModel: orderModel,
+                                      searchQuery: searchQuery)
+                                  : OrderCard(
+                                      key: Key(orderModel.docId!),
+                                      orderModel: orderModel);
+                        }).toList())
+                      :
+                      // column of order cards
+                      Column(
+                          children: orders.map((orderModel) {
+                          // single order card
+                          return forBuyer != null
+                              ? OrderCard.forBuyer(
+                                  key: Key(orderModel.docId!),
+                                  orderModel: orderModel)
+                              : OrderCard(
+                                  key: Key(orderModel.docId!),
+                                  orderModel: orderModel);
+                        }).toList())
             ],
           );
   }
@@ -82,9 +107,14 @@ class AllOrdersTabView extends StatelessWidget {
 // in progress orders tab view
 class InProgressOrdersTabView extends StatelessWidget {
   InProgressOrdersTabView({super.key});
+  InProgressOrdersTabView.forSellerSearch(
+      {super.key, required this.searchQuery});
   InProgressOrdersTabView.forBuyer({super.key, this.forBuyer = true});
+  InProgressOrdersTabView.forBuyerSearch(
+      {super.key, this.forBuyer = true, required this.searchQuery});
 
   bool? forBuyer;
+  String? searchQuery;
 
   @override
   Widget build(BuildContext context) {
@@ -128,12 +158,20 @@ class InProgressOrdersTabView extends StatelessWidget {
                           .map((orderModel) {
                       // single order card
                       return forBuyer != null
-                          ? OrderCard.forBuyer(
-                              key: Key(orderModel.docId!),
-                              orderModel: orderModel)
-                          : OrderCard(
-                              key: Key(orderModel.docId!),
-                              orderModel: orderModel);
+                          ? searchQuery != null
+                              ? OrderCard.forBuyerSearch(
+                                  orderModel: orderModel,
+                                  searchQuery: searchQuery)
+                              : OrderCard.forBuyer(
+                                  key: Key(orderModel.docId!),
+                                  orderModel: orderModel)
+                          : searchQuery != null
+                              ? OrderCard.forSellerSearch(
+                                  orderModel: orderModel,
+                                  searchQuery: searchQuery)
+                              : OrderCard(
+                                  key: Key(orderModel.docId!),
+                                  orderModel: orderModel);
                     }).toList())
             ],
           );
@@ -143,9 +181,14 @@ class InProgressOrdersTabView extends StatelessWidget {
 // completed orders tab view
 class CompletedOrdersTabView extends StatelessWidget {
   CompletedOrdersTabView({super.key});
+  CompletedOrdersTabView.forSellerSearch(
+      {super.key, required this.searchQuery});
   CompletedOrdersTabView.forBuyer({super.key, this.forBuyer = true});
+  CompletedOrdersTabView.forBuyerSearch(
+      {super.key, this.forBuyer = true, required this.searchQuery});
 
   bool? forBuyer;
+  String? searchQuery;
 
   @override
   Widget build(BuildContext context) {
@@ -187,12 +230,20 @@ class CompletedOrdersTabView extends StatelessWidget {
                           .map((orderModel) {
                       // single order card
                       return forBuyer != null
-                          ? OrderCard.forBuyer(
-                              key: Key(orderModel.docId!),
-                              orderModel: orderModel)
-                          : OrderCard(
-                              key: Key(orderModel.docId!),
-                              orderModel: orderModel);
+                          ? searchQuery != null
+                              ? OrderCard.forBuyerSearch(
+                                  orderModel: orderModel,
+                                  searchQuery: searchQuery)
+                              : OrderCard.forBuyer(
+                                  key: Key(orderModel.docId!),
+                                  orderModel: orderModel)
+                          : searchQuery != null
+                              ? OrderCard.forSellerSearch(
+                                  orderModel: orderModel,
+                                  searchQuery: searchQuery)
+                              : OrderCard(
+                                  key: Key(orderModel.docId!),
+                                  orderModel: orderModel);
                     }).toList())
             ],
           );
@@ -203,8 +254,13 @@ class CompletedOrdersTabView extends StatelessWidget {
 class CancelledOrdersTabView extends StatelessWidget {
   CancelledOrdersTabView({super.key});
   CancelledOrdersTabView.forBuyer({super.key, this.forBuyer = true});
+  CancelledOrdersTabView.forSellerSearch(
+      {super.key, required this.searchQuery});
+  CancelledOrdersTabView.forBuyerSearch(
+      {super.key, this.forBuyer = true, required this.searchQuery});
 
   bool? forBuyer;
+  String? searchQuery;
 
   @override
   Widget build(BuildContext context) {
@@ -246,12 +302,20 @@ class CancelledOrdersTabView extends StatelessWidget {
                           .map((orderModel) {
                       // single order card
                       return forBuyer != null
-                          ? OrderCard.forBuyer(
-                              key: Key(orderModel.docId!),
-                              orderModel: orderModel)
-                          : OrderCard(
-                              key: Key(orderModel.docId!),
-                              orderModel: orderModel);
+                          ? searchQuery != null
+                              ? OrderCard.forBuyerSearch(
+                                  orderModel: orderModel,
+                                  searchQuery: searchQuery)
+                              : OrderCard.forBuyer(
+                                  key: Key(orderModel.docId!),
+                                  orderModel: orderModel)
+                          : searchQuery != null
+                              ? OrderCard.forSellerSearch(
+                                  orderModel: orderModel,
+                                  searchQuery: searchQuery)
+                              : OrderCard(
+                                  key: Key(orderModel.docId!),
+                                  orderModel: orderModel);
                     }).toList())
             ],
           );
@@ -265,6 +329,13 @@ class OrderCard extends StatefulWidget {
       {super.key, required this.orderModel, this.forHomeTab = true});
   OrderCard.forBuyer(
       {super.key, required this.orderModel, this.forBuyer = true});
+  OrderCard.forBuyerSearch(
+      {super.key,
+      required this.orderModel,
+      this.forBuyer = true,
+      required this.searchQuery});
+  OrderCard.forSellerSearch(
+      {super.key, required this.orderModel, required this.searchQuery});
   OrderCard.forBuyerBottomSheet(
       {super.key,
       required this.orderModel,
@@ -278,6 +349,9 @@ class OrderCard extends StatefulWidget {
   bool? forOrderDetailsBottomSheet;
   ProductModel?
       productModel; // for order details bottom sheet because need name, image, category of product already in bottom sheet
+
+  // searched text of product name
+  String? searchQuery;
 
   @override
   State<OrderCard> createState() => _OrderCardState();
@@ -620,26 +694,32 @@ class _OrderCardState extends State<OrderCard> {
                       : widget.orderModel.status == 'Completed' &&
                               orderReviewExists!
                           ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // text
-                              Text('Your Review', style: Utils.kAppBody1BoldStyle,),
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // text
+                                Text(
+                                  'Your Review',
+                                  style: Utils.kAppBody1BoldStyle,
+                                ),
 
-                              // space
-                              SizedBox(height: 10,),
+                                // space
+                                SizedBox(
+                                  height: 10,
+                                ),
 
-                              // single user rating/review card
-                              Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: SingleUserRatingCard(
+                                // single user rating/review card
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: SingleUserRatingCard(
                                     reviewModel: orderReviewModel!,
-                                    timeAgo: timeAgo(orderReviewModel!.createdAt!),
+                                    timeAgo:
+                                        timeAgo(orderReviewModel!.createdAt!),
                                     noPadding: true,
                                     noBottomDivider: true,
-                                    ),
-                              ),
-                            ],
-                          )
+                                  ),
+                                ),
+                              ],
+                            )
                           : SizedBox() // for cancelled/ in progress orders
                 ],
               ),
@@ -726,218 +806,457 @@ class _OrderCardState extends State<OrderCard> {
     // print('widget.orderModel: ${widget.orderModel.toJson()}, id: ${widget.orderModel.docId}');
 
     // widget tree
-    return GestureDetector(
-      onTap: widget.forHomeTab != null
-          ? () {}
-          : widget.forOrderDetailsBottomSheet != null
-              ? () {}
-              : () {
-                  if (_productModel.title!.isEmpty ||
-                      _productModel.category!.isEmpty ||
-                      _productModel.mainImageUrl!.isEmpty) {
-                    // not show details screen / details bottom sheet
-                  } else {
-                    //  if for buyer order card
-                    if (widget.forBuyer != null) {
-                      // print('orderReviewExists: $orderReviewExists');
-                      // order review exists variable is not null then show details bottom sheet
-                      if (orderReviewExists != null) {
-                        _showBuyerOrderDetailsBottomSheet();
-                      }
-                    } else {
-                      // show order details screen for seller
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => OrderDetailsView(
-                                  orderModel: widget.orderModel,
-                                  orderId: convertStringToNumber(
-                                          widget.orderModel.docId!)
-                                      .substring(0, 7),
-                                  orderDate: extractDateFromTimestampForSeller(
-                                      widget.orderModel.createdAt!),
-                                  productModel: _productModel)));
-                    }
-                  }
-                },
-      // main body column
-      child: Column(
-        children: [
-          Padding(
-            padding: widget.forOrderDetailsBottomSheet != null
-                ? const EdgeInsets.all(0)
-                : const EdgeInsets.all(20),
+    return widget.searchQuery != null && _productModel.title!.isNotEmpty
+        ? _productModel.title!
+                .toLowerCase()
+                .contains(widget.searchQuery!.toLowerCase())
+            ? GestureDetector(
+                onTap: widget.forHomeTab != null
+                    ? () {}
+                    : widget.forOrderDetailsBottomSheet != null
+                        ? () {}
+                        : () {
+                            if (_productModel.title!.isEmpty ||
+                                _productModel.category!.isEmpty ||
+                                _productModel.mainImageUrl!.isEmpty) {
+                              // not show details screen / details bottom sheet
+                            } else {
+                              //  if for buyer order card
+                              if (widget.forBuyer != null) {
+                                // print('orderReviewExists: $orderReviewExists');
+                                // order review exists variable is not null then show details bottom sheet
+                                if (orderReviewExists != null) {
+                                  _showBuyerOrderDetailsBottomSheet();
+                                }
+                              } else {
+                                // show order details screen for seller
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => OrderDetailsView(
+                                            orderModel: widget.orderModel,
+                                            orderId: convertStringToNumber(
+                                                    widget.orderModel.docId!)
+                                                .substring(0, 7),
+                                            orderDate:
+                                                extractDateFromTimestampForSeller(
+                                                    widget
+                                                        .orderModel.createdAt!),
+                                            productModel: _productModel)));
+                              }
+                            }
+                          },
+                // main body column
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: widget.forOrderDetailsBottomSheet != null
+                          ? const EdgeInsets.all(0)
+                          : const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          // if order card if or home tab
+                          widget.forHomeTab != null
+                              ? const SizedBox()
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "#${convertStringToNumber(widget.orderModel.docId!).substring(0, 7)}",
+                                      style: Utils.kAppBody3MediumStyle,
+                                    ),
+                                    // status
+                                    Text(
+                                      widget.orderModel.status!,
+                                      style: Utils.kAppBody3MediumStyle
+                                          .copyWith(
+                                              color: widget.orderModel.status ==
+                                                      "In Progress"
+                                                  ? Colors.orange
+                                                  : widget.orderModel.status ==
+                                                          "Completed"
+                                                      ? Utils.greenColor
+                                                      : widget.orderModel
+                                                                  .status ==
+                                                              "Cancelled"
+                                                          ? Colors.red
+                                                          : Colors.black),
+                                    ),
+                                  ],
+                                ),
+
+                          // space
+                          widget.forHomeTab != null
+                              ? const SizedBox()
+                              : const SizedBox(
+                                  height: 10,
+                                ),
+
+                          // row
+                          widget.forHomeTab != null
+                              ? const SizedBox()
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Date placed',
+                                      style: Utils.kAppCaptionMediumStyle
+                                          .copyWith(color: Utils.greyColor2),
+                                    ),
+                                    Text(
+                                      widget.forBuyer != null
+                                          ? extractDateFromTimestampForBuyer(
+                                              widget.orderModel.createdAt!)
+                                          : extractDateFromTimestampForSeller(
+                                              widget.orderModel.createdAt!),
+                                      style: Utils.kAppCaptionMediumStyle
+                                          .copyWith(color: Utils.greyColor2),
+                                    ),
+                                  ],
+                                ),
+
+                          // space
+                          widget.forHomeTab != null
+                              ? const SizedBox()
+                              : const SizedBox(
+                                  height: 20,
+                                ),
+
+                          // product details
+                          Row(
+                            children: [
+                              // image
+                              // use widget's product model for order details bottom sheet (means not use state vars but already got data in widget product model)
+                              widget.forOrderDetailsBottomSheet != null
+                                  ? Image.network(
+                                      widget.productModel!.mainImageUrl!,
+                                      width: 90,
+                                      height: 80,
+                                    )
+                                  : _productModel.mainImageUrl!.isEmpty
+                                      ? const SizedBox(
+                                          width: 90,
+                                          child:
+                                              Utils.circularProgressIndicator)
+                                      : Image.network(
+                                          _productModel.mainImageUrl!,
+                                          width: 90,
+                                          height: 80,
+                                        ),
+
+                              // space
+                              const SizedBox(
+                                width: 20,
+                              ),
+
+                              // column
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // name
+                                    Row(
+                                      children: [
+                                        Text(
+                                          widget.forOrderDetailsBottomSheet !=
+                                                  null
+                                              ? widget.productModel!.title!
+                                              : _productModel.title!.isEmpty
+                                                  ? "Product Name"
+                                                  : _productModel.title!,
+                                          style: Utils.kAppBody3MediumStyle,
+                                        ),
+                                        widget.forHomeTab == null
+                                            ? const SizedBox()
+                                            : Text(
+                                                " #${convertStringToNumber(widget.orderModel.docId!).substring(0, 7)}",
+                                                style: Utils
+                                                    .kAppBody3MediumStyle
+                                                    .copyWith(
+                                                        color:
+                                                            Utils.greenColor),
+                                              ),
+                                      ],
+                                    ),
+
+                                    // space
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+
+                                    // category
+                                    Text(
+                                      widget.forOrderDetailsBottomSheet != null
+                                          ? widget.productModel!.category!
+                                          : _productModel.category!.isEmpty
+                                              ? 'Category'
+                                              : _productModel.category!,
+                                      style: Utils.kAppCaptionMediumStyle
+                                          .copyWith(color: Utils.greyColor2),
+                                    ),
+
+                                    // space
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        // price
+                                        Text(
+                                          "PKR ${widget.orderModel.totalAmount!}",
+                                          style: Utils.kAppBody2MediumStyle
+                                              .copyWith(
+                                                  color: Utils.greenColor),
+                                        ),
+
+                                        // quantity
+                                        Text(
+                                          'Qty: ${widget.orderModel.quantity}',
+                                          style: Utils.kAppCaptionMediumStyle
+                                              .copyWith(
+                                                  color: Utils.greyColor2),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    // divider
+                    // no divider for order card in buyer order details bottom sheet
+                    widget.forOrderDetailsBottomSheet != null
+                        ? SizedBox()
+                        : Utils.divider,
+                  ],
+                ))
+            // if product name does not contain search query then not shown card
+            : SizedBox()
+        // normal order tab card
+        : GestureDetector(
+            onTap: widget.forHomeTab != null
+                ? () {}
+                : widget.forOrderDetailsBottomSheet != null
+                    ? () {}
+                    : () {
+                        if (_productModel.title!.isEmpty ||
+                            _productModel.category!.isEmpty ||
+                            _productModel.mainImageUrl!.isEmpty) {
+                          // not show details screen / details bottom sheet
+                        } else {
+                          //  if for buyer order card
+                          if (widget.forBuyer != null) {
+                            // print('orderReviewExists: $orderReviewExists');
+                            // order review exists variable is not null then show details bottom sheet
+                            if (orderReviewExists != null) {
+                              _showBuyerOrderDetailsBottomSheet();
+                            }
+                          } else {
+                            // show order details screen for seller
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => OrderDetailsView(
+                                        orderModel: widget.orderModel,
+                                        orderId: convertStringToNumber(
+                                                widget.orderModel.docId!)
+                                            .substring(0, 7),
+                                        orderDate:
+                                            extractDateFromTimestampForSeller(
+                                                widget.orderModel.createdAt!),
+                                        productModel: _productModel)));
+                          }
+                        }
+                      },
+            // main body column
             child: Column(
               children: [
-                // if order card if or home tab
-                widget.forHomeTab != null
-                    ? const SizedBox()
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Padding(
+                  padding: widget.forOrderDetailsBottomSheet != null
+                      ? const EdgeInsets.all(0)
+                      : const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      // if order card if or home tab
+                      widget.forHomeTab != null
+                          ? const SizedBox()
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "#${convertStringToNumber(widget.orderModel.docId!).substring(0, 7)}",
+                                  style: Utils.kAppBody3MediumStyle,
+                                ),
+                                // status
+                                Text(
+                                  widget.orderModel.status!,
+                                  style: Utils.kAppBody3MediumStyle.copyWith(
+                                      color: widget.orderModel.status ==
+                                              "In Progress"
+                                          ? Colors.orange
+                                          : widget.orderModel.status ==
+                                                  "Completed"
+                                              ? Utils.greenColor
+                                              : widget.orderModel.status ==
+                                                      "Cancelled"
+                                                  ? Colors.red
+                                                  : Colors.black),
+                                ),
+                              ],
+                            ),
+
+                      // space
+                      widget.forHomeTab != null
+                          ? const SizedBox()
+                          : const SizedBox(
+                              height: 10,
+                            ),
+
+                      // row
+                      widget.forHomeTab != null
+                          ? const SizedBox()
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Date placed',
+                                  style: Utils.kAppCaptionMediumStyle
+                                      .copyWith(color: Utils.greyColor2),
+                                ),
+                                Text(
+                                  widget.forBuyer != null
+                                      ? extractDateFromTimestampForBuyer(
+                                          widget.orderModel.createdAt!)
+                                      : extractDateFromTimestampForSeller(
+                                          widget.orderModel.createdAt!),
+                                  style: Utils.kAppCaptionMediumStyle
+                                      .copyWith(color: Utils.greyColor2),
+                                ),
+                              ],
+                            ),
+
+                      // space
+                      widget.forHomeTab != null
+                          ? const SizedBox()
+                          : const SizedBox(
+                              height: 20,
+                            ),
+
+                      // product details
+                      Row(
                         children: [
-                          Text(
-                            "#${convertStringToNumber(widget.orderModel.docId!).substring(0, 7)}",
-                            style: Utils.kAppBody3MediumStyle,
+                          // image
+                          // use widget's product model for order details bottom sheet (means not use state vars but already got data in widget product model)
+                          widget.forOrderDetailsBottomSheet != null
+                              ? Image.network(
+                                  widget.productModel!.mainImageUrl!,
+                                  width: 90,
+                                  height: 80,
+                                )
+                              : _productModel.mainImageUrl!.isEmpty
+                                  ? const SizedBox(
+                                      width: 90,
+                                      child: Utils.circularProgressIndicator)
+                                  : Image.network(
+                                      _productModel.mainImageUrl!,
+                                      width: 90,
+                                      height: 80,
+                                    ),
+
+                          // space
+                          const SizedBox(
+                            width: 20,
                           ),
-                          // status
-                          Text(
-                            widget.orderModel.status!,
-                            style: Utils.kAppBody3MediumStyle.copyWith(
-                                color: widget.orderModel.status == "In Progress"
-                                    ? Colors.orange
-                                    : widget.orderModel.status == "Completed"
-                                        ? Utils.greenColor
-                                        : widget.orderModel.status ==
-                                                "Cancelled"
-                                            ? Colors.red
-                                            : Colors.black),
-                          ),
-                        ],
-                      ),
 
-                // space
-                widget.forHomeTab != null
-                    ? const SizedBox()
-                    : const SizedBox(
-                        height: 10,
-                      ),
+                          // column
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // name
+                                Row(
+                                  children: [
+                                    Text(
+                                      widget.forOrderDetailsBottomSheet != null
+                                          ? widget.productModel!.title!
+                                          : _productModel.title!.isEmpty
+                                              ? "Product Name"
+                                              : _productModel.title!,
+                                      style: Utils.kAppBody3MediumStyle,
+                                    ),
+                                    widget.forHomeTab == null
+                                        ? const SizedBox()
+                                        : Text(
+                                            " #${convertStringToNumber(widget.orderModel.docId!).substring(0, 7)}",
+                                            style: Utils.kAppBody3MediumStyle
+                                                .copyWith(
+                                                    color: Utils.greenColor),
+                                          ),
+                                  ],
+                                ),
 
-                // row
-                widget.forHomeTab != null
-                    ? const SizedBox()
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Date placed',
-                            style: Utils.kAppCaptionMediumStyle
-                                .copyWith(color: Utils.greyColor2),
-                          ),
-                          Text(
-                            widget.forBuyer != null
-                                ? extractDateFromTimestampForBuyer(
-                                    widget.orderModel.createdAt!)
-                                : extractDateFromTimestampForSeller(
-                                    widget.orderModel.createdAt!),
-                            style: Utils.kAppCaptionMediumStyle
-                                .copyWith(color: Utils.greyColor2),
-                          ),
-                        ],
-                      ),
+                                // space
+                                const SizedBox(
+                                  height: 5,
+                                ),
 
-                // space
-                widget.forHomeTab != null
-                    ? const SizedBox()
-                    : const SizedBox(
-                        height: 20,
-                      ),
+                                // category
+                                Text(
+                                  widget.forOrderDetailsBottomSheet != null
+                                      ? widget.productModel!.category!
+                                      : _productModel.category!.isEmpty
+                                          ? 'Category'
+                                          : _productModel.category!,
+                                  style: Utils.kAppCaptionMediumStyle
+                                      .copyWith(color: Utils.greyColor2),
+                                ),
 
-                // product details
-                Row(
-                  children: [
-                    // image
-                    // use widget's product model for order details bottom sheet (means not use state vars but already got data in widget product model)
-                    widget.forOrderDetailsBottomSheet != null
-                        ? Image.network(
-                            widget.productModel!.mainImageUrl!,
-                            width: 90,
-                            height: 80,
-                          )
-                        : _productModel.mainImageUrl!.isEmpty
-                            ? const SizedBox(
-                                width: 90,
-                                child: Utils.circularProgressIndicator)
-                            : Image.network(
-                                _productModel.mainImageUrl!,
-                                width: 90,
-                                height: 80,
-                              ),
+                                // space
+                                const SizedBox(
+                                  height: 10,
+                                ),
 
-                    // space
-                    const SizedBox(
-                      width: 20,
-                    ),
-
-                    // column
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // name
-                          Row(
-                            children: [
-                              Text(
-                                widget.forOrderDetailsBottomSheet != null
-                                    ? widget.productModel!.title!
-                                    : _productModel.title!.isEmpty
-                                        ? "Product Name"
-                                        : _productModel.title!,
-                                style: Utils.kAppBody3MediumStyle,
-                              ),
-                              widget.forHomeTab == null
-                                  ? const SizedBox()
-                                  : Text(
-                                      " #${convertStringToNumber(widget.orderModel.docId!).substring(0, 7)}",
-                                      style: Utils.kAppBody3MediumStyle
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    // price
+                                    Text(
+                                      "PKR ${widget.orderModel.totalAmount!}",
+                                      style: Utils.kAppBody2MediumStyle
                                           .copyWith(color: Utils.greenColor),
                                     ),
-                            ],
-                          ),
 
-                          // space
-                          const SizedBox(
-                            height: 5,
-                          ),
-
-                          // category
-                          Text(
-                            widget.forOrderDetailsBottomSheet != null
-                                ? widget.productModel!.category!
-                                : _productModel.category!.isEmpty
-                                    ? 'Category'
-                                    : _productModel.category!,
-                            style: Utils.kAppCaptionMediumStyle
-                                .copyWith(color: Utils.greyColor2),
-                          ),
-
-                          // space
-                          const SizedBox(
-                            height: 10,
-                          ),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // price
-                              Text(
-                                "PKR ${widget.orderModel.totalAmount!}",
-                                style: Utils.kAppBody2MediumStyle
-                                    .copyWith(color: Utils.greenColor),
-                              ),
-
-                              // quantity
-                              Text(
-                                'Qty: ${widget.orderModel.quantity}',
-                                style: Utils.kAppCaptionMediumStyle
-                                    .copyWith(color: Utils.greyColor2),
-                              ),
-                            ],
-                          ),
+                                    // quantity
+                                    Text(
+                                      'Qty: ${widget.orderModel.quantity}',
+                                      style: Utils.kAppCaptionMediumStyle
+                                          .copyWith(color: Utils.greyColor2),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
+                // divider
+                // no divider for order card in buyer order details bottom sheet
+                widget.forOrderDetailsBottomSheet != null
+                    ? SizedBox()
+                    : Utils.divider,
               ],
-            ),
-          ),
-          // divider
-          // no divider for order card in buyer order details bottom sheet
-          widget.forOrderDetailsBottomSheet != null
-              ? SizedBox()
-              : Utils.divider,
-        ],
-      ),
-    );
+            ));
   }
 }

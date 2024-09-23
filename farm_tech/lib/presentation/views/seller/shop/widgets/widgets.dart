@@ -16,7 +16,10 @@ import 'package:provider/provider.dart';
 
 // product tab view
 class ProductTabView extends StatefulWidget {
-  const ProductTabView({super.key});
+  ProductTabView({super.key});
+  ProductTabView.forShopTabSearch({super.key, required this.searchQuery});
+
+  String? searchQuery;
 
   @override
   State<ProductTabView> createState() => _ProductTabViewState();
@@ -76,25 +79,46 @@ class _ProductTabViewState extends State<ProductTabView> {
     // print('productsList $productsList');
 
     return products == null
-        ? Utils.circularProgressIndicator
+        ? SizedBox(
+          height: 100,
+          child: Center(child: Utils.circularProgressIndicator))
         // grid view
         : SizedBox(
-            height: 340,
-            child: ProductsGridView(
-                children: productsList.map((productModel) {
-              // product card with stream of product reviews data supplied
-              return StreamProvider.value(
-                  initialData: null,
-                  value:
-                      ProductServices().getProductAvgRatingStream(productModel),
-                  child: ProductCard(
-                    productModel: productModel,
-                    setOrderTabAsActive: () {},
-                  ));
-            }).toList()
-                // ..sort((a, b) =>
-                //     b.createdAt.compareTo(a.createdAt))
-                ));
+            height: widget.searchQuery != null
+                ? MediaQuery.sizeOf(context).height - 180
+                : 340,
+            child: widget.searchQuery != null
+                ? ProductsGridView(
+                    children: productsList
+                        .where((productModel) => productModel.title!
+                            .toLowerCase()
+                            .contains(widget.searchQuery!.toLowerCase()))
+                        .map((productModel) {
+                    // product card with stream of product reviews data supplied
+                    return StreamProvider.value(
+                        initialData: null,
+                        value: ProductServices()
+                            .getProductAvgRatingStream(productModel),
+                        child: ProductCard(
+                          productModel: productModel,
+                          setOrderTabAsActive: () {},
+                        ));
+                  }).toList())
+                : ProductsGridView(
+                    children: productsList.map((productModel) {
+                    // product card with stream of product reviews data supplied
+                    return StreamProvider.value(
+                        initialData: null,
+                        value: ProductServices()
+                            .getProductAvgRatingStream(productModel),
+                        child: ProductCard(
+                          productModel: productModel,
+                          setOrderTabAsActive: () {},
+                        ));
+                  }).toList()
+                    // ..sort((a, b) =>
+                    //     b.createdAt.compareTo(a.createdAt))
+                    ));
   }
 }
 
@@ -495,5 +519,3 @@ class ProductImagesCarousel extends StatelessWidget {
     ]);
   }
 }
-
-

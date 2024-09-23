@@ -4,6 +4,7 @@ import 'package:farm_tech/backend/services/order_services.dart';
 import 'package:farm_tech/backend/services/product_services.dart';
 import 'package:farm_tech/backend/services/seller_services.dart';
 import 'package:farm_tech/configs/utils.dart';
+import 'package:farm_tech/presentation/views/seller/profile/settings_view.dart';
 import 'package:farm_tech/presentation/views/seller/shop/upload_product_view.dart';
 import 'package:farm_tech/presentation/views/seller/shop/widgets/widgets.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
@@ -20,12 +21,29 @@ class ShopTabView extends StatefulWidget {
 }
 
 class _ShopTabViewState extends State<ShopTabView> {
+  bool _isSearching = false; // Whether search is active
+  TextEditingController _searchController = TextEditingController();
+  String searchQuery = "";
+
+  void _startSearch() {
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+  void _stopSearch() {
+    setState(() {
+      _isSearching = false;
+      _searchController.clear(); // Clear the search input
+    });
+  }
+
   // build method
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _getAppbar(),
-      floatingActionButton: _getFloatingActionButton(),
+      floatingActionButton: _isSearching ? null : _getFloatingActionButton(),
       backgroundColor: Utils.whiteColor,
       body: _getBody(),
     );
@@ -33,27 +51,63 @@ class _ShopTabViewState extends State<ShopTabView> {
 
   // get app bar
   _getAppbar() {
-    return Utils.getTabAppBar(
-        'Store Profile',
-        [
-          // search icon
-          const Icon(
-            Icons.search,
-            color: Utils.greenColor,
-          ),
-          const SizedBox(
-            width: 15,
-          ),
-          // settings icon
-          const Icon(
-            Icons.settings,
-            color: Utils.greenColor,
-          ),
-          const SizedBox(
-            width: 30,
-          ),
-        ],
-        context);
+    return _isSearching
+        ? AppBar(
+          toolbarHeight: 80,
+          backgroundColor: Utils.whiteColor,
+            title: TextField(
+              style: Utils.kAppBody3MediumStyle,
+              controller: _searchController,
+              keyboardType: TextInputType.name,
+              autofocus: true,
+              decoration: Utils.inputFieldDecoration.copyWith(
+                // contentPadding: EdgeInsets.all(15),
+                hintText: 'Search in your products...',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.clear, color: Utils.greenColor, size: 28,),
+                  onPressed: _stopSearch, // Clear search and go back
+                ),
+              ),
+              onChanged: (query) => setState(() {
+                searchQuery = query.trim();
+              }), // Filter as user types
+            ),
+          )
+        : Utils.getTabAppBar(
+            'Store Profile',
+            [
+              // search icon
+              GestureDetector(
+                onTap: () {
+                  _startSearch();
+                },
+                child: const Icon(
+                  Icons.search,
+                  color: Utils.greenColor,
+                  size: 30,
+                ),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              // settings icon
+              GestureDetector(
+                onTap: () {
+                  // show settings screen
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SettingsView()));
+                },
+                child: const Icon(
+                  Icons.settings,
+                  color: Utils.greenColor,
+                  size: 30,
+                ),
+              ),
+              const SizedBox(
+                width: 30,
+              ),
+            ],
+            context);
   }
 
   // get floating action button
@@ -77,69 +131,76 @@ class _ShopTabViewState extends State<ShopTabView> {
   // return body
   _getBody() {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
+      child: _isSearching
+          ? StreamProvider.value(
+              initialData: null,
+              value: ProductServices().getSellerProductsStream(
+                  SellerModel(docId: widget.sellerId)),
+              child: ProductTabView.forShopTabSearch(
+                  searchQuery: searchQuery))
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // dp, name column
-                StreamProvider.value(
-                    initialData: null,
-                    value: SellerServices().getSellerDataStream(
-                        SellerModel(docId: widget.sellerId)),
-                    child: const SellerDetails()),
-
-                // space
-                const SizedBox(
-                  height: 5,
-                ),
-
-                // seller avg. rating, reviews count row
-                StreamProvider.value(
-                    initialData: null,
-                    value: SellerServices().getSellerReviewsDataStream(
-                        SellerModel(docId: widget.sellerId)),
-                    child: const SellerReviewsData()),
-
-                // space
-                const SizedBox(
-                  height: 20,
-                ),
-
-                // store stats
                 SizedBox(
-                  width: MediaQuery.of(context).size.width - 150,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
                     children: [
-                      // seller products count column
-                      SellerTotalItemsCount(sellerId: widget.sellerId),
-
-                      // seller total sold items count
+                      // dp, name column
                       StreamProvider.value(
-                        value: OrderServices().getSellerSoldItemsStream(
-                            SellerModel(docId: widget.sellerId)),
-                        initialData: null,
-                        child: const SellerSoldItemsCount(),
-                      )
+                          initialData: null,
+                          value: SellerServices().getSellerDataStream(
+                              SellerModel(docId: widget.sellerId)),
+                          child: const SellerDetails()),
+
+                      // space
+                      const SizedBox(
+                        height: 5,
+                      ),
+
+                      // seller avg. rating, reviews count row
+                      StreamProvider.value(
+                          initialData: null,
+                          value: SellerServices().getSellerReviewsDataStream(
+                              SellerModel(docId: widget.sellerId)),
+                          child: const SellerReviewsData()),
+
+                      // space
+                      const SizedBox(
+                        height: 20,
+                      ),
+
+                      // store stats
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width - 150,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // seller products count column
+                            SellerTotalItemsCount(sellerId: widget.sellerId),
+
+                            // seller total sold items count
+                            StreamProvider.value(
+                              value: OrderServices().getSellerSoldItemsStream(
+                                  SellerModel(docId: widget.sellerId)),
+                              initialData: null,
+                              child: const SellerSoldItemsCount(),
+                            )
+                          ],
+                        ),
+                      ),
+
+                      // space
+                      const SizedBox(
+                        height: 40,
+                      ),
+
+                      // product, info tabs container
+                      ProductAndInfoTabsContainer(sellerId: widget.sellerId)
                     ],
                   ),
-                ),
-
-                // space
-                const SizedBox(
-                  height: 40,
-                ),
-
-                // product, info tabs container
-                ProductAndInfoTabsContainer(sellerId: widget.sellerId)
+                )
               ],
             ),
-          )
-        ],
-      ),
     );
   }
 }
@@ -422,9 +483,9 @@ class _ProductAndInfoTabsContainerState
         productTabActive
             ? StreamProvider.value(
                 initialData: null,
-                value: ProductServices()
-                    .getSellerProductsStream(SellerModel(docId: widget.sellerId)),
-                child: const ProductTabView())
+                value: ProductServices().getSellerProductsStream(
+                    SellerModel(docId: widget.sellerId)),
+                child: ProductTabView())
             :
             // info container
             // Container(
