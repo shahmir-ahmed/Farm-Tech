@@ -11,6 +11,7 @@ String buyerModelToJson(BuyerModel data) => json.encode(data.toJson());
 class BuyerModel {
     String? docId;
     String? name;
+    String? email;
     String? contactNo;
     String? address;
     String? profileImageUrl;
@@ -18,6 +19,7 @@ class BuyerModel {
     BuyerModel({
         this.docId,
         this.name,
+        this.email,
         this.contactNo,
         this.address,
         this.profileImageUrl
@@ -26,12 +28,14 @@ class BuyerModel {
     factory BuyerModel.fromJson(Map<String, dynamic> json, String docId) => BuyerModel(
         docId: docId,
         name: json["name"],
+        email: json["email"],
         contactNo: json["contactNo"],
         address: json["address"],
     );
 
     Map<String, dynamic> toJson() => {
         "name": name,
+        "email": email,
         "contactNo": contactNo,
         "address": address,
     };

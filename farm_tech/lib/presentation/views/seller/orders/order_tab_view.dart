@@ -114,6 +114,7 @@ class _OrderTabViewState extends State<OrderTabView> {
                   height: 10,
                 ),
 
+                // search results based on active tab
                 StreamProvider.value(
                   initialData: null,
                   value: widget.sellerId != null

@@ -37,7 +37,7 @@ class _HomeViewState extends State<HomeView> {
     Utils.circularProgressIndicator,
     Utils.circularProgressIndicator,
     Utils.circularProgressIndicator,
-    const ChatTabView(),
+    // const ChatTabView(),
     Utils.circularProgressIndicator
   ];
 
@@ -46,7 +46,7 @@ class _HomeViewState extends State<HomeView> {
     Utils.circularProgressIndicator,
     Utils.circularProgressIndicator,
     Utils.circularProgressIndicator,
-    const BuyerChatTabView(),
+    // const BuyerChatTabView(),
     Utils.circularProgressIndicator,
   ];
 
@@ -211,7 +211,7 @@ class _HomeViewState extends State<HomeView> {
     // reinitialize widgets options
     setState(() {
       // pass function to profile tab
-      _widgetOptionsSeller[4] = ProfileTabView(
+      _widgetOptionsSeller[3] = ProfileTabView(
         setOrderTabAsActive: setOrderTabAsActive,
       );
     });
@@ -222,7 +222,7 @@ class _HomeViewState extends State<HomeView> {
     // reinitialize widgets options
     setState(() {
       // pass function to profile tab
-      _widgetOptionsBuyer[4] = ProfileTabView.forBuyer(
+      _widgetOptionsBuyer[3] = ProfileTabView.forBuyer(
         setOrderTabAsActive: setOrderTabAsActive,
       );
     });
@@ -431,6 +431,7 @@ class _HomeViewState extends State<HomeView> {
                       height: 27,
                     ),
                     label: ''),
+                    /*
                 BottomNavigationBarItem(
                     backgroundColor: Colors.white,
                     activeIcon: Image.asset(
@@ -444,6 +445,7 @@ class _HomeViewState extends State<HomeView> {
                       height: 27,
                     ),
                     label: ''),
+                    */
                 BottomNavigationBarItem(
                     backgroundColor: Colors.white,
                     activeIcon: Image.asset(

@@ -32,7 +32,8 @@ class UserAuthServices {
   }
 
   // signup user
-  Future signUpUser(UserModel userModel) async {
+  Future signUpUser(
+      UserModel userModel) async {
     try {
       // create user auth with email and password (also logins the user)
       UserCredential result = await _firebaseAuth!
@@ -40,6 +41,9 @@ class UserAuthServices {
               email: userModel.email as String,
               password: userModel.password
                   as String); // awaiting the create user result
+
+      // Link the phone number with the newly created email-password account
+      // await result.user?.linkWithCredential(phoneAuthCredential);
 
       // user object
       User? firebaseUser = result.user;

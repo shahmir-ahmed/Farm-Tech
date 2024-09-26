@@ -8,6 +8,7 @@ import 'package:farm_tech/backend/services/user_auth_services.dart';
 import 'package:farm_tech/configs/utils.dart';
 import 'package:farm_tech/presentation/views/shared/authentication/authentication_view.dart';
 import 'package:farm_tech/presentation/views/widgets/widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +22,8 @@ class ShopRegisterView extends StatefulWidget {
       required this.sellerContactNo,
       required this.email,
       required this.password,
-      required this.deviceToken});
+      required this.deviceToken,
+      });
 
   // seller/owner name
   String sellerName;
@@ -45,6 +47,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
   String shopName = '';
   String shopLocation = '';
   String ownerName = '';
+  String ownerEmail = '';
   String ownerCNICNo = '';
   String ownerContactNo = '';
   String shopDescription = '';
@@ -209,6 +212,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
     // TODO: implement initState
     super.initState();
     ownerName = widget.sellerName;
+    ownerEmail = widget.email;
     ownerContactNo = widget.sellerContactNo;
   }
 
@@ -375,7 +379,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                         child: GestureDetector(
                           onTap: () {
                             // remove focus from last text field filled
-                            FocusScope.of(context).unfocus();
+                            FocusScope.of(context).requestFocus(new FocusNode());
                             mediaPickerOptions(context);
                           },
                           child: Container(
@@ -492,7 +496,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                             final result = await _userAuthServices.signUpUser(
                                 UserModel(
                                     email: widget.email,
-                                    password: widget.password));
+                                    password: widget.password,));
 
                             if (result == null) {
                               // close creating account dialog
@@ -512,6 +516,7 @@ class _ShopRegisterViewState extends State<ShopRegisterView> {
                                   .createSellerDoc(
                                       SellerModel(
                                           name: ownerName,
+                                          email: ownerEmail,
                                           contactNo: ownerContactNo,
                                           cnicNo: ownerCNICNo,
                                           shopName: shopName,

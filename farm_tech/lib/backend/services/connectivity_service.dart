@@ -57,9 +57,9 @@ class ConnectivityService {
       // widget: isChecking ? Utils.circularProgressIndicatorLightGreen : null,
       buttonText: 'Try again',
       onButtonPressed: () async {
-        // closing here so that user knows that trying again
-        _isDialogShown = false;
-        Navigator.of(_context!).pop(); // Close the dialog
+        // closing here so that user knows that trying again (but user can do another task in between)
+        // _isDialogShown = false;
+        // Navigator.of(_context!).pop(); // Close the dialog
         
         // isChecking = true; // after checking instant no internet screen showing which causes blinking
         // Navigator.of(_context!).pop(); // Close the try again dialog
@@ -69,10 +69,10 @@ class ConnectivityService {
         // isChecking = false;
         // Navigator.of(_context!).pop(); // Close the loading dialog
         if (isConnected) {
-          // _isDialogShown = false;
-          // Navigator.of(_context!).pop(); // Close the dialog
+          _isDialogShown = false;
+          Navigator.of(_context!).pop(); // Close the dialog
         } else {
-          // Navigator.of(_context!).pop(); // Close the dialog
+          Navigator.of(_context!).pop(); // Close the dialog
           // if dialog is not shown until now means if between connection status from connectivity plus changed then it has already shown dialog so check here before showing
           // if(!_isDialogShown){
           // Keep showing the dialog until there's internet access

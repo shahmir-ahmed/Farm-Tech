@@ -105,7 +105,7 @@ class BuyerServices {
     }
   }
 
-    // get and return buyer profile image for profile tab
+  // get and return buyer profile image for profile tab
   Future<String?> getProfileImage(BuyerModel model) async {
     try {
       // get profile image path from storage
@@ -127,7 +127,7 @@ class BuyerServices {
     }
   }
 
-    // update buyer name
+  // update buyer name
   Future<String?> updateName(BuyerModel model) async {
     try {
       await FirebaseFirestore.instance
@@ -142,7 +142,7 @@ class BuyerServices {
     }
   }
 
-    // update buyer profile image
+  // update buyer profile image
   Future<String?> updateProfileImage(BuyerModel model) async {
     try {
       // get profile image path from storage
@@ -166,6 +166,27 @@ class BuyerServices {
     } catch (e) {
       // print error
       print("ERR in updateProfileImage: ${e.toString()}");
+      return null;
+    }
+  }
+
+  // check email with buyer doc exists or not
+  checkEmailExists(BuyerModel model) async {
+    try {
+      return await FirebaseFirestore.instance
+          .collection('buyers')
+          .where('email', isEqualTo: model.email)
+          .get()
+          .then((snapshot) {
+        // if seller exists the return true otherwise false
+        if (snapshot.docs.length == 1) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    } catch (e) {
+      print('Err in checkEmailExists: $e');
       return null;
     }
   }

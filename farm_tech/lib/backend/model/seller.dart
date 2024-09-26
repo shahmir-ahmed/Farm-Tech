@@ -14,6 +14,7 @@ String sellerModelToJson(SellerModel data) => json.encode(data.toJson());
 class SellerModel {
   String? docId;
   String? name;
+  String? email;
   String? contactNo;
   String? cnicNo;
   String? shopName;
@@ -28,6 +29,7 @@ class SellerModel {
   SellerModel({
     this.docId,
     this.name,
+    this.email,
     this.contactNo,
     this.cnicNo,
     this.shopName,
@@ -45,6 +47,7 @@ class SellerModel {
       SellerModel(
         docId: docId,
         name: json["name"],
+        email: json["email"],
         contactNo: json["contactNo"],
         cnicNo: json["cnicNo"],
         shopName: json["shopName"],
@@ -59,6 +62,7 @@ class SellerModel {
   Map<String, dynamic> toJson() => {
         // "docId": docId,
         "name": name,
+        "email": email,
         "contactNo": contactNo,
         "cnicNo": cnicNo,
         "shopName": shopName,

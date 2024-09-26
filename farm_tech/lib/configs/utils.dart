@@ -194,7 +194,11 @@ class Utils {
                                                                             ? "Deleting"
                                                                             : forScreen == 'post_feedback'
                                                                                 ? "Posting feedback"
-                                                                                : "",
+                                                                                : forScreen == 'sending_otp'
+                                                                                    ? "Sending OTP"
+                                                                                    : forScreen == 'verifying_otp'
+                                                                                        ? "Verifying OTP"
+                                                                                        : "",
             style: forScreen == 'payment_processing'
                 ? kAppBody1BoldStyle
                 : kAppHeading6BoldStyle,
@@ -241,10 +245,13 @@ class Utils {
                                                                         : forScreen ==
                                                                                 'post_feedback'
                                                                             ? "Your feedback is being posted"
-                                                                        : forScreen ==
-                                                                                'logout'
-                                                                            ? "Please be patient"
-                                                                            : "",
+                                                                            : forScreen == 'logout'
+                                                                                ? "Please be patient"
+                                                                                : forScreen == 'sending_otp'
+                                                                                    ? "OTP is being sent to your number"
+                                                                                    : forScreen == 'verifying_otp'
+                                                                                        ? "Your otp is being verified"
+                                                                                        : "",
             style: kAppBody3RegularStyle.copyWith(color: lightGreyColor1),
           ),
         ],
@@ -312,6 +319,57 @@ class Utils {
       content: Text(
         textAlign: TextAlign.center,
         "You can now access your account",
+        style:
+            Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
+      ),
+      actions: [okButton],
+    );
+
+    // show the dialog
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return WillPopScope(
+            onWillPop: () async =>
+                false, // False will prevent and true will allow to dismiss
+            child: alert);
+        // return alert;
+      },
+    );
+  }
+
+  // show error alert dialog
+  static showErrorAlertDialog(BuildContext context, String message) {
+    // set up the button
+    Widget okButton = CustomButton(
+      secondaryButton: false,
+      primaryButton: true,
+      buttonText: 'OK',
+      onButtonPressed: () {
+        // close alert dialog
+        Navigator.pop(context);
+      },
+      buttonWidth: MediaQuery.of(context).size.width,
+      buttonHeight: 60,
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      insetPadding:
+          const EdgeInsets.symmetric(horizontal: 30.0, vertical: 45.0),
+      icon: Icon(Icons.cancel, size: 60, color: Utils.greenColor),
+      // contentPadding:
+      //     const EdgeInsets.symmetric(horizontal: 30.0, vertical: 45.0),
+      backgroundColor: Utils.whiteColor,
+      actionsAlignment: MainAxisAlignment.spaceBetween,
+      title: Text(
+        "Error",
+        style: Utils.kAppHeading6BoldStyle,
+      ),
+      content: Text(
+        textAlign: TextAlign.center,
+        message,
         style:
             Utils.kAppBody3RegularStyle.copyWith(color: Utils.lightGreyColor1),
       ),

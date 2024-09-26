@@ -240,6 +240,27 @@ class SellerServices {
     }
   }
 
+  // check email with seller doc exists or not
+  checkEmailExists(SellerModel model) async {
+    try {
+      return await FirebaseFirestore.instance
+          .collection('sellers')
+          .where('email', isEqualTo: model.email)
+          .get()
+          .then((snapshot) {
+            // if seller exists the return true otherwise false
+        if (snapshot.docs.length == 1) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    } catch (e) {
+      print('Err in checkEmailExists: $e');
+      return null;
+    }
+  }
+
   Future getSellerDeviceToken(String sellerId) async {
     try {
       return await FirebaseFirestore.instance
@@ -259,7 +280,7 @@ class SellerServices {
           .collection('sellers')
           .doc(model.docId)
           .update({'deviceToken': model.deviceToken});
-      
+
       print('device token updated');
     } catch (e) {
       print('Err in updateDeviceToken: $e');
